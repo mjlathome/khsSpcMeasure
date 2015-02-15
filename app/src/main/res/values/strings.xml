@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">khsSpcMeasure</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_import_setup">Import Setup</string>
+    <string name="title_setup_list">Setup</string>
+    <string name="title_setup_detail">Setup Detail</string>
+    <string name="title_activity_mnt_setup">Maintain Setups</string>
+    <string name="title_measurement_list">Measurements</string>
+    <string name="title_measurement_detail">Measurement Detail</string>
+    <string name="title_piece_list">Pieces</string>
+    <string name="title_piece_detail">Piece Detail</string>
+
+</resources>

@@ -1,0 +1,2 @@
+C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\classes\debug
+C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\support-v4-19.1.0-f4b1df7a02b76ccf2955cf1089392a26a1451a53.jar

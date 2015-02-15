@@ -1,0 +1,32 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.khs.spcmeasure.PieceDetailFragment" >
+
+	<item 
+	    android:id="@+id/mnuCollectStatus"
+	    android:actionProviderClass="com.khs.spcmeasure.widget.CollectStatusActionProvider" 
+        android:showAsAction="always" 
+        android:title="Collect Status" 
+        android:enabled="true"/>	    	
+	
+    <item 
+        android:id="@+id/mnuPieceMeas" 
+        android:icon="@drawable/ic_action_edit" 
+        android:showAsAction="always" 
+        android:title="Measurements" 
+        android:enabled="true"/>        
+    
+    <item 
+        android:id="@+id/mnuPieceDelete"
+        android:icon="@drawable/ic_action_remove"  
+        android:showAsAction="ifRoom" 
+        android:title="Delete Piece" 
+        android:enabled="true"/>        
+        
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_settings"/>
+    
+</menu>

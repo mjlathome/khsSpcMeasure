@@ -1,0 +1,33 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.khs.spcmeasure.PieceListActivity" >
+
+	<item 
+	    android:id="@+id/mnuImportSetup"
+	    android:icon="@drawable/ic_action_download" 
+        android:showAsAction="always" 
+        android:title="Import Setup" 
+        android:enabled="true"/>	    		       
+
+	<item 
+	    android:id="@+id/mnuExportMeas"
+        android:showAsAction="always" 
+        android:title="Up" 
+        android:enabled="true"/>	
+	
+    <item 
+        android:id="@+id/mnuDeleteSetup"
+        android:icon="@drawable/ic_action_discard" 
+        android:showAsAction="ifRoom" 
+        android:title="Delete Setup" 
+        android:enabled="true"/>  	
+			
+	<item 
+	    android:id="@+id/mnuNewPiece"
+	    android:icon="@drawable/ic_action_new" 
+        android:showAsAction="always" 
+        android:title="New Piece" 
+        android:enabled="true"/>	
+        
+	
+</menu>

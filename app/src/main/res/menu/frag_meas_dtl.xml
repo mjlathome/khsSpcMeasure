@@ -1,0 +1,47 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.khs.spcmeasure.MeasurementDetailFragment" >
+
+	<item 
+	    android:id="@+id/mnuScanBle" 
+        android:showAsAction="ifRoom" 
+        android:title="Scan BLE" 
+        android:enabled="true"/>	    	
+	
+    <item 
+        android:id="@+id/mnuSetUomMm" 
+        android:showAsAction="ifRoom" 
+        android:title="Set MM" 
+        android:enabled="true"/>     
+			
+    <item 
+        android:id="@+id/mnuSetZero" 
+        android:showAsAction="ifRoom" 
+        android:title="Set Zero" 
+        android:enabled="true"/>        
+        
+    <item 
+        android:id="@+id/mnuGetValue" 
+        android:showAsAction="ifRoom" 
+        android:title="Get Value" 
+        android:enabled="true"/>        
+
+    <item 
+        android:id="@+id/mnuClearValue" 
+        android:showAsAction="ifRoom" 
+        android:title="Clear Value" 
+        android:enabled="true"/>        
+
+    <item 
+        android:id="@+id/mnuGetBattery" 
+        android:showAsAction="ifRoom" 
+        android:title="Battery" 
+        android:enabled="true"/>        
+        
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_settings"/>
+    
+</menu>

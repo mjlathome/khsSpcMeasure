@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp" >
+
+    <TextView
+        android:id="@+id/lblCollSt"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/txtCollDt"
+        android:layout_marginLeft="63dp"
+        android:labelFor="@+id/txtCollDt"
+        android:text="Status:"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txtProdName"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/lblProdName"
+        android:layout_alignBottom="@+id/lblProdName"
+        android:layout_toRightOf="@+id/lblProdName"
+        android:text="Product Name" />
+
+    <TextView
+        android:id="@+id/txtCollDt"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtProdName"
+        android:layout_below="@+id/txtProdName"
+        android:text="Collect Datetime" />
+
+    <TextView
+        android:id="@+id/lblCollDt"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/lblCollSt"
+        android:layout_below="@+id/lblProdName"
+        android:labelFor="@+id/txtCollDt"
+        android:text="Collect D/T:"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/lblMeasValue"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lblFeatName"
+        android:layout_toLeftOf="@+id/txtCollDt"
+        android:labelFor="@+id/txtMeasValue"
+        android:text="Measurement:"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/lblFeatName"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/txtFeatName"
+        android:layout_alignBottom="@+id/txtFeatName"
+        android:layout_alignRight="@+id/lblMeasValue"
+        android:labelFor="@+id/txtFeatName"
+        android:text="Feature:"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/lblProdName"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/lblCollDt"
+        android:layout_marginTop="14dp"
+        android:labelFor="@+id/txtProdName"
+        android:text="Product:"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txtCollSt"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtCollDt"
+        android:layout_toRightOf="@+id/lblCollSt"
+        android:text="Collect Status" />
+
+    <TextView
+        android:id="@+id/txtFeatName"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lblCollSt"
+        android:layout_toRightOf="@+id/lblFeatName"
+        android:text="Feature Name" />
+
+    <TextView
+        android:id="@+id/txtMeasValue"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/lblMeasValue"
+        android:layout_alignBottom="@+id/lblMeasValue"
+        android:layout_toRightOf="@+id/lblMeasValue"
+        android:inputType="numberDecimal"
+        android:text="Meas Value" />
+
+    <TextView
+        android:id="@+id/txtInControl"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/lblInControl"
+        android:layout_alignBottom="@+id/lblInControl"
+        android:layout_toRightOf="@+id/lblInControl"
+        android:inputType="textCapCharacters"
+        android:text="In Control" />
+
+    <TextView
+        android:id="@+id/lblInControl"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lblMeasValue"
+        android:layout_toLeftOf="@+id/txtMeasValue"
+        android:labelFor="@+id/txtInControl"
+        android:text="In-Control:"
+        android:textStyle="bold" />
+
+    <ListView
+        android:id="@+id/lstLimits"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/lblCollDt"
+        android:layout_below="@+id/txtInControl"
+        android:layout_marginTop="13dp" >
+    </ListView>
+
+    <TextView
+	    android:id="@+id/txtNoLimits"
+	    android:text="No Limits"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:gravity="center"
+    />
+    
+</RelativeLayout>

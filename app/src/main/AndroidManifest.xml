@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.khs.spcmeasure"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="18"
+        android:targetSdkVersion="18" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- declare Bluetooth permissions -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <!-- ensure application is only available to devices which support Bluetooth Low Energy (BLE) -->
+    <uses-feature
+        android:name="android:.hardware.bluetooth_le"
+        android:required="true" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.khs.spcmeasure.ImportSetupActivity"
+            android:label="@string/title_activity_import_setup"
+            android:parentActivityName=".PieceListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.khs.spcmeasure.PieceListActivity" />
+        </activity>                
+        <activity
+            android:name="com.khs.spcmeasure.old.ImportSetupActivity"
+            android:label="@string/title_activity_import_setup"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.khs.spcmeasure.MainActivity" />
+        </activity>
+        <activity
+            android:name=".SetupListActivity"
+            android:label="@string/title_setup_list" >
+        </activity>
+        <activity
+            android:name=".SetupDetailActivity"
+            android:label="@string/title_setup_detail"
+            android:parentActivityName=".SetupListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.khs.spcmeasure.SetupListActivity" />
+        </activity>
+        <activity
+            android:name=".MntSetupActivity"
+            android:label="@string/title_activity_mnt_setup" >
+        </activity>
+        <activity
+            android:name=".MeasurementListActivity"
+            android:label="@string/title_measurement_list"
+            android:parentActivityName=".PieceListActivity" >
+        </activity>
+        <activity
+            android:name=".MeasurementDetailActivity"
+            android:label="@string/title_measurement_detail"
+            android:parentActivityName=".MeasurementListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.khs.spcmeasure.MeasurementListActivity" />
+        </activity>
+
+        <service android:name=".SylvacBleService" />
+
+        <activity
+            android:name=".PieceListActivity"
+            android:label="@string/title_piece_list" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".PieceDetailActivity"
+            android:label="@string/title_piece_detail"
+            android:parentActivityName=".PieceListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.khs.spcmeasure.PieceListActivity" />
+        </activity>
+    </application>
+
+</manifest>
