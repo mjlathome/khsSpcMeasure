@@ -19,13 +19,21 @@
         android:name="android:.hardware.bluetooth_le"
         android:required="true" />
 
+    <android:uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <android:uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name=".SetupListActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,32 +42,24 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.khs.spcmeasure.ImportSetupActivity"
-            android:label="@string/title_activity_import_setup"
-            android:parentActivityName=".PieceListActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.khs.spcmeasure.PieceListActivity" />
-        </activity>                
-        <activity
-            android:name="com.khs.spcmeasure.old.ImportSetupActivity"
-            android:label="@string/title_activity_import_setup"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.khs.spcmeasure.MainActivity" />
+            android:name=".old.MainActivity"
+            android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".SetupListActivity"
-            android:label="@string/title_setup_list" >
-        </activity>
-        <activity
-            android:name=".SetupDetailActivity"
-            android:label="@string/title_setup_detail"
+            android:name=".SetupImportActivity"
+            android:label="@string/title_activity_import_setup"
             android:parentActivityName=".SetupListActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.khs.spcmeasure.SetupListActivity" />
+                android:value=".SetupListActivity" />
+        </activity>
+        <activity
+            android:name=".old.ImportSetupActivity"
+            android:label="@string/title_activity_import_setup"
+            android:parentActivityName=".old.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".old.MainActivity" />
         </activity>
         <activity
             android:name=".MntSetupActivity"
@@ -68,7 +68,7 @@
         <activity
             android:name=".MeasurementListActivity"
             android:label="@string/title_measurement_list"
-            android:parentActivityName=".PieceListActivity" >
+            android:parentActivityName=".old.PieceListActivity" >
         </activity>
         <activity
             android:name=".MeasurementDetailActivity"
@@ -83,20 +83,27 @@
 
         <activity
             android:name=".PieceListActivity"
-            android:label="@string/title_piece_list" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:label="@string/title_activity_piece_list"
+            android:parentActivityName=".SetupListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.khs.spcmeasure.SetupListActivity" />
         </activity>
         <activity
-            android:name=".PieceDetailActivity"
-            android:label="@string/title_piece_detail"
+            android:name=".FeatureReviewActivity"
+            android:label="@string/title_activity_feature_review"
             android:parentActivityName=".PieceListActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.khs.spcmeasure.PieceListActivity" />
+        </activity>
+        <activity
+            android:name=".FeatureActivity"
+            android:label="@string/title_activity_feature"
+            android:parentActivityName=".FeatureReviewActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.khs.spcmeasure.FeatureReviewActivity" />
         </activity>
     </application>
 

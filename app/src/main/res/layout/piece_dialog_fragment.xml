@@ -10,9 +10,9 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/txtCollectDt"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="53dp"
+        android:layout_marginLeft="23dp"
         android:labelFor="@+id/txtProdName"
-        android:text="Product Name:"
+        android:text="Product:"
         android:textStyle="bold" />
 
     <TextView
@@ -20,9 +20,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="08dp"
         android:layout_toRightOf="@+id/lblProdName"
-        android:text="Product Name" />
+        android:text="@string/text_product" />
 
     <TextView
         android:id="@+id/lblCollectDt"
@@ -32,7 +32,7 @@
         android:layout_alignBottom="@+id/txtCollectDt"
         android:layout_toLeftOf="@+id/txtProdName"
         android:labelFor="@+id/txtCollectDt"
-        android:text="Collect Date/Time:"
+        android:text="Collected:"
         android:textStyle="bold" />
 
     <TextView
@@ -42,27 +42,27 @@
         android:layout_alignLeft="@+id/txtProdName"
         android:layout_below="@+id/txtProdName"
         android:layout_marginTop="15dp"
-        android:text="Collect Date/Time" />
+        android:text="Collected" />
 
     <TextView
         android:id="@+id/lblOperator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/edtOperator"
-        android:layout_alignBottom="@+id/edtOperator"
-        android:layout_alignRight="@+id/lblCollectDt"
         android:labelFor="@+id/edtOperator"
         android:text="Operator:"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_alignBaseline="@+id/edtOperator"
+        android:layout_alignBottom="@+id/edtOperator"
+        android:layout_toStartOf="@+id/txtProdName" />
 
     <EditText
         android:id="@+id/edtOperator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/edtLot"
-        android:layout_alignLeft="@+id/edtLot"
         android:ems="10"
-        android:inputType="textPersonName" >
+        android:inputType="textPersonName"
+        android:layout_below="@+id/txtCollectDt"
+        android:layout_alignStart="@+id/txtCollectDt">
 
         <requestFocus />
     </EditText>
@@ -71,40 +71,38 @@
         android:id="@+id/edtLot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/lblLot"
-        android:layout_alignLeft="@+id/txtCollectDt"
         android:ems="10"
         android:inputType="textCapCharacters|textNoSuggestions"
         android:maxEms="6"
         android:maxLength="6"
-        android:textAllCaps="true" />
+        android:textAllCaps="true"
+        android:layout_below="@+id/edtOperator"
+        android:layout_alignStart="@+id/edtOperator" />
 
     <TextView
         android:id="@+id/lblLot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btnPieceCancel"
-        android:layout_toLeftOf="@+id/txtProdName"
         android:labelFor="@+id/edtLot"
-        android:text="Lot Number:"
-        android:textStyle="bold" />
+        android:text="Lot:"
+        android:textStyle="bold"
+        android:layout_alignBottom="@+id/edtLot"
+        android:layout_alignEnd="@+id/lblOperator" />
 
     <Button
         android:id="@+id/btnPieceOk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/lblCollectDt"
-        android:layout_marginTop="90dp"
-        android:layout_toLeftOf="@+id/lblOperator"
-        android:text="OK" />
+        android:text="@string/text_okay"
+        android:layout_alignTop="@+id/btnPieceCancel"
+        android:layout_alignStart="@+id/edtLot" />
 
     <Button
         android:id="@+id/btnPieceCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/btnPieceOk"
-        android:layout_alignBottom="@+id/btnPieceOk"
-        android:layout_alignRight="@+id/edtLot"
-        android:text="Cancel" />
+        android:text="@string/text_cancel"
+        android:layout_below="@+id/edtLot"
+        android:layout_alignEnd="@+id/edtLot" />
 
 </RelativeLayout>

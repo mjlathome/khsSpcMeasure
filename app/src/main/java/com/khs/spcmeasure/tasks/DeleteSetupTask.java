@@ -3,34 +3,35 @@
  */
 package com.khs.spcmeasure.tasks;
 
-import java.io.ObjectInputStream.GetField;
-
 import com.khs.spcmeasure.DBAdapter;
-import com.khs.spcmeasure.fragments.MntSetupFragment;
-import com.khs.spcmeasure.old.ImportSetupActivity;
+import com.khs.spcmeasure.R;
 
-import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.SimpleCursorAdapter;
 
 /**
  * @author Mark
  *
  */
 public class DeleteSetupTask extends AsyncTask <Long, Void, Void>{
+    private final static String TAG = "DeleteSetupTask";
+
 	private Context mContext;
-	private MntSetupFragment mMntSetupFrag;
-	
-	private ProgressDialog pDialog;	
-	
+
+	private ProgressDialog pDialog;
+
+    //
+    public static DeleteSetupTask newInstance(Context context) {
+        DeleteSetupTask asyncTask = new DeleteSetupTask(context);
+        return asyncTask;
+    }
+
 	// constructor
-	public DeleteSetupTask(Context context, MntSetupFragment mntSetupfrag) {
+	public DeleteSetupTask(Context context) {
 		super();
 		this.mContext = context;
-		this.mMntSetupFrag = mntSetupfrag;
 	}
 
 	@Override
@@ -40,7 +41,7 @@ public class DeleteSetupTask extends AsyncTask <Long, Void, Void>{
 		
 		// inform user it's started
 		pDialog = new ProgressDialog(mContext);
-		pDialog.setMessage("Deleting Setup(s) ...");
+		pDialog.setMessage(mContext.getString(R.string.text_deleting_setups));
 		pDialog.setIndeterminate(false);
 		pDialog.setCancelable(true);
 		pDialog.show();
@@ -58,7 +59,7 @@ public class DeleteSetupTask extends AsyncTask <Long, Void, Void>{
 				
 		// TODO Auto-generated method stub
 		for (Long id: params) {				
-			Log.d("DELETE Task = ", Long.toString(id));
+			Log.d(TAG, "id = " + Long.toString(id));
 		
 			// open the DB
 			DBAdapter db = new DBAdapter(mContext);
@@ -68,12 +69,10 @@ public class DeleteSetupTask extends AsyncTask <Long, Void, Void>{
 			
 			// close the DB			
 			db.close();
-			
 		}
 		
-		Log.d("DELETE B4 CLOSE = ", "Hi");
-		
-		
+		Log.d(TAG, "Before close");
+
 		return null;
 	}
 
@@ -83,8 +82,17 @@ public class DeleteSetupTask extends AsyncTask <Long, Void, Void>{
 		super.onPostExecute(result);
 		
 		pDialog.dismiss();	
-		
-		mMntSetupFrag.refeshList();				
-	}	
-	
+
+        if (mContext instanceof OnDeleteSetupListener) {
+            OnDeleteSetupListener listener = (OnDeleteSetupListener) mContext;
+            listener.onDeleteSetupPostExecute();
+        }
+	}
+
+    // communication interface
+    public interface OnDeleteSetupListener {
+        // TODO: Update argument type and name
+        public void onDeleteSetupPostExecute();
+    }
+
 }

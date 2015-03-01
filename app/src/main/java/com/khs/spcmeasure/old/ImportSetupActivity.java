@@ -3,11 +3,7 @@ package com.khs.spcmeasure.old;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.khs.spcmeasure.MainActivity;
 import com.khs.spcmeasure.R;
-import com.khs.spcmeasure.R.id;
-import com.khs.spcmeasure.R.layout;
-import com.khs.spcmeasure.R.menu;
 import com.khs.spcmeasure.library.JSONParser;
 import com.khs.spcmeasure.tasks.ImportSetupTask;
 
@@ -16,7 +12,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
@@ -34,8 +29,6 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.os.Build;
 
 public class ImportSetupActivity extends Activity {
 	ListView list;
@@ -60,7 +53,7 @@ public class ImportSetupActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_import_setup);
+		setContentView(R.layout.activity_setup_import);
 		if (savedInstanceState == null) {
 			getFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
@@ -72,7 +65,7 @@ public class ImportSetupActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.import_setup, menu);
+		getMenuInflater().inflate(R.menu.activity_import_setup, menu);
 		return true;
 	}
 
@@ -101,7 +94,7 @@ public class ImportSetupActivity extends Activity {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_import_setup,
+			View rootView = inflater.inflate(R.layout.fragment_setup_import,
 					container, false);			
 			return rootView;
 		}
@@ -185,7 +178,7 @@ public class ImportSetupActivity extends Activity {
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
 						// TODO was:
-						//Toast.makeText(ImportSetupActivity.this,  
+						//Toast.makeText(SetupImportActivity.this,
 							//	"You Clicked at " + setupList.get(+position).get(TAG_PROD_NAME) + 
 							//	" id = " + setupList.get(+position).get(TAG_PROD_ID), Toast.LENGTH_SHORT).show();
 						//		

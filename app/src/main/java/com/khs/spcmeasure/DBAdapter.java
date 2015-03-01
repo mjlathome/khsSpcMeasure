@@ -181,7 +181,7 @@ public class DBAdapter {
 	// get all Products
 	public Cursor getAllProducts() {
 		// select all query
-		String selectQuery = "SELECT * FROM " + TABLE_PRODUCT;
+		String selectQuery = "SELECT * FROM " + TABLE_PRODUCT + " ORDER BY " + KEY_NAME;
 		
 		return db.rawQuery(selectQuery, null);		
 	};	
@@ -376,7 +376,7 @@ public class DBAdapter {
 		return db.insert(TABLE_LIMITS, null, limitToValues(limit));
 	};
     	
-	// get all Limits by prodId by charId
+	// get all Limits by prodId by featId
 	public Cursor getAllLimits(long prodId, long featId) {
 		// select all query
 		String selectQuery = "SELECT * FROM " + TABLE_LIMITS + " WHERE " + 

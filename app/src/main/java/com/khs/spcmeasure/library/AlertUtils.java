@@ -4,12 +4,14 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 
+import com.khs.spcmeasure.R;
+
 /**
  * @author Mark
  *
  */
 public class AlertUtils {
-	
+
 	public static AlertDialog.Builder createAlert(Context context, String title, String message) {
 		AlertDialog.Builder dlgAlert = new AlertDialog.Builder(context);				
 		dlgAlert.setTitle(title);
@@ -19,7 +21,7 @@ public class AlertUtils {
 	}
 	
 	public static AlertDialog.Builder createAlert(Context context, String message) {
-		return createAlert(context, "Error", message);
+		return createAlert(context, context.getString(R.string.text_error), message);
 	}	
 	
 	// generate alert dialog with the provided title and message
@@ -30,7 +32,7 @@ public class AlertUtils {
 //		dlgAlert.setTitle(title);
 //		dlgAlert.setMessage(message);
 //		dlgAlert.setCancelable(false);
-		dlgAlert.setPositiveButton("OK", new DialogInterface.OnClickListener() {					
+		dlgAlert.setPositiveButton(context.getString(R.string.text_okay), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// dismiss the dialog					
@@ -42,7 +44,7 @@ public class AlertUtils {
 	// generate error dialog with the provided title and message
 	public static void errorDialogShow(Context context, String message)
     {
-		alertDialogShow(context, "Error", message);
+		alertDialogShow(context, context.getString(R.string.text_error), message);
     }
 	
 }

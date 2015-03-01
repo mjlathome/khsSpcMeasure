@@ -17,6 +17,8 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+// TODO needs comments
+
 public class CollectStatusActionProvider extends ActionProvider implements OnItemSelectedListener{
 	
 	private static final String TAG = "CollectStatusActionProvider";
@@ -34,9 +36,7 @@ public class CollectStatusActionProvider extends ActionProvider implements OnIte
         super(context);
         mContext = context;
     }
- 
-    
-    
+
     @Override
     public View onCreateActionView() {
     	
@@ -77,5 +77,4 @@ public class CollectStatusActionProvider extends ActionProvider implements OnIte
     	LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);			
 	}
 
-    
 }

@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.khs.spcmeasure.SetupListActivity">
+    <item
+        android:id="@+id/mnuImport"
+        android:icon="@drawable/ic_action_download"
+        android:showAsAction="always"
+        android:title="@string/text_import"
+        android:enabled="true"/>
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+</menu>

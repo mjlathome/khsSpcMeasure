@@ -187,7 +187,7 @@ public class MeasurementListActivity extends Activity implements
 			mPieceId = args.getLong(DBAdapter.KEY_PIECE_ID);
 			
 			// extract the piece
-//			mPiece = mPieceDao.getPiece(mPieceId);
+//			mPiece = mPieceDao.findPiece(mPieceId);
 	        DBAdapter db = new DBAdapter(this);
 	        db.open();
 			Cursor c = db.getPiece(mPieceId);
@@ -341,7 +341,7 @@ public class MeasurementListActivity extends Activity implements
 			getLast();			
 			return true;					
 		case R.id.mnuClosePiece:
-			closePiece();			
+            closePiece();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);	
@@ -365,7 +365,7 @@ public class MeasurementListActivity extends Activity implements
 		int numMeas = 0;
 		
 		// extract the piece
-		// mPiece = mPieceDao.getPiece(mPieceId);
+		// mPiece = mPieceDao.findPiece(mPieceId);
         DBAdapter db = new DBAdapter(this);
         db.open();
 		Cursor c = db.getPiece(mPieceId);

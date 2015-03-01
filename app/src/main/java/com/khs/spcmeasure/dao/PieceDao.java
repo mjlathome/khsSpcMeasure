@@ -7,6 +7,9 @@ import android.util.Log;
 import com.khs.spcmeasure.DBAdapter;
 import com.khs.spcmeasure.entity.Piece;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PieceDao {
 	
 	private static final String TAG = "PieceDao";
@@ -15,25 +18,62 @@ public class PieceDao {
 	private DBAdapter db;
 	
 	// constructor
-	public PieceDao(Context mContext) {
+	public PieceDao(Context context) {
 		super();
-		this.mContext = mContext;
+		this.mContext = context;
 		
 		// instantiate db helper 
 		db = new DBAdapter(mContext);
 	}
 
 	// find Piece from id
-	public Piece getPiece(long id) {
-		Log.d(TAG, "getPeice id = " + id);
-		
-        db.open();
-		Cursor c = db.getPiece(id);
-		Piece piece = db.cursorToPiece(c);
-		db.close();
-		
-		Log.d(TAG, "getPeice Piece St = " + piece.getStatus());
-		
-		return piece;
+	public Piece getPiece(long pieceId) {
+		Log.d(TAG, "getPiece id = " + pieceId);
+
+        Piece piece = null;
+
+        // DBAdapter db = new DBAdapter(getActivity());
+        try {
+            db.open();
+
+            // get piece
+            Cursor cPiece = db.getPiece(pieceId);
+            piece = db.cursorToPiece(cPiece);
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.close();
+        }
+
+        return piece;
 	}
+
+    // list All Pieces for provided Product
+    public List<Piece> getAllPieces(long prodId) {
+        List pieceList = new ArrayList();
+
+        // DBAdapter db = new DBAdapter(getActivity());
+        try {
+            db.open();
+
+            // query the database
+            Cursor cPiece = db.getAllPieces(prodId);
+
+            // iterate the results
+            if (cPiece.moveToFirst()) {
+                do {
+                    // add feature to the list
+                    pieceList.add(db.cursorToPiece(cPiece));
+                } while(cPiece.moveToNext());
+            }
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.close();
+        }
+
+        return pieceList;
+    }
 }

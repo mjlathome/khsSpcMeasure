@@ -1,9 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">khsSpcMeasure</string>
+    <string name="app_name">Spc Measure</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="text_cancel">Cancel</string>
+    <string name="text_collect_dt">Collect Datetime</string>
+    <string name="text_collect_status">Collect Status</string>
+    <string name="text_delete">Delete</string>
+    <string name="text_deleting_setups">Deleting Setup(s)...</string>
+    <string name="text_error">Error</string>
+    <string name="text_feature">Feature</string>
+    <string name="text_import">Import</string>
+    <string name="text_information">Information</string>
+    <string name="text_limit_rev">Limit Rev</string>
+    <string name="text_limit_type">Limit Type</string>
+    <string name="text_limit_upper">Upper</string>
+    <string name="text_limit_lower">Lower</string>
+    <string name="text_mess_delete_piece">Are you sure you want to Delete Piece created on %s?</string>
+    <string name="text_mess_delete_piece_not_open">Cannot delete as Piece create on %s is not OPEN</string>
+    <string name="text_mess_piece_deleted">Piece has been Deleted"</string>
+    <string name="text_mess_piece_not_selected">No Piece is selected"</string>
+    <string name="text_mess_feature_not_selected">No Feature is selected"</string>
+    <string name="text_mess_delete_setup">Are you sure you want to Delete Setup %s?</string>
+    <string name="text_mess_import_setup">Are you sure you want to Import the %d selected setup(s)?</string>
+    <string name="text_mess_arguments_invalid">Arguments are invalid.  Contact Administrator.</string>
+    <string name="text_mess_prod_id_invalid">Product Id is invalid.  Contact Administrator.</string>
+    <string name="text_mess_piece_id_invalid">Piece Id is invalid.  Contact Administrator.</string>
+    <string name="text_new_piece">New Piece</string>
+    <string name="text_no_data">No Data</string>
+    <string name="text_okay">OK</string>
+    <string name="text_open">Open</string>
+    <string name="text_piece_already_closed">Piece is already closed.</string>
+    <string name="text_piece_now_closed">Piece is now Closed.</string>
+    <string name="text_product">Product</string>
+    <string name="text_refresh">Refresh</string>
+    <string name="text_warning">Warning</string>
     <string name="title_activity_import_setup">Import Setup</string>
     <string name="title_setup_list">Setup</string>
     <string name="title_setup_detail">Setup Detail</string>
@@ -12,5 +44,17 @@
     <string name="title_measurement_detail">Measurement Detail</string>
     <string name="title_piece_list">Pieces</string>
     <string name="title_piece_detail">Piece Detail</string>
+    <string name="title_activity_piece_list">Piece List</string>
+    <string name="title_activity_setup_list">Setup List</string>
+    <string name="title_activity_feature_review">Feature Review</string>
+    <string name="title_activity_feature">Feature</string>
+
+    <!-- Feature Activity - Tab titles -->
+    <string name="title_measurement">Measurement</string>
+    <string name="title_chart">Chart</string>
+    <string name="title_limits">Limits</string>
+
+    <string name="first">First</string>
+    <string name="last">Last</string>
 
 </resources>

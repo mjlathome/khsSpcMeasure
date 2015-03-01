@@ -2,72 +2,64 @@ package com.khs.spcmeasure;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.app.AlertDialog;
 import android.app.ListFragment;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.khs.spcmeasure.dummy.DummyContent;
+import com.khs.spcmeasure.entity.Piece;
+import com.khs.spcmeasure.library.AlertUtils;
+import com.khs.spcmeasure.library.CollectStatus;
+import com.khs.spcmeasure.library.DateTimeUtils;
 
 /**
- * A list fragment representing a list of Pieces. This fragment also supports
- * tablet devices by allowing list items to be given an 'activated' state upon
- * selection. This helps indicate which item is currently being viewed in a
- * {@link PieceDetailFragment}.
- * <p>
- * Activities containing this fragment MUST implement the {@link Callbacks}
- * interface.
+ * A fragment representing a single Piece detail screen. This fragment is either
+ * contained in a {@link com.khs.spcmeasure.PieceListActivity} in two-pane mode (on tablets) or a
+ * {@link PieceListActivity} on handsets.
  */
-public class PieceListFragment extends ListFragment {
+public class PieceListFragment extends ListFragment implements AdapterView.OnItemSelectedListener {
 	
 	private static final String TAG = "PieceListFragment";
+    private static ListView mListView;
+
+	private Long mProdId;
 	
-	/**
-	 * The serialization (saved instance state) Bundle key representing the
-	 * activated item position. Only used on tablets.
-	 */
-	private static final String STATE_ACTIVATED_POSITION = "activated_position";
+	private long mPieceId = ListView.INVALID_POSITION;
+	private CollectStatus mCollStat = CollectStatus.OPEN;
 
-	/**
-	 * The fragment's current callback object, which is notified of list item
-	 * clicks.
-	 */
-	private Callbacks mCallbacks = sDummyCallbacks;
+    private OnFragmentInteractionListener mListener;
 
-	/**
-	 * The current activated item position. Only used on tablets.
-	 */
-	private int mActivatedPosition = ListView.INVALID_POSITION;
+    // spinner interface calls
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        CollectStatus collStat = (CollectStatus) adapterView.getSelectedItem();
+        refreshList(collStat);
+    }
 
-	/**
-	 * A callback interface that all activities containing this fragment must
-	 * implement. This mechanism allows activities to be notified of item
-	 * selections.
-	 */
-	public interface Callbacks {
-		/**
-		 * Callback for when an item has been selected.
-		 */
-		public void onItemSelected(long id);
-	}
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
 
-	/**
-	 * A dummy implementation of the {@link Callbacks} interface that does
-	 * nothing. Used only when this fragment is not attached to an activity.
-	 */
-	private static Callbacks sDummyCallbacks = new Callbacks() {
-		@Override
-		public void onItemSelected(long id) {
-		}
-	};
+    }
 
+    //	private TextView mHeader;
+	
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
@@ -78,51 +70,189 @@ public class PieceListFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		setHasOptionsMenu(true);
+
+        // TODO need to trap when Product Id is not set
+		/* extract arguments */
+		Bundle args = getArguments();		
+		if (args != null) {
+			// Load the dummy content specified by the fragment
+			// arguments. In a real-world scenario, use a Loader
+			// to load content from a content provider.
+			mProdId = args.getLong(DBAdapter.KEY_PROD_ID);
+		}		
+		Log.d(TAG, "mProdId = " + mProdId);	
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View rootView = inflater.inflate(R.layout.fragment_piece_list,
+				container, false);
+
+		// TODO Auto-generated method stub
+//		return super.onCreateView(inflater, container, savedInstanceState);
+		return rootView;
 	}
 
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
-		// Restore the previously serialized activated item position.
-		if (savedInstanceState != null
-				&& savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
-			setActivatedPosition(savedInstanceState
-					.getInt(STATE_ACTIVATED_POSITION));
-		}
-	}
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
+        // TODO remove as no longer required
+		// When setting CHOICE_MODE_SINGLE, ListView will automatically
+		// give items the 'activated' state when touched.
+		// this.getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		
-		// empty list text
-		setEmptyText("No Products");
-		
-		// populate list with all products		
-		DBAdapter db = new DBAdapter(getActivity());
-		db.open();
-		Cursor c = db.getAllProducts();		
-		SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(), 
-				android.R.layout.simple_list_item_activated_1, c, 
-				// android.R.layout.simple_list_item_multiple_choice, c,
-				// R.layout.mylistrow, c,
-				new String[] {DBAdapter.KEY_NAME}, 
-				new int[] {android.R.id.text1}, 0);
-		// associate adapter with list view
-		setListAdapter(adapter);		
-		db.close();			
+		// add header to listview - has problems when updated in refreshList
+//		setListAdapter(null);
+//		mHeader = new TextView(getActivity());
+//		mHeader.setText("Prod = " + mProdId);  
+//		getListView().addHeaderView(mHeader);		
 	}
 
 	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		super.onCreateOptionsMenu(menu, inflater);
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+
+        mListView = getListView();
+
+        // register the listview for a context menu
+        registerForContextMenu(mListView);
+
+        // TODO remove later as long click handled via context menu
+//		OnItemLongClickListener listener = new OnItemLongClickListener() {
+//			@Override
+//			public boolean onItemLongClick(AdapterView<?> parent, View view,
+//					int position, long id) {
+//
+//				// start the measurement activity
+//				selectPiece(id);
+//
+//				// indicate that event was handled
+//				return true;
+//			}
+//        };
+//
+//        getListView().setOnItemLongClickListener(listener);
+
+        // TODO remove later as playing with default ListFragment ListView didn't work out
+//        LayoutInflater inflater = getActivity().getLayoutInflater();
+//
+//        ListView lv = getListView();
+//        // ViewGroup vg = (ViewGroup) lv.getParent();
+//
+//        View header = inflater.inflate(R.layout.piece_list_header, lv, false);
+//        lv.addHeaderView(header, null, false);
+//        // vg.addView(header);
+//
+//        View empty = inflater.inflate(R.layout.piece_list_empty, lv, false);
+//        // getActivity().addContentView(empty, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+//        empty.setVisibility(View.GONE);
+//        ((ViewGroup)getListView().getParent()).addView(empty);
+//
+//        if (mProdId != null) {
+//            // extract the Product
+//            DBAdapter db = new DBAdapter(getActivity());
+//            db.open();
+//            Cursor c = db.getProduct(mProdId);
+//            ((TextView) header.findViewById(R.id.txtProdName))
+//                .setText(c.getString(c.getColumnIndex(DBAdapter.KEY_NAME)));
+//            ((TextView) empty.findViewById(R.id.android_empty))
+//                .setText(c.getString(c.getColumnIndex(DBAdapter.KEY_NAME)));
+//            empty.findViewById(R.id.android_empty).setVisibility(View.GONE);
+//            lv.setEmptyView(empty);
+//            db.close();
+//        }
+
+        // show the Product Name in the TextView
+        if (mProdId != null) {
+            // extract the Product
+            DBAdapter db = new DBAdapter(getActivity());
+            db.open();
+            Cursor c = db.getProduct(mProdId);
+            ((TextView) getView().findViewById(R.id.txtProdName))
+                    .setText(c.getString(c.getColumnIndex(DBAdapter.KEY_NAME)));
+
+//            mPiece = db.cursorToPiece(c);
+//            db.close();
+//            Log.d(TAG, "OnCreate Piece St = " + mPiece.getStatus());
+        }
+
+        // populate spinner for Collect Status and setup handler
+        Spinner spinner = (Spinner) getView().findViewById(R.id.spnCollStatus);
+        ArrayAdapter<CollectStatus> adapter = new ArrayAdapter<CollectStatus>(getActivity(), android.R.layout.simple_list_item_1, CollectStatus.values());
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+
+        // refresh piece list
+        // refreshList(mCollStat);
+	}
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		// TODO Auto-generated method stub
+		super.onListItemClick(l, v, position, id);
 		
-		// Inflate the menu; this adds items to the action bar if it is present.
-		inflater.inflate(R.menu.mnu_new_piece, menu);
-	}	
+		Log.d(TAG, "OnListItemClick Id = " + id);
+		// save current selected Piece Id
+		mPieceId = id;
+		
+		// inform the Activity of the selected Piece
+		mListener.onFragmentInteraction(id);
+	}
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        public void onFragmentInteraction(long pieceId);
+    }
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		// TODO Auto-generated method stub
+		super.onCreateOptionsMenu(menu, inflater);
+
+        // TODO remove later as Fragment no longer adds any menu options
+        // TODO probably should add new piece through
+//		// Inflate the menu; this adds items to the action bar if it is present.
+//		inflater.inflate(R.menu.fragment_piece_list, menu);
+//
+//		// find menu item for Collect Status
+//		MenuItem mnuCollStat = (MenuItem) menu.findItem(R.id.mnuCollectStatus);
+//		Log.d(TAG, "MenuI = " + mnuCollStat);
+		
+		// find the Collect Status spinner
+		// Spinner miSollStat = (Spinner) mnuCollStat.findItem(R.id.spnCollectStatus);		
+		// Log.d(TAG, "Spin = " + collStat);
+	}
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -132,95 +262,158 @@ public class PieceListFragment extends ListFragment {
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		Log.d(TAG, "menu = " + item.getTitle());
+
+        switch(id) {
+            case R.id.action_settings:
+                return true;
+            // TODO remove later as Action Spinner not used
+//            case R.id.mnuCollectStatus:
+//                return false;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        // TODO old action menu - remove later
+//		if (id == R.id.action_settings) {
+//			return true;
+//		} else if (id == R.id.mnuCollectStatus) {
+//			Log.d(TAG, "id = mnuCollectStatus");
+//			return false;
+//		} else if (id == R.id.mnuPieceMeas) {
+//			selectPiece(mPieceId);
+//			return true;
+//		} else if (id == R.id.mnuPieceDelete) {
+//			deletePiece(mPieceId);
+//			return true;
+// 		}
+//
+//		// TODO Auto-generated method stub
+//		return super.onOptionsItemSelected(item);
+	}
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        MenuInflater inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.context_piece_list, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+
+        // get info for item selected
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        // handle menu option selected
+        int id = item.getItemId();
+        switch(id) {
+            case R.id.mnuOpen:
+                mListener.onFragmentInteraction(id);
+                // selectPiece(info.id);
+                return true;
+            case R.id.mnuDelete:
+                deletePiece(info.position);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
+    // refresh piece list based upon provided collect status
+	public void refreshList(CollectStatus collStat) {
+		Log.d(TAG, "refreshList = " + collStat);
+
+        // setEmptyText(getString(R.string.text_no_data));
+
+        // start out with a progress indicator.
+        // setListShown(false);
+
+		// save current Collect Status
+		mCollStat = collStat;
 		
-		if (id == R.id.action_settings) {
-			return true;
-		} else if (id == R.id.mnuNewPiece) {
-			return true;
-		} 
-					
-		return super.onOptionsItemSelected(item);
-	}		
+		// clear current selected Piece
+		mPieceId = ListView.INVALID_POSITION;
+		
+		// extract all Pieces for the prodId and collect status
+        DBAdapter db = new DBAdapter(getActivity());
+        db.open();
+        Cursor c = db.getAllPieces(mProdId, collStat);
+
+
+//		SimpleCursorAdapter adapter = (SimpleCursorAdapter) getListView().getAdapter();
+
+        // create adapter
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(),
+                android.R.layout.simple_list_item_activated_2, c,
+                new String[] {DBAdapter.KEY_COLLECT_DATETIME, DBAdapter.KEY_OPERATOR},
+                new int[] {android.R.id.text1, android.R.id.text2}, 0);
+
+        // associate adapter with list view
+        setListAdapter(adapter);
+        db.close();
+
+
+//        adapter.changeCursor(c);
+//		  adapter.notifyDataSetChanged();
+			
+		db.close();
+
+        // remove progress indicator.
+        // setListShown(true);
+
+        /****
+         *
+         *
+         mListView = getListView();
+         mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+         mListView.setTextFilterEnabled(true);
+         *
+         */
+	}	
+
+	// handles piece deletion
+	private void deletePiece(int pos) {
+        Cursor c = (Cursor) mListView.getItemAtPosition(pos);
+        final Piece p = new DBAdapter(getActivity()).cursorToPiece(c);
+        String message;
+
+        // TODO block delete or context menu option when Piece is not OPEN
+        if (!p.getStatus().equals(CollectStatus.OPEN)) {
+            message = String.format(getString(R.string.text_mess_delete_piece_not_open), DateTimeUtils.getDateTimeStr(p.getCollectDt()));
+            AlertUtils.errorDialogShow(getActivity(), message);
+            return;
+        }
+
+        // confirm with user via dialog
+        message = String.format(getString(R.string.text_mess_delete_piece), DateTimeUtils.getDateTimeStr(p.getCollectDt()));
+
+		AlertDialog.Builder dlgAlert = AlertUtils.createAlert(getActivity(), getString(R.string.text_warning), message);
+		dlgAlert.setPositiveButton(R.string.text_okay, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {							
+				// TODO use DAO?
+				DBAdapter db = new DBAdapter(getActivity());
+
+                // TODO use a task to perform the delete instead
+				// delete the piece
+				try {
+					db.open();
+					db.deletePiece(p.getId());
+					Toast.makeText(getActivity(), getString(R.string.text_mess_piece_deleted), Toast.LENGTH_LONG).show();
+					// TODO need to ensure no further readings can take place
+					refreshList(mCollStat);
+				} catch(Exception e) {
+					e.printStackTrace();
+				} finally {
+					db.close();
+				}
+			}
+		}); 		
+		dlgAlert.setNegativeButton(getString(R.string.text_cancel), null);
+		dlgAlert.show();
+		
+		return;
+	}
 	
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-
-		// Activities containing this fragment must implement its callbacks.
-		if (!(activity instanceof Callbacks)) {
-			throw new IllegalStateException(
-					"Activity must implement fragment's callbacks.");
-		}
-
-		mCallbacks = (Callbacks) activity;
-	}
-
-	@Override
-	public void onDetach() {
-		super.onDetach();
-
-		// Reset the active callbacks interface to the dummy implementation.
-		mCallbacks = sDummyCallbacks;
-	}
-
-	@Override
-	public void onListItemClick(ListView listView, View view, int position,
-			long id) {
-		super.onListItemClick(listView, view, position, id);
-
-		// Notify the active callbacks interface (the activity, if the
-		// fragment is attached to one) that an item has been selected.
-		mCallbacks.onItemSelected(id);
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		if (mActivatedPosition != ListView.INVALID_POSITION) {
-			// Serialize and persist the activated item position.
-			outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
-		}
-	}
-
-	/**
-	 * Turns on activate-on-click mode. When this mode is on, list items will be
-	 * given the 'activated' state when touched.
-	 */
-	public void setActivateOnItemClick(boolean activateOnItemClick) {
-		// When setting CHOICE_MODE_SINGLE, ListView will automatically
-		// give items the 'activated' state when touched.
-		getListView().setChoiceMode(
-				activateOnItemClick ? ListView.CHOICE_MODE_SINGLE
-						: ListView.CHOICE_MODE_NONE);
-	}
-
-	private void setActivatedPosition(int position) {
-		if (position == ListView.INVALID_POSITION) {
-			getListView().setItemChecked(mActivatedPosition, false);
-		} else {
-			getListView().setItemChecked(position, true);
-		}
-
-		mActivatedPosition = position;
-	}
-	
-	
-	// refresh the list view
-	public void refreshList() {
-		
-		// empty list text
-		setEmptyText("No Products");
-		
-		// populate list with all products		
-		DBAdapter db = new DBAdapter(getActivity());
-		db.open();
-		Cursor c = db.getAllProducts();		
-		SimpleCursorAdapter adapter = (SimpleCursorAdapter) (getListView().getAdapter());
-		
-		adapter.changeCursor(c);
-		adapter.notifyDataSetChanged();
-		
-		db.close();			
-		
-	}
 }

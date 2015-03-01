@@ -1,0 +1,54 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.khs.spcmeasure.FeatureReviewFragment">
+
+    <TextView android:id="@+id/txtProdName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_small"
+        android:gravity="top"
+        android:text="@string/text_product"
+        android:textSize="@dimen/text_medium"
+        android:textStyle="bold" />
+
+    <TextView android:id="@+id/txtCollectDt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtProdName"
+        android:layout_alignStart="@id/txtProdName"
+        android:paddingTop="@dimen/margin_small"
+        android:text="@string/text_collect_dt"
+        android:textSize="@dimen/text_medium"
+        android:textStyle="bold" />
+
+    <TextView android:id="@+id/txtCollStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/txtCollectDt"
+        android:layout_alignEnd="@id/txtProdName"
+        android:text="@string/text_open"
+        android:textSize="@dimen/text_medium"
+        android:textStyle="bold" />
+
+    <ListView android:id="@+id/android:list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/txtCollStatus"
+        android:paddingTop="@dimen/margin_small"
+        android:drawSelectorOnTop="false" />
+
+    <TextView android:id="@id/android:empty"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/text_no_data"
+        android:textSize="@dimen/text_large" />
+
+</RelativeLayout>

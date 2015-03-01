@@ -17,12 +17,14 @@ public class LimitsAdapter extends ResourceCursorAdapter {
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		
-		// extract text views 
-		TextView txtLimType = (TextView) view.findViewById(R.id.colLimType);
-		TextView txtLimUpper = (TextView) view.findViewById(R.id.colLimUpper);
-		TextView txtLimLower = (TextView) view.findViewById(R.id.colLimLower);
+		// extract text views
+        TextView txtLimRev = (TextView) view.findViewById(R.id.txtLimRev);
+		TextView txtLimType = (TextView) view.findViewById(R.id.txtLimType);
+		TextView txtLimUpper = (TextView) view.findViewById(R.id.txtLimUpper);
+		TextView txtLimLower = (TextView) view.findViewById(R.id.txtLimLower);
 		
 		// display data
+        txtLimRev.setText(cursor.getString(cursor.getColumnIndex(DBAdapter.KEY_LIMIT_REV)));
 		txtLimType.setText(cursor.getString(cursor.getColumnIndex(DBAdapter.KEY_LIMIT_TYPE)));
 		txtLimUpper.setText(Double.toString(cursor.getDouble(cursor.getColumnIndex(DBAdapter.KEY_UPPER))));
 		txtLimLower.setText(Double.toString(cursor.getDouble(cursor.getColumnIndex(DBAdapter.KEY_LOWER))));

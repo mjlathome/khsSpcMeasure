@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.khs.spcmeasure.PieceListFragment" >
+
+    <!-- TODO remove later as no longer required
+	<item 
+	    android:id="@+id/mnuCollectStatus"
+	    android:actionProviderClass="com.khs.spcmeasure.widget.CollectStatusActionProvider" 
+        android:showAsAction="always" 
+        android:title="@string/text_collect_status"
+        android:enabled="true" />
+    -->
+
+</menu>

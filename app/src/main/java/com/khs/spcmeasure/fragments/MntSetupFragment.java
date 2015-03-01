@@ -190,9 +190,9 @@ public class MntSetupFragment extends ListFragment {
 						deleteSetup[count++] = p.getId();
 					}
 				}
-				
+			    /*
 				new DeleteSetupTask(getActivity(), MntSetupFragment.this).execute(deleteSetup);
-										
+				*/
 				dialog.cancel();									
 			}
 		});
