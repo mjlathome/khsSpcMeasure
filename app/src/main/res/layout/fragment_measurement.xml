@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="@dimen/margin_small"
+    android:gravity="start"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="10dp" >
+    android:layout_height="match_parent">
 
+    <!-- TODO remove later
     <TextView
         android:id="@+id/lblCollSt"
         style="?android:attr/textAppearanceMedium"
@@ -15,26 +18,23 @@
         android:labelFor="@+id/txtCollDt"
         android:text="Status:"
         android:textStyle="bold" />
+    -->
 
     <TextView
         android:id="@+id/txtProdName"
         style="?android:attr/textAppearanceMedium"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/lblProdName"
-        android:layout_alignBottom="@+id/lblProdName"
-        android:layout_toRightOf="@+id/lblProdName"
-        android:text="Product Name" />
+        android:text="@string/text_product" />
 
     <TextView
         android:id="@+id/txtCollDt"
         style="?android:attr/textAppearanceMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/txtProdName"
-        android:layout_below="@+id/txtProdName"
-        android:text="Collect Datetime" />
+        android:text="@string/text_collect_dt" />
 
+    <!-- TODO remove later
     <TextView
         android:id="@+id/lblCollDt"
         style="?android:attr/textAppearanceMedium"
@@ -45,91 +45,122 @@
         android:labelFor="@+id/txtCollDt"
         android:text="Collect D/T:"
         android:textStyle="bold" />
+-->
+    <!-- TODO remove later
+<TextView
+    android:id="@+id/lblMeasValue"
+    style="?android:attr/textAppearanceMedium"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/lblFeatName"
+    android:layout_toLeftOf="@+id/txtCollDt"
+    android:labelFor="@+id/txtMeasValue"
+    android:text="Measurement:"
+    android:textStyle="bold" />
+    -->
 
-    <TextView
-        android:id="@+id/lblMeasValue"
-        style="?android:attr/textAppearanceMedium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/lblFeatName"
-        android:layout_toLeftOf="@+id/txtCollDt"
-        android:labelFor="@+id/txtMeasValue"
-        android:text="Measurement:"
-        android:textStyle="bold" />
+    <!-- TODO remove later
+<TextView
+    android:id="@+id/lblFeatName"
+    style="?android:attr/textAppearanceMedium"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignBaseline="@+id/txtFeatName"
+    android:layout_alignBottom="@+id/txtFeatName"
+    android:layout_alignRight="@+id/lblMeasValue"
+    android:labelFor="@+id/txtFeatName"
+    android:text="Feature:"
+    android:textStyle="bold" />
+    -->
 
-    <TextView
-        android:id="@+id/lblFeatName"
-        style="?android:attr/textAppearanceMedium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/txtFeatName"
-        android:layout_alignBottom="@+id/txtFeatName"
-        android:layout_alignRight="@+id/lblMeasValue"
-        android:labelFor="@+id/txtFeatName"
-        android:text="Feature:"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/lblProdName"
-        style="?android:attr/textAppearanceMedium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignRight="@+id/lblCollDt"
-        android:layout_marginTop="14dp"
-        android:labelFor="@+id/txtProdName"
-        android:text="Product:"
-        android:textStyle="bold" />
-
+    <!--
+<TextView
+    android:id="@+id/lblProdName"
+    style="?android:attr/textAppearanceMedium"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_alignRight="@+id/lblCollDt"
+    android:layout_marginTop="14dp"
+    android:labelFor="@+id/txtProdName"
+    android:text="Product:"
+    android:textStyle="bold" />
+-->
     <TextView
         android:id="@+id/txtCollSt"
         style="?android:attr/textAppearanceMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/txtCollDt"
-        android:layout_toRightOf="@+id/lblCollSt"
-        android:text="Collect Status" />
+        android:text="@string/text_collect_status" />
 
     <TextView
         android:id="@+id/txtFeatName"
         style="?android:attr/textAppearanceMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/lblCollSt"
-        android:layout_toRightOf="@+id/lblFeatName"
-        android:text="Feature Name" />
+        android:text="@string/text_feature" />
+
+    <TextView
+        android:id="@+id/txtLimUpper"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_limit_upper" />
+
+    <TextView
+        android:id="@+id/txtLimLower"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_limit_lower" />
 
     <TextView
         android:id="@+id/txtMeasValue"
         style="?android:attr/textAppearanceMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/lblMeasValue"
-        android:layout_alignBottom="@+id/lblMeasValue"
-        android:layout_toRightOf="@+id/lblMeasValue"
-        android:inputType="numberDecimal"
-        android:text="Meas Value" />
+        android:text="@string/text_measurement" />
 
-    <TextView
-        android:id="@+id/txtInControl"
-        style="?android:attr/textAppearanceMedium"
+    <ImageView
+        android:id="@+id/imgInControl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/lblInControl"
-        android:layout_alignBottom="@+id/lblInControl"
-        android:layout_toRightOf="@+id/lblInControl"
-        android:inputType="textCapCharacters"
-        android:text="In Control" />
+        android:contentDescription="@string/text_in_control"
+        android:src="@drawable/ic_meas_unknown" />
 
-    <TextView
-        android:id="@+id/lblInControl"
-        style="?android:attr/textAppearanceMedium"
+    <!-- TODO remove later
+<TextView
+    android:id="@+id/lblInControl"
+    style="?android:attr/textAppearanceMedium"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/lblMeasValue"
+    android:layout_toLeftOf="@+id/txtMeasValue"
+    android:labelFor="@+id/txtInControl"
+    android:text="In-Control:"
+    android:textStyle="bold" />
+-->
+<LinearLayout
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:measureWithLargestChild="true"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="0" >
+    <Button
+        android:id="@+id/btnGetValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/lblMeasValue"
-        android:layout_toLeftOf="@+id/txtMeasValue"
-        android:labelFor="@+id/txtInControl"
-        android:text="In-Control:"
-        android:textStyle="bold" />
+        android:text="@string/text_get_value"
+        android:onClick="onClickBtnGetValue" >
+    </Button>
+    <Button
+        android:id="@+id/btnClearValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_clear_value"
+        android:onClick="onClickBtnClearValue" >
+    </Button>
+</LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

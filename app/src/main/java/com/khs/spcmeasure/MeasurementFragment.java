@@ -78,7 +78,7 @@ public class MeasurementFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 
 		// indicate fragment has action bar menu
-		setHasOptionsMenu(true);
+		// setHasOptionsMenu(true);
 		
 		// TODO create Toast utils?
 		// error message constants
@@ -140,7 +140,8 @@ public class MeasurementFragment extends Fragment {
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		// TODO Auto-generated method stub
 		super.onCreateOptionsMenu(menu, inflater);
-		
+
+        // TODO old and can be removed?
 		// Inflate the menu; this adds items to the action bar if it is present.
 		inflater.inflate(R.menu.frag_meas_dtl, menu);		
 	}
@@ -153,7 +154,8 @@ public class MeasurementFragment extends Fragment {
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		Log.d(TAG, "menu = " + item.getTitle());
-		
+
+        // TODO - can remove as No longer called?
 		if (id == R.id.action_settings) {
 			return true;
 		} else if (id == R.id.mnuScanBle) {
