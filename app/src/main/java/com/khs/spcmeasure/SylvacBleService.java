@@ -56,7 +56,8 @@ public class SylvacBleService extends Service {
     private int mNotifyId = 1;
     
     // local broadcast intent actions
-    public final static String ACTION_PREFIX = "com.example.localbound_";
+    // public final static String ACTION_PREFIX = "com.example.localbound_";
+    public final static String ACTION_PREFIX = "com.khs.spcmeasure_";
     public final static String ACTION_BLE_NOT_SUPPORTED = ACTION_PREFIX + "ACTION_BLE_NOT_SUPPORTED";
     public final static String ACTION_BLUETOOTH_NOT_ENABLED = ACTION_PREFIX + "ACTION_BLUETOOTH_NOT_ENABLED";
     public final static String ACTION_GATT_CONNECTED    = ACTION_PREFIX + "ACTION_GATT_CONNECTED";

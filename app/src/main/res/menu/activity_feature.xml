@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.khs.spcmeasure.FeatureActivity">
+
+    <item
+        android:id="@+id/mnuScanBle"
+        android:showAsAction="never"
+        android:title="@string/text_ble_scan_ble"
+        android:enabled="true"/>
+
+    <item
+        android:id="@+id/mnuSetUomMm"
+        android:showAsAction="never"
+        android:title="@string/text_ble_set_mm"
+        android:enabled="true"/>
+
+    <item
+        android:id="@+id/mnuSetZero"
+        android:showAsAction="never"
+        android:title="@string/text_ble_set_zero"
+        android:enabled="true"/>
+
+    <item
+        android:id="@+id/mnuGetBattery"
+        android:showAsAction="never"
+        android:title="@string/text_ble_get_battery"
+        android:enabled="true"/>
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_settings"/>
+
+</menu>

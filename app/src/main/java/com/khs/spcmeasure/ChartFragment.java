@@ -103,6 +103,8 @@ public class ChartFragment extends Fragment {
         return (mProdId != null && mFeatId != null);
     }
 
+    // render the chart
+    // TODO to much being done in UI.  Consider background task?
     private void renderChart() {
         // initialize our XYPlot reference:
         plot = (XYPlot) getView().findViewById(R.id.mySimpleXYPlot);

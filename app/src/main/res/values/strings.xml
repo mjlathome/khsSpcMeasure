@@ -5,18 +5,22 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="text_cancel">Cancel</string>
+    <string name="text_clear_value">Clear Value</string>
     <string name="text_collect_dt">Collect Datetime</string>
     <string name="text_collect_status">Collect Status</string>
     <string name="text_delete">Delete</string>
     <string name="text_deleting_setups">Deleting Setup(s)...</string>
     <string name="text_error">Error</string>
     <string name="text_feature">Feature</string>
+    <string name="text_get_value">Get Value</string>
     <string name="text_import">Import</string>
+    <string name="text_in_control">In Control</string>
     <string name="text_information">Information</string>
     <string name="text_limit_rev">Limit Rev</string>
     <string name="text_limit_type">Limit Type</string>
     <string name="text_limit_upper">Upper</string>
     <string name="text_limit_lower">Lower</string>
+    <string name="text_measurement">Measurement</string>
     <string name="text_mess_delete_piece">Are you sure you want to Delete Piece created on %s?</string>
     <string name="text_mess_delete_piece_not_open">Cannot delete as Piece create on %s is not OPEN</string>
     <string name="text_mess_piece_deleted">Piece has been Deleted"</string>
@@ -31,11 +35,28 @@
     <string name="text_no_data">No Data</string>
     <string name="text_okay">OK</string>
     <string name="text_open">Open</string>
+    <string name="text_out_control">Out of Control</string>
     <string name="text_piece_already_closed">Piece is already closed.</string>
     <string name="text_piece_now_closed">Piece is now Closed.</string>
     <string name="text_product">Product</string>
     <string name="text_refresh">Refresh</string>
     <string name="text_warning">Warning</string>
+    <string name="text_unknown">Unknown</string>
+
+    <!-- BLE strings -->
+    <string name="text_ble_not_supported">Bluetooth LE not supported.  Contact administrator</string>
+    <string name="text_ble_battery_okay">Battery Level Okay (%s)</string>
+    <string name="text_ble_battery_low">Battery Level Low (%s)</string>
+    <string name="text_ble_battery_unknown">Battery Level Unknown (%s)</string>
+    <string name="text_ble_instrument_id">Instrument ID = %s</string>
+    <string name="text_ble_uom_now_mm">Unit of Measure now mm</string>
+    <string name="text_ble_zero_reset">Zero was reset</string>
+    <string name="text_ble_cmd_req_unknown">Unknown Command/Request.  Contact administrator. (%s)</string>
+    <string name="text_ble_scan_ble">Scan BLE</string>
+    <string name="text_ble_set_mm">Set mm</string>
+    <string name="text_ble_set_zero">Set Zero</string>
+    <string name="text_ble_get_battery">Get Battery</string>
+
     <string name="title_activity_import_setup">Import Setup</string>
     <string name="title_setup_list">Setup</string>
     <string name="title_setup_detail">Setup Detail</string>
