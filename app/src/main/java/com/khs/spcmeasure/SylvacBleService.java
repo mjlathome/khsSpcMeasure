@@ -3,8 +3,10 @@ package com.khs.spcmeasure;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Queue;
 import java.util.Random;
 import java.util.UUID;
 
@@ -31,8 +33,18 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+// handle all Bluetooth Low Energy (BLE) communication
+// queues are now used for the write/read requests.  see:
+// http://stackoverflow.com/questions/17910322/android-ble-api-gatt-notification-not-received
 public class SylvacBleService extends Service {	
 	private static final String TAG = "SylvacBleService";
+
+    // queue read/write requests
+    private Queue<BluetoothGattDescriptor> descriptorWriteQueue = new LinkedList<BluetoothGattDescriptor>();
+    private Queue<BluetoothGattCharacteristic> characteristicReadQueue = new LinkedList<BluetoothGattCharacteristic>();
+    // TODO use queue of characteristic and the value written so that this can be correctly returned instead of mLastWrite
+    private Queue<BluetoothGattCharacteristic> characteristicWriteQueue = new LinkedList<BluetoothGattCharacteristic>();
+
 	private static final String DEVICE_NAME = "SY";
 	
     // Stops scanning after 10 seconds.
@@ -125,7 +137,8 @@ public class SylvacBleService extends Service {
 		// binder has getService method to obtain reference to this Service
 		return myBinder;
 	}	
-		
+
+    // perform clean-uo prior to exit
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -134,6 +147,9 @@ public class SylvacBleService extends Service {
 	    if (mConnectedGatt == null) {
 	        return;
 	    }
+
+        // close gatt connection
+        mConnectedGatt.disconnect();
 	    mConnectedGatt.close();
 	    mConnectedGatt = null;
 	    
@@ -244,11 +260,34 @@ public class SylvacBleService extends Service {
             }
         }
 
+        // remove top descriptor write and dequeue next BLE operation
+        @Override
+        public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
+            // super.onDescriptorWrite(gatt, descriptor, status);
+
+            // pop the item that we just finishing writing
+            descriptorWriteQueue.remove();
+
+            if (status == BluetoothGatt.GATT_SUCCESS) {
+                Log.d(TAG, "Callback: Wrote GATT Descriptor successfully.");
+            }
+            else{
+                Log.d(TAG, "Callback: Error writing GATT Descriptor: "+ status);
+            }
+
+            // dequeue next BLE command
+            dequeueBleCommand();
+        }
+
         // result of a characteristic read operation
         @Override        
         public void onCharacteristicRead(BluetoothGatt gatt,
                                          BluetoothGattCharacteristic characteristic,
                                          int status) {
+
+            // pop the item that we just finishing reading
+            characteristicReadQueue.remove();
+
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 Log.i(TAG, "onCharacteristicRead GATT_SUCCESS: " + characteristic);
                 Log.d(TAG, "onCharacteristicRead UUID = " + characteristic.getUuid());
@@ -263,6 +302,12 @@ public class SylvacBleService extends Service {
                     Log.d(TAG, "onCharacteristicRead value = " + new String(data) + "\n" + stringBuilder.toString());
                 }
             }
+            else {
+                Log.d(TAG, "onCharacteristicRead error: " + status);
+            }
+
+            // dequeue next BLE command
+            dequeueBleCommand();
         }
 
         // result of a characteristic read operation
@@ -288,6 +333,10 @@ public class SylvacBleService extends Service {
 
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+
+            // pop the item that we just finishing writing
+            characteristicWriteQueue.remove();
+
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 Log.i(TAG, "onCharacteristicWrite GATT_SUCCESS: " + status);
                 Log.d(TAG, "onCharacteristicWrite UUID = " + characteristic.getUuid());
@@ -295,6 +344,9 @@ public class SylvacBleService extends Service {
             } else {
                 Log.w(TAG, "onCharacteristicWrite received: " + status);
             }
+
+            // dequeue next BLE command
+            dequeueBleCommand();
         }
 
         @Override
@@ -302,8 +354,8 @@ public class SylvacBleService extends Service {
             super.onReliableWriteCompleted(gatt, status);
             Log.d(TAG, "onReliableWriteCompleted(" + status + ")");
         }
-    };    
-    
+    };
+
     // Demonstrates how to iterate through the supported GATT
     // Services/Characteristics.
     // In this sample, we populate the data structure that is bound to the
@@ -311,6 +363,11 @@ public class SylvacBleService extends Service {
     // FUTURE rename this method as is registering for services too!
     private void displayGattServices(List<BluetoothGattService> gattServices) {
         if (gattServices == null) return;
+
+        // clear BLE command queues
+        descriptorWriteQueue.clear();
+        characteristicReadQueue.clear();
+        characteristicWriteQueue.clear();
 
         for (BluetoothGattService service : gattServices) {
             Log.d(TAG, "Found service: " + service.getUuid());
@@ -322,7 +379,9 @@ public class SylvacBleService extends Service {
                 if(hasProperty(characteristic,
                         BluetoothGattCharacteristic.PROPERTY_READ)) {
                     Log.d(TAG, "Read characteristic: " + characteristic.getUuid());
-                    mConnectedGatt.readCharacteristic(characteristic);
+                    // TODO before queue - remove later
+                    // mConnectedGatt.readCharacteristic(characteristic);
+                    readCharacteristic(characteristic);
                 }
 
                 if(hasProperty(characteristic,
@@ -353,7 +412,10 @@ public class SylvacBleService extends Service {
                             UUID.fromString(SylvacGattAttributes.CLIENT_CHARACTERISTIC_CONFIG));
                     descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
                     // descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
-                    mConnectedGatt.writeDescriptor(descriptor);
+
+                    // TODO before queue - remove later
+                    // mConnectedGatt.writeDescriptor(descriptor);
+                    writeGattDescriptor(descriptor);
                 }
 
                 for (BluetoothGattDescriptor descriptor : characteristic.getDescriptors()) {
@@ -370,7 +432,69 @@ public class SylvacBleService extends Service {
     	int prop = characteristic.getProperties() & property;
     	return prop == property;
     }
-    
+
+    // dequeue next BLE command
+    private boolean dequeueBleCommand() {
+
+        // handle asynchronous BLE callbacks via queues
+        // GIVE PRECEDENCE to descriptor writes.  They must all finish first?
+        if (descriptorWriteQueue.size() > 0) {
+            return mConnectedGatt.writeDescriptor(descriptorWriteQueue.element());
+        } else if (characteristicReadQueue.size() > 0) {
+            return mConnectedGatt.readCharacteristic(characteristicReadQueue.element());
+        } else if (characteristicWriteQueue.size() > 0) {
+            return mConnectedGatt.writeCharacteristic(characteristicWriteQueue.element());
+        } else {
+            return true;
+        }
+    }
+
+    // queue Gatt Descriptor writes
+    public boolean writeGattDescriptor(BluetoothGattDescriptor d){
+        boolean success = false;
+
+        // check Bluetooth GATT connected
+        if (mConnectedGatt == null) {
+            Log.e(TAG, "lost connection");
+            return false;
+        }
+
+        //put the descriptor into the write queue
+        success = descriptorWriteQueue.add(d);
+
+        // execute BLE command immediately if there is nothing else queued up
+        if((descriptorWriteQueue.size() == 1) && (characteristicReadQueue.size() == 0) && (characteristicWriteQueue.size() == 0)) {
+            return mConnectedGatt.writeDescriptor(d);
+        } else {
+            return success;
+        }
+    }
+
+    // queue BLE characteristic writes
+    private boolean writeCharacteristic(BluetoothGattCharacteristic c) {
+        boolean success = false;
+
+        // check Bluetooth GATT connected
+        if (mConnectedGatt == null) {
+            Log.e(TAG, "lost connection");
+            return false;
+        }
+
+        // BluetoothGattService s = mBluetoothGatt.getService(UUID.fromString(kYourServiceUUIDString));
+        // BluetoothGattCharacteristic c = s.getCharacteristic(UUID.fromString(characteristicName));
+
+        //put the characteristic into the read queue
+        success = characteristicWriteQueue.add(c);
+
+        // execute BLE command immediately if there is nothing else queued up
+        if((descriptorWriteQueue.size() == 0) && (characteristicReadQueue.size() == 0) && (characteristicWriteQueue.size() == 1)) {
+            return mConnectedGatt.writeCharacteristic(c);
+        }
+        else {
+            return success;
+        }
+    }
+
     // allows bound application component to write to the Sylvac Ble request or command characteristic
     public boolean writeCharacteristic(String value) {
 
@@ -411,14 +535,39 @@ public class SylvacBleService extends Service {
         }
 
         // write the Characteristic
-        if (mConnectedGatt.writeCharacteristic(gattChar) == false) {
+        if (writeCharacteristic(gattChar) == false) {
             Log.e(TAG, "characteristic write failed");
             return false;
         }
 
+        // TODO handle last value via getValue or getSTringValue of BLE GATT CHaracteristic
         mLastWrite = value;
        // mCanWrite = false;
         return true;
+    }
+
+    // queue BLE characteristic reads
+    private boolean readCharacteristic(BluetoothGattCharacteristic c) {
+        boolean success = false;
+
+        // check Bluetooth GATT connected
+        if (mConnectedGatt == null) {
+            Log.e(TAG, "lost connection");
+            return false;
+        }
+
+        // BluetoothGattService s = mBluetoothGatt.getService(UUID.fromString(kYourServiceUUIDString));
+        // BluetoothGattCharacteristic c = s.getCharacteristic(UUID.fromString(characteristicName));
+
+        //put the characteristic into the read queue
+        success = characteristicReadQueue.add(c);
+
+        // execute BLE command immediately if there is nothing else queued up
+        if((descriptorWriteQueue.size() == 0) && (characteristicReadQueue.size() == 1) && (characteristicWriteQueue.size() == 0)) {
+            return mConnectedGatt.readCharacteristic(c);
+        } else {
+            return success;
+        }
     }
 
     // allows bound application component to read from the Sylvac Ble request or command characteristic
@@ -445,7 +594,9 @@ public class SylvacBleService extends Service {
         }
 
         // read the Characteristic
-        return mConnectedGatt.readCharacteristic(gattChar);
+        // TODO - before queue; remove later
+        // return mConnectedGatt.readCharacteristic(gattChar);
+        return readCharacteristic(gattChar);
     }
         
 	// broadcast action - no extras

@@ -6,6 +6,7 @@ import com.khs.spcmeasure.entity.Limits;
 import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.entity.Measurement;
 
+import com.khs.spcmeasure.entity.SimpleCode;
 import com.khs.spcmeasure.library.CollectStatus;
 import com.khs.spcmeasure.library.DateTimeUtils;
 import com.khs.spcmeasure.library.LimitType;
@@ -24,7 +25,7 @@ public class DBAdapter {
 	
 	// All Static variables
     // Database Version
-    static final int DATABASE_VERSION = 10;
+    static final int DATABASE_VERSION = 13;
  
     // Database Name
     public static final String DATABASE_NAME = "spcMeasure";
@@ -34,7 +35,8 @@ public class DBAdapter {
     public static final String TABLE_FEATURE 		= "feature";
     public static final String TABLE_LIMITS   		= "limits";
     public static final String TABLE_PIECE   		= "piece";
-    public static final String TABLE_MEASUREMENT   = "measurement";
+    public static final String TABLE_MEASUREMENT    = "measurement";
+    public static final String TABLE_SIMPLE_CODE    = "simpleCode";
 	
     // column names
     public static final String KEY_ROWID = "_id";
@@ -56,9 +58,15 @@ public class DBAdapter {
     public static final String KEY_OPERATOR = "operator";
     public static final String KEY_LOT = "lot";
     public static final String KEY_VALUE = "value";
+    public static final String KEY_RANGE = "range";
+    public static final String KEY_CAUSE = "cause";
     public static final String KEY_IN_CONTROL = "inControl";
     public static final String KEY_IN_ENG_LIM = "inEngLim";
-    
+    public static final String KEY_TYPE = "type";
+    public static final String KEY_CODE = "code";
+    public static final String KEY_DESCRIPTION = "description";
+    public static final String KEY_INT_CODE = "intCode";
+
     // sql table creates
     static final String CREATE_TABLE_PRODUCT = "CREATE TABLE " + TABLE_PRODUCT + "(" + 
 			KEY_ROWID + " INTEGER PRIMARY KEY UNIQUE NOT NULL," +
@@ -102,10 +110,20 @@ public class DBAdapter {
 			KEY_COLLECT_DATETIME + " TEXT," +
 			KEY_OPERATOR + " TEXT," +
 			KEY_VALUE + " REAL," +
+            KEY_RANGE + " REAL," +
+            KEY_CAUSE + " INTEGER," +
 			KEY_LIMIT_REV + " INTEGER," +
 			KEY_IN_CONTROL + " INTEGER," +
-			KEY_IN_ENG_LIM + " INTEGER" + ")";			
-    
+			KEY_IN_ENG_LIM + " INTEGER" + ")";
+
+    static final String CREATE_TABLE_SIMPLE_CODE = "CREATE TABLE " + TABLE_SIMPLE_CODE + "(" +
+            KEY_ROWID + " INTEGER PRIMARY KEY UNIQUE NOT NULL," +
+            KEY_TYPE + " TEXT KEY NOT NULL," +
+            KEY_CODE + " TEXT KEY NOT NULL," +
+            KEY_DESCRIPTION + " TEXT," +
+            KEY_INT_CODE + " TEXT KEY," +
+            KEY_ACTIVE + " INTEGER" + ")";
+
     // member variables
     final Context context;
     
@@ -127,7 +145,7 @@ public class DBAdapter {
     	// creates all SQLite tables
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-			Log.d("DEBUG Create DB ", "create all");
+			Log.d(TAG, "onCreate");
 			try {
 				// create tables
 				db.execSQL(CREATE_TABLE_PRODUCT);
@@ -135,6 +153,7 @@ public class DBAdapter {
 				db.execSQL(CREATE_TABLE_LIMITS);
 				db.execSQL(CREATE_TABLE_PIECE);
 				db.execSQL(CREATE_TABLE_MEASUREMENT);
+                db.execSQL(CREATE_TABLE_SIMPLE_CODE);
 			} catch(SQLException e) {
 				e.printStackTrace();
 			}
@@ -151,7 +170,8 @@ public class DBAdapter {
 				db.execSQL("DROP TABLE IF EXISTS " + TABLE_LIMITS);
 				db.execSQL("DROP TABLE IF EXISTS " + TABLE_PIECE);
 				db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEASUREMENT);
-				
+                db.execSQL("DROP TABLE IF EXISTS " + TABLE_SIMPLE_CODE);
+
 				// create tables again
 				onCreate(db);							
 			} catch(SQLException e) {
@@ -308,7 +328,7 @@ public class DBAdapter {
 	
 	// update single Feature
 	public boolean updateFeature(Feature feature) {	
-		Log.d("DEBUG update RowId; Prod Id = ", String.valueOf(feature.getId()) + "; " + String.valueOf(feature.getProdId()));
+		Log.d(TAG, "updFest:  RowId; Prod Id = " + String.valueOf(feature.getId()) + "; " + String.valueOf(feature.getProdId()));
 		return db.update(TABLE_FEATURE, featureToValues(feature), KEY_ROWID + "=" + feature.getId(), null) > 0; 
 	};	
 	
@@ -352,7 +372,7 @@ public class DBAdapter {
 		
 		// don't output id if not known 
 		if(feature.getId() != null) {
-			Log.d("DEBUG limToVal output rowid", String.valueOf(feature.getId()));
+			Log.d(TAG, "featToVal: id = " + String.valueOf(feature.getId()));
 			values.put(KEY_ROWID, feature.getId());	
 		}	
 		
@@ -613,7 +633,9 @@ public class DBAdapter {
 				
 		return values;
 	} 	
-	
+
+    // START - Measurement methods
+
 	// create new measurement
 	public long createMeasurement(Measurement meas) {
 		Log.d(TAG, "createMeas pieceId; featId; value = " + 
@@ -638,7 +660,7 @@ public class DBAdapter {
 	public Cursor getMeasurement(long pieceId, long prodId, long featId) {
 		Cursor c = db.query(TABLE_MEASUREMENT,  
 				new String[] {KEY_ROWID, KEY_PIECE_ID, KEY_PROD_ID, KEY_FEAT_ID, 
-					KEY_COLLECT_DATETIME, KEY_OPERATOR, KEY_VALUE, KEY_LIMIT_REV, KEY_IN_CONTROL, KEY_IN_ENG_LIM},
+					KEY_COLLECT_DATETIME, KEY_OPERATOR, KEY_VALUE, KEY_RANGE, KEY_CAUSE, KEY_LIMIT_REV, KEY_IN_CONTROL, KEY_IN_ENG_LIM},
 				KEY_PIECE_ID	+ "=" + pieceId	+ " AND " +	
 				KEY_PROD_ID	 	+ "=" + prodId 	+ " AND " + 
 				KEY_FEAT_ID 	+ "=" + featId, 
@@ -680,6 +702,8 @@ public class DBAdapter {
 				DateTimeUtils.getDate(c.getString(c.getColumnIndex(KEY_COLLECT_DATETIME))),
 				c.getString(c.getColumnIndex(KEY_OPERATOR)),
 				c.getDouble(c.getColumnIndex(KEY_VALUE)),
+                c.getDouble(c.getColumnIndex(KEY_RANGE)),
+                c.getInt(c.getColumnIndex(KEY_CAUSE)),
 				c.getLong(c.getColumnIndex(KEY_LIMIT_REV)),
 				intToBool(c.getInt(c.getColumnIndex(KEY_IN_CONTROL))),
 				intToBool(c.getInt(c.getColumnIndex(KEY_IN_ENG_LIM))));							
@@ -694,7 +718,7 @@ public class DBAdapter {
 
 		// don't output id if not known 
 		if(meas.getId() != null) {
-			Log.d("DEBUG measToVal output rowid", String.valueOf(meas.getId()));
+			Log.d(TAG, "measToVal: id" + String.valueOf(meas.getId()));
 			values.put(KEY_ROWID, meas.getId());	
 		}		
 		
@@ -706,13 +730,95 @@ public class DBAdapter {
 		values.put(KEY_COLLECT_DATETIME, DateTimeUtils.getDateTimeStr(meas.getCollectDt()));
 		values.put(KEY_OPERATOR, meas.getOperator());
 		values.put(KEY_VALUE, meas.getValue());
+        values.put(KEY_RANGE, meas.getRange());
+        values.put(KEY_CAUSE, meas.getCause());
 		values.put(KEY_LIMIT_REV, meas.getLimitRev());
 		values.put(KEY_IN_CONTROL, boolToInt(meas.isInControl()));
 		values.put(KEY_IN_ENG_LIM, boolToInt(meas.isInEngLim()));
 								
 		return values;
-	} 
-	
+	}
+
+    // END - Measurement methods
+
+    // START - SimpleCode methods
+
+    // create new Simple Code
+    public long createSimpleCode(SimpleCode code) {
+        Log.d(TAG, "createSimpleCode: Id = " + String.valueOf(code.getId()));
+        // insert row
+        return db.insert(TABLE_SIMPLE_CODE, null, simpleCodeToValues(code));
+    };
+
+    // get all Simple Code for type
+    public Cursor getAllSimpleCode(String type) {
+        // select query
+        String selectQuery = "SELECT * FROM " + TABLE_SIMPLE_CODE + " WHERE " + KEY_TYPE + " = '" + type + "' ORDER BY " + KEY_CODE;
+
+        return db.rawQuery(selectQuery, null);
+    };
+
+    // get single Simple Code
+    public Cursor getSimpleCode(long rowId) {
+        Cursor c = db.query(TABLE_SIMPLE_CODE,
+                new String[] {KEY_ROWID, KEY_TYPE, KEY_CODE, KEY_DESCRIPTION, KEY_INT_CODE, KEY_ACTIVE},
+                KEY_ROWID + "=" + rowId,
+                null, null, null, null, null);
+
+        if (c != null) {
+            c.moveToFirst();
+        }
+
+        return c;
+    };
+
+    // get Simple Code count
+    public int getSimpleCodeCount(String type) {
+        return getAllSimpleCode(type).getCount();
+    };
+
+    // update single Simple Code
+    public boolean updateSimpleCode(SimpleCode code) {
+        Log.d(TAG, "updateSimpleCode: Id = " + String.valueOf(code.getId()));
+        return db.update(TABLE_SIMPLE_CODE, simpleCodeToValues(code), KEY_ROWID + "=" + code.getId(), null) > 0;
+    };
+
+    // delete single Simple Code
+    public boolean deleteSimpleCode(long rowId) {
+
+        return db.delete(TABLE_SIMPLE_CODE, KEY_ROWID + "=" + rowId, null) > 0;
+    };
+
+    // convert cursor to Simple Code
+    public SimpleCode cursorToSimpleCode(Cursor c) {
+        SimpleCode code = new SimpleCode(
+                c.getInt(c.getColumnIndex(KEY_ROWID)),
+                c.getString(c.getColumnIndex(KEY_TYPE)),
+                c.getString(c.getColumnIndex(KEY_CODE)),
+                c.getString(c.getColumnIndex(KEY_DESCRIPTION)),
+                c.getString(c.getColumnIndex(KEY_INT_CODE)),
+                Boolean.parseBoolean(c.getString(c.getColumnIndex(KEY_ACTIVE))));
+
+        // return code
+        return code;
+    }
+
+    // convert simple code to content values
+    private ContentValues simpleCodeToValues(SimpleCode code) {
+        ContentValues values = new ContentValues();
+
+        values.put(KEY_ROWID, code.getId());
+        values.put(KEY_TYPE, code.getType());
+        values.put(KEY_CODE, code.getCode());
+        values.put(KEY_DESCRIPTION, code.getDescription());
+        values.put(KEY_INT_CODE, code.getIntCode());
+        values.put(KEY_ACTIVE, code.isActive());
+
+        return values;
+    }
+
+    // END - SimpleCode methods
+
 	// convert boolean to int
 	public static int boolToInt(boolean boolVal) {
 		return (boolVal)? 1 : 0;		

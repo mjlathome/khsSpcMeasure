@@ -11,6 +11,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,7 +23,9 @@ import com.khs.spcmeasure.entity.Limits;
 import com.khs.spcmeasure.entity.Measurement;
 import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.entity.Product;
+import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.LimitType;
+import com.khs.spcmeasure.tasks.ImportSimpleCodeTask;
 
 import java.util.Date;
 
@@ -28,7 +34,7 @@ import java.util.Date;
  * either contained in a {@link com.khs.spcmeasure.MeasurementListActivity} in two-pane mode (on
  * tablets) or a {@link com.khs.spcmeasure.MeasurementDetailActivity} on handsets.
  */
-public class MeasurementFragment extends Fragment {
+public class MeasurementFragment extends Fragment implements AdapterView.OnItemSelectedListener{
 
 	private static final String TAG = "MeasurementFragment";
 
@@ -50,13 +56,28 @@ public class MeasurementFragment extends Fragment {
 	private TextView mTxtFeatName;
 	private TextView mTxtCollDt;
 	private TextView mTxtCollSt;
+    private TextView mTxtLimUpper;
+    private TextView mTxtLimLower;
 	private TextView mTxtMeasValue;
-	private TextView mTxtInControl;
+    private TextView mTxtMeasRange;
+    private Spinner mSpnMeasCause;
+    private ImageView mImgInControl;
 
 	// services
 //	private SylvacBleService mBleService;
 
-	/**
+    // spinner interface calls
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        Log.d(TAG, "onItemSelected: i = " + i + "; l = " + l);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
+    }
+
+    /**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
 	 */
@@ -122,15 +143,6 @@ public class MeasurementFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_measurement,
 				container, false);
 
-		// TODO remove later
-//		// store layout views
-//		mTxtProdName = (TextView) rootView.findViewById(R.id.txtProdName);
-//		mTxtFeatName = (TextView) rootView.findViewById(R.id.txtFeatName);
-//		mTxtCollDt = (TextView) rootView.findViewById(R.id.txtCollDt);
-//		mTxtCollSt = (TextView) rootView.findViewById(R.id.txtCollSt);
-//		mTxtMeasValue = (TextView) rootView.findViewById(R.id.txtMeasValue);
-//		mTxtInControl = (TextView) rootView.findViewById(R.id.txtInControl);
-		
 		return rootView;
 	}
 	
@@ -193,36 +205,70 @@ public class MeasurementFragment extends Fragment {
 		mTxtFeatName = (TextView) rootView.findViewById(R.id.txtFeatName);
 		mTxtCollDt = (TextView) rootView.findViewById(R.id.txtCollDt);
 		mTxtCollSt = (TextView) rootView.findViewById(R.id.txtCollSt);
+        mTxtLimUpper = (TextView) rootView.findViewById(R.id.txtLimUpper);
+        mTxtLimLower = (TextView) rootView.findViewById(R.id.txtLimLower);
 		mTxtMeasValue = (TextView) rootView.findViewById(R.id.txtMeasValue);
-		mTxtInControl = (TextView) rootView.findViewById(R.id.txtInControl);
-		
-		try {
-			// TODO implement interface for this?
-			// TODO ensure call works when not 2 pane
-			// extract Ble service for direct communication
+        mTxtMeasRange = (TextView) rootView.findViewById(R.id.txtMeasRange);
+        mSpnMeasCause = (Spinner) rootView.findViewById(R.id.spnMeasCause);
+		mImgInControl = (ImageView) rootView.findViewById(R.id.imgInControl);
+
+        try {
+            // TODO implement interface for this?
+            // TODO ensure call works when not 2 pane
+            // extract Ble service for direct communication
 //			MeasurementListActivity measListAct = (MeasurementListActivity) getActivity();
 //			mBleService = measListAct.getBleService();
-					
-			// extract on-screen data
-			mPiece = findPiece(mPieceId);
-			mProduct = findProduct(mPiece.getProdId());
-			mFeature = findFeature(mPiece.getProdId(), mFeatId);
-			mLimitCl  = findLimit(mFeature.getProdId(), mFeature.getFeatId(), mFeature.getLimitRev(), LimitType.CONTROL);
-			mLimitEng = findLimit(mFeature.getProdId(), mFeature.getFeatId(), mFeature.getLimitRev(), LimitType.ENGINEERING);
-			mMeasurement = findMeasurement(mPieceId, mPiece.getProdId(), mFeatId);
-		
-			// display layout views
-			displayAll();
-			
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-			
+
+            // extract on-screen data
+            mPiece = findPiece(mPieceId);
+            mProduct = findProduct(mPiece.getProdId());
+            mFeature = findFeature(mPiece.getProdId(), mFeatId);
+            mLimitCl  = findLimit(mFeature.getProdId(), mFeature.getFeatId(), mFeature.getLimitRev(), LimitType.CONTROL);
+            mLimitEng = findLimit(mFeature.getProdId(), mFeature.getFeatId(), mFeature.getLimitRev(), LimitType.ENGINEERING);
+            mMeasurement = findMeasurement(mPieceId, mPiece.getProdId(), mFeatId);
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        // show the Action Cause list in the Spinner
+        DBAdapter db = new DBAdapter(getActivity());
+        db.open();
+        // TODO move types const to SimpleCode
+        Cursor c = db.getAllSimpleCode(ImportSimpleCodeTask.TYPE_ACTION_CAUSE);
+
+        // populate spinner for Collect Status and setup handler
+        if (c.getCount() > 0) {
+            String[] from = new String[]{DBAdapter.KEY_DESCRIPTION};
+            // create an array of the display item we want to bind our data to
+            int[] to = new int[]{android.R.id.text1};
+            SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_item, c, from, to, 0);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            mSpnMeasCause.setAdapter(adapter);
+            mSpnMeasCause.setOnItemSelectedListener(this);
+        }
+
+        db.close();
+
 		return;
 	}
 
-	// sets the on-screen value
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        try {
+            // display layout views
+            displayAll();
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // sets the on-screen value
 	public boolean setValue(Double value) {
+        // TODO if measurement already set then ignore.
 		// TODO should probably need to create/update/delete the measurement here instead of externally 
 		boolean success = false;			
 		boolean inControl = false;
@@ -230,6 +276,12 @@ public class MeasurementFragment extends Fragment {
 		Log.d(TAG, "setValue: " + value);
 				
 		if (value != null) {
+            // ignore new measurement if there is already one set
+            if (mMeasurement != null) {
+                AlertUtils.alertDialogShow(getActivity(), getString(R.string.text_warning), getString(R.string.text_meas_not_cleared));
+                return false;
+            }
+
 			// determine whether value is in-control
 			inControl = isInLimit(mLimitCl, value);
 			
@@ -252,14 +304,16 @@ public class MeasurementFragment extends Fragment {
 		
 		// update display
 		displayMeasurement();
-		
+
+        // navigate to next measurement if in control
 		if (inControl == true) {
 			// TODO implement interface for this?
-			// TODO ensure call works when not 2 pane
 			// navigate to the next feature automatically as reading was good
-//			MeasurementListActivity measListAct = (MeasurementListActivity) getActivity();
-//			measListAct.getNext();
-		}
+            FeatureActivity featAct = (FeatureActivity) getActivity();
+            featAct.getNext();
+		} else {
+            AlertUtils.alertDialogShow(getActivity(), getString(R.string.text_warning), getString(R.string.text_out_control_choose_cause));
+        }
 		
 		return success;
 	}
@@ -446,6 +500,7 @@ public class MeasurementFragment extends Fragment {
 		displayProduct();
 		displayPiece();
 		displayFeature();
+        displayLimits();
 		displayMeasurement();
 		return;
 	}	
@@ -467,22 +522,29 @@ public class MeasurementFragment extends Fragment {
 	private void displayFeature() {
 		mTxtFeatName.setText(mFeature.getName());
 		return;
-	}	
-		
-	// display Measurement layout views 
+	}
+
+    // display Limit layout views
+    private void displayLimits() {
+        mTxtLimUpper.setText(Double.toString(mLimitCl.getUpper()));
+        mTxtLimLower.setText(Double.toString(mLimitCl.getLower()));
+        return;
+    }
+
+    // display Measurement layout views
 	private void displayMeasurement() {
 		if (mMeasurement != null) {
 			Log.d(TAG, "dispMeas - isInCtrl = " + mMeasurement.isInControl());
 			
 			mTxtMeasValue.setText(Double.toString(mMeasurement.getValue()));
-			mTxtInControl.setText(mMeasurement.isInControl()? "YES" : "NO");
+			mImgInControl.setImageResource(mMeasurement.isInControl() ? R.drawable.ic_meas_in_control : R.drawable.ic_meas_out_control);
+            mSpnMeasCause.setVisibility(mMeasurement.isInControl() ? View.INVISIBLE : View.VISIBLE);
 		} else {
-			mTxtMeasValue.setText("");	
-			mTxtInControl.setText("");
+			mTxtMeasValue.setText("");
+            mImgInControl.setImageResource(R.drawable.ic_meas_unknown);
+            mSpnMeasCause.setVisibility(View.INVISIBLE);
 		}			
-		
-		if (mTxtMeasValue != null) {
-		}
+
 		return;
 	}	
 
@@ -491,7 +553,7 @@ public class MeasurementFragment extends Fragment {
 		Measurement meas = new Measurement(mPieceId, mPiece.getProdId(), mFeatId, 
 				new Date(), // TODO is this required? was: mPiece.getCollectDt() 
 				mPiece.getOperator(),	// TODO needs to be current user, not the one who created the piece?  
-				value, mFeature.getLimitRev(), 
+				value, 0.0, 0, mFeature.getLimitRev(),
 				isInLimit(mLimitCl, value), isInLimit(mLimitEng, value));  
 		
 		return meas;
@@ -505,6 +567,8 @@ public class MeasurementFragment extends Fragment {
 			mMeasurement.setCollectDt(new Date());	// TODO is actual dt collected for measurement required?
 			mMeasurement.setOperator(mPiece.getOperator());	// TODO should this be from the actual logged in user
 			mMeasurement.setValue(value);
+            mMeasurement.setRange(0.0);
+            mMeasurement.setCause(0);
 			mMeasurement.setInControl(isInLimit(mLimitCl, value));
 			mMeasurement.setInEngLim(isInLimit(mLimitEng, value));
 			

@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -28,6 +29,7 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
@@ -39,6 +41,7 @@ import com.khs.spcmeasure.entity.Feature;
 import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.CollectStatus;
+import com.khs.spcmeasure.library.DateTimeUtils;
 
 import java.util.List;
 
@@ -57,6 +60,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
     private PieceDao mPieceDao = new PieceDao(this);
     private FeatureDao mFeatDao = new FeatureDao(this);
     private Piece mPiece;
+
     public List<Feature> mFeatList;
 
     FeaturePagerAdapter mAdapter;
@@ -208,9 +212,8 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         mPiece = mPieceDao.getPiece(mPieceId);
         mFeatList = mFeatDao.getAllFeatures(mPiece.getProdId());
 
-        // configure decorations
-        TextView txtProdName = (TextView)findViewById(R.id.txtProdName);
-        ((ViewPager.LayoutParams)txtProdName.getLayoutParams()).isDecor = true;
+        // display views
+        displayView();
 
         // configure ViewPager
         mAdapter = new FeaturePagerAdapter(getSupportFragmentManager());
@@ -243,6 +246,9 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
                 mPager.setCurrentItem(mFeatList.size() - 1);
             }
         });
+
+        // display the required feature
+        mPager.setCurrentItem(getFeaturePos(mFeatId));
     }
 
     @Override
@@ -395,7 +401,9 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
     // checks arguments
     private boolean chkArguments() {
         // verify arguments
-        return (mPieceId != null && mFeatId != null);
+        // mFeatId is no longer mandatory due to launch from New Piece Dialog
+        // return (mPieceId != null && mFeatId != null);
+        return (mPieceId != null);
     }
 
     // bind to Ble service
@@ -419,7 +427,87 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         return mBleService;
     }
 
-    // setter for measured value
+    // extracts Feature pager position for the feature Id provided
+    // returns 0 if feature Id is unknown
+    public int getFeaturePos(Long featId) {
+        int pos = 0;
+
+        if (featId != null) {
+            // start off at required feature
+            for (Feature f : mFeatList) {
+                if (f.getId() == mFeatId) {
+                    pos = mFeatList.indexOf(f);
+                    break;
+                }
+            }
+        }
+
+        return pos;
+    }
+
+    // navigate to first Feature
+    public void getFirst() {
+        int pos = mPager.getCurrentItem();
+        if (pos != 0) {
+            mPager.setCurrentItem(0);
+        }
+    }
+
+    // navigate to previous Feature
+    public void getPrev() {
+        int pos = mPager.getCurrentItem();
+        if (pos != 0) {
+            mPager.setCurrentItem(pos - 1);
+        }
+    }
+
+    // navigate to next Feature
+    public void getNext() {
+        int pos = mPager.getCurrentItem();
+        if (pos != (mFeatList.size() - 1)) {
+            mPager.setCurrentItem(pos + 1);
+        }
+    }
+
+    // navigate to last Feature
+    public void getLast() {
+        int pos = mPager.getCurrentItem();
+        if (pos != (mFeatList.size() - 1)) {
+            mPager.setCurrentItem((mFeatList.size() - 1));
+        }
+    }
+
+    // display on-screen Views
+    public void displayView() {
+
+        // TODO error trap when required data not available
+
+        // display Piece views
+        if (mPiece != null) {
+            // extract views
+            TextView txtProdName = (TextView)findViewById(R.id.txtProdName);
+            TextView txtCollectDt = (TextView)findViewById(R.id.txtCollectDt);
+            TextView txtCollStatus = (TextView)findViewById(R.id.txtCollStatus);
+
+            // configure as decorations
+            ((ViewPager.LayoutParams)txtProdName.getLayoutParams()).isDecor = true;
+            ((ViewPager.LayoutParams)txtCollectDt.getLayoutParams()).isDecor = true;
+            ((ViewPager.LayoutParams)txtCollStatus.getLayoutParams()).isDecor = true;
+
+            // set view data
+            txtCollectDt.setText(DateTimeUtils.getDateTimeStr(mPiece.getCollectDt()));
+            txtCollStatus.setText(mPiece.getStatus().toString());
+
+            // show the Product Name in the TextView
+            DBAdapter db = new DBAdapter(this);
+            db.open();
+            Cursor c = db.getProduct(mPiece.getProdId());
+            txtProdName.setText(c.getString(c.getColumnIndex(DBAdapter.KEY_NAME)));
+            db.close();
+        }
+    }
+
+    // set measured value
     private boolean setMeasurement(byte[] value) {
         boolean success = false;
 
@@ -427,18 +515,37 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         Double myDouble = Double.parseDouble(new String(value));
 
         // update Measurement value
-        if (myDouble != null) {
-            // TODO need to communicate measurement to fragment - for now assume true
-            success = true;
-//            MeasurementDetailFragment measDetailFrag = (MeasurementDetailFragment) getFragmentManager().findFragmentById(R.id.measurement_detail_container);
-//            success = measDetailFrag.setValue(myDouble);
+        if (myDouble != null && mTabPos == FeatureActivity.TAB_POS_MEASUREMENT) {
+            // communicate measurement to fragment
+            MeasurementFragment measFrag = (MeasurementFragment) mAdapter.getCurrentFragment();
+            return measFrag.setValue(myDouble);
+        } else {
+            // ignore as not on the Measurement fragment
+            return success;
         }
+    }
 
-        return success;
+    // clear measured value
+    private boolean clearMeasurement() {
+        boolean success = false;
+
+        // clear Measurement value
+        if (mTabPos == FeatureActivity.TAB_POS_MEASUREMENT) {
+            // communicate measurement to fragment
+            MeasurementFragment measFrag = (MeasurementFragment) mAdapter.getCurrentFragment();
+            return measFrag.setValue(null);
+        } else {
+            // ignore as not on the Measurement fragment
+            return success;
+        }
     }
 
     // glue between on-screen View Pager and the Fragments it contains
     public class FeaturePagerAdapter extends FragmentStatePagerAdapter {
+
+        // store current fragment.  see:
+        // http://stackoverflow.com/questions/18609261/getting-the-current-fragment-instance-in-the-viewpager
+        private Fragment mCurrentFragment = null;
 
         public FeaturePagerAdapter(FragmentManager fm) {
             super(fm);
@@ -460,7 +567,11 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         // create fragment appropriate to on-screen tab selected
         @Override
         public Fragment getItem(int position) {
+
+            // extract Feature at the pager position
             Feature feat = mFeatList.get(position);
+            mFeatId = feat.getId();
+
             Bundle args;
 
             switch(mTabPos) {
@@ -500,6 +611,21 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
             // return super.getItemPosition(object);
             Log.d(TAG, "getItemPosition = " + object.toString());
             return PagerAdapter.POSITION_NONE;  // changed
+        }
+
+        // store current fragment. see:
+        // http://stackoverflow.com/questions/18609261/getting-the-current-fragment-instance-in-the-viewpager
+        @Override
+        public void setPrimaryItem(ViewGroup container, int position, Object object) {
+            if (getCurrentFragment() != object) {
+                mCurrentFragment = ((Fragment) object);
+            }
+            super.setPrimaryItem(container, position, object);
+        }
+
+        // extracts current fragment
+        public Fragment getCurrentFragment() {
+            return mCurrentFragment;
         }
     }
 
@@ -569,7 +695,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
     public void onClickBtnClearValue(View view) {
         Log.d(TAG, "onClickBtnClearValue");
 
-        // setValue(null);
+        clearMeasurement();
         return;
     }
 

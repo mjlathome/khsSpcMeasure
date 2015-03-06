@@ -82,10 +82,10 @@ public class PieceListActivity extends Activity implements
                 refreshPieceList(mCollStat);
             }
 
-            // launch measurement screen
-            Intent measIntent = new Intent(this, MeasurementListActivity.class);
-            measIntent.putExtra(DBAdapter.KEY_PIECE_ID, pieceId);
-            startActivity(measIntent);
+            // launch feature measurement screen
+            Intent featIntent = new Intent(this, FeatureActivity.class);
+            featIntent.putExtra(DBAdapter.KEY_PIECE_ID, pieceId);
+            startActivity(featIntent);
         }
     }
 
@@ -94,30 +94,20 @@ public class PieceListActivity extends Activity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_piece_list);
 
-		// Show the Up button in the action bar.
+		// show the Up button in the action bar.
         // TODO is this required?
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // extract piece id from intent; exit if not found
-        Bundle args = getIntent().getExtras();
-        if (args != null && args.containsKey(DBAdapter.KEY_PROD_ID)) {
-            mProdId = args.getLong(DBAdapter.KEY_PROD_ID);
+        // extract intent arguments, if any
+        getArguments(getIntent().getExtras());
 
-            Log.d(TAG, "prodId = " + Long.toString(mProdId));
+        // extract saved instance state arguments, if any
+        getArguments(savedInstanceState);
 
-            // TODO remove how to get the actual record later
-//            // extract the piece
-////			mPiece = mPieceDao.findPiece(mPieceId);
-//            DBAdapter db = new DBAdapter(this);
-//            db.open();
-//            Cursor c = db.findPiece(mPieceId);
-//            Log.d(TAG, "Cursor count = " + c.getCount());
-//            mPiece = db.cursorToPiece(c);
-//            db.close();
-//            Log.d(TAG, "OnCreate Piece St = " + mPiece.getStatus());
-
-        } else {
-            AlertUtils.errorDialogShow(this, getString(R.string.text_mess_prod_id_invalid));
+        // verify arguments
+        if (!chkArguments()) {
+            Log.d(TAG, "args are BAD");
+            AlertUtils.errorDialogShow(this, getString(R.string.text_mess_arguments_invalid));
             finish();
         }
 
@@ -193,6 +183,55 @@ public class PieceListActivity extends Activity implements
 //			return true;
 //		}
 	}
+
+    // save the state prior to exit
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        // always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(outState);
+
+        Log.d(TAG, "onSaveInstanceState - prodId = " + mProdId);
+
+        // save state
+        outState.putLong(DBAdapter.KEY_PROD_ID, mProdId);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        Log.d(TAG, "onRestoreInstanceState");
+
+        // extract saved instance state arguments, if any
+        getArguments(savedInstanceState);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        Log.d(TAG, "onNewIntent");
+
+        // extract intent arguments, if any
+        getArguments(intent.getExtras());
+    }
+
+    // extracts arguments from provided Bundle
+    private void getArguments(Bundle args) {
+        if (args != null) {
+            if (args.containsKey(DBAdapter.KEY_PROD_ID)) {
+                mProdId = args.getLong(DBAdapter.KEY_PROD_ID);
+                Log.d(TAG, "prod id = " + mProdId);
+            }
+        } else {
+            Log.d(TAG, "getArguments - NULL");
+        }
+    }
+
+    // checks arguments
+    private boolean chkArguments() {
+        return (mProdId != null);
+    }
 
     // helper method: verify Product is selected
     private boolean isProductSelected() {

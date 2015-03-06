@@ -6,20 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- TODO remove later
-    <TextView
-        android:id="@+id/lblCollSt"
-        style="?android:attr/textAppearanceMedium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/txtCollDt"
-        android:layout_marginLeft="63dp"
-        android:labelFor="@+id/txtCollDt"
-        android:text="Status:"
-        android:textStyle="bold" />
-    -->
-
     <TextView
         android:id="@+id/txtProdName"
         style="?android:attr/textAppearanceMedium"
@@ -34,58 +20,6 @@
         android:layout_height="wrap_content"
         android:text="@string/text_collect_dt" />
 
-    <!-- TODO remove later
-    <TextView
-        android:id="@+id/lblCollDt"
-        style="?android:attr/textAppearanceMedium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/lblCollSt"
-        android:layout_below="@+id/lblProdName"
-        android:labelFor="@+id/txtCollDt"
-        android:text="Collect D/T:"
-        android:textStyle="bold" />
--->
-    <!-- TODO remove later
-<TextView
-    android:id="@+id/lblMeasValue"
-    style="?android:attr/textAppearanceMedium"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_below="@+id/lblFeatName"
-    android:layout_toLeftOf="@+id/txtCollDt"
-    android:labelFor="@+id/txtMeasValue"
-    android:text="Measurement:"
-    android:textStyle="bold" />
-    -->
-
-    <!-- TODO remove later
-<TextView
-    android:id="@+id/lblFeatName"
-    style="?android:attr/textAppearanceMedium"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_alignBaseline="@+id/txtFeatName"
-    android:layout_alignBottom="@+id/txtFeatName"
-    android:layout_alignRight="@+id/lblMeasValue"
-    android:labelFor="@+id/txtFeatName"
-    android:text="Feature:"
-    android:textStyle="bold" />
-    -->
-
-    <!--
-<TextView
-    android:id="@+id/lblProdName"
-    style="?android:attr/textAppearanceMedium"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_alignParentTop="true"
-    android:layout_alignRight="@+id/lblCollDt"
-    android:layout_marginTop="14dp"
-    android:labelFor="@+id/txtProdName"
-    android:text="Product:"
-    android:textStyle="bold" />
--->
     <TextView
         android:id="@+id/txtCollSt"
         style="?android:attr/textAppearanceMedium"
@@ -128,39 +62,41 @@
         android:contentDescription="@string/text_in_control"
         android:src="@drawable/ic_meas_unknown" />
 
-    <!-- TODO remove later
-<TextView
-    android:id="@+id/lblInControl"
-    style="?android:attr/textAppearanceMedium"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_below="@+id/lblMeasValue"
-    android:layout_toLeftOf="@+id/txtMeasValue"
-    android:labelFor="@+id/txtInControl"
-    android:text="In-Control:"
-    android:textStyle="bold" />
--->
-<LinearLayout
-    android:orientation="horizontal"
-    android:gravity="center"
-    android:measureWithLargestChild="true"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_weight="0" >
-    <Button
-        android:id="@+id/btnGetValue"
+    <TextView
+        android:id="@+id/txtMeasRange"
+        style="?android:attr/textAppearanceMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/text_get_value"
-        android:onClick="onClickBtnGetValue" >
-    </Button>
-    <Button
-        android:id="@+id/btnClearValue"
-        android:layout_width="wrap_content"
+        android:text="@string/text_range" />
+
+    <Spinner
+        android:id="@+id/spnMeasCause"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:text="@string/text_cause" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:measureWithLargestChild="true"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/text_clear_value"
-        android:onClick="onClickBtnClearValue" >
-    </Button>
-</LinearLayout>
+        android:layout_weight="0" >
+        <Button
+            android:id="@+id/btnGetValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_get_value"
+            android:onClick="onClickBtnGetValue" >
+        </Button>
+        <Button
+            android:id="@+id/btnClearValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_clear_value"
+            android:onClick="onClickBtnClearValue" >
+        </Button>
+    </LinearLayout>
 
 </LinearLayout>

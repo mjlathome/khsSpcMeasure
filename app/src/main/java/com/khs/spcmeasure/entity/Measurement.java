@@ -16,6 +16,8 @@ public class Measurement {
 	private Date collectDt;		// TODO is this required as piece has it? 
 	private String operator;	// TODO is this required as piece has it?
 	private double value;
+    private double range;
+    private Integer cause;
 	private long limitRev;
 	private boolean inControl;
 	private boolean inEngLim;
@@ -25,7 +27,7 @@ public class Measurement {
 
 	// constructor
 	public Measurement(Long id, long pieceId, long prodId, long featId, 
-			Date collectDt, String operator, double value, long limitRev, boolean inControl, boolean inEngLim) {
+			Date collectDt, String operator, double value, double range, Integer cause, long limitRev, boolean inControl, boolean inEngLim) {
 		super();
 		this.id = id;
 		this.pieceId = pieceId;
@@ -34,14 +36,16 @@ public class Measurement {
 		this.collectDt = collectDt;
 		this.operator = operator;
 		this.value = value;
+        this.range = range;
+        this.cause = cause;
 		this.limitRev = limitRev;
 		this.inControl = inControl;
 		this.inEngLim = inEngLim;
 	}
 
 	public Measurement(long pieceId, long prodId, long featId, 
-			Date collectDt, String operator, double value, long limitRev, boolean inControl, boolean inEngLim) {		
-		this(null, pieceId, prodId, featId, collectDt, operator, value, limitRev, inControl, inEngLim);
+			Date collectDt, String operator, double value, double range, Integer cause, long limitRev, boolean inControl, boolean inEngLim) {
+		this(null, pieceId, prodId, featId, collectDt, operator, value, range, cause, limitRev, inControl, inEngLim);
 	}
 
 	// getter & setter methods
@@ -94,14 +98,30 @@ public class Measurement {
 	}
 
 	public double getValue() {
-		return value;
-	}
+        return value;
+    }
 
-	public void setValue(double value) {
-		this.value = value;
-	}
+    public void setValue(double value) {
+        this.value = value;
+    }
 
-	public long getLimitRev() {
+    public double getRange() {
+        return range;
+    }
+
+    public void setRange(double range) {
+        this.range = range;
+    }
+
+    public Integer getCause() {
+        return cause;
+    }
+
+    public void setCause(Integer cause) {
+        this.cause = cause;
+    }
+
+    public long getLimitRev() {
 		return limitRev;
 	}
 

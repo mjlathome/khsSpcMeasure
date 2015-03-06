@@ -132,8 +132,10 @@ public class ChartFragment extends Fragment {
             // add measured value, if any
             Measurement meas = measDao.getMeasurement(piece.getId(), piece.getProdId(), feat.getFeatId());
             if (meas != null) {
+                Log.d(TAG, "renderChart: meas = " + meas.getValue());
                 seriesVal.add(meas.getValue());
             } else {
+                Log.d(TAG, "renderChart: meas = null");
                 seriesVal.add(null);
             }
 

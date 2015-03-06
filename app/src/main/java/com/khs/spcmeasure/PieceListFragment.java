@@ -207,6 +207,14 @@ public class PieceListFragment extends ListFragment implements AdapterView.OnIte
         mListener = null;
     }
 
+    // refresh the list prior
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        refreshList(mCollStat);
+    }
+
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		// TODO Auto-generated method stub

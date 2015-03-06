@@ -90,8 +90,10 @@ public class FeatureReviewFragment extends ListFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        displayView();
-        refreshList();
+        Log.d(TAG, "onActivityCreated");
+
+        // displayView();
+        // refreshList();
     }
 
     @Override
@@ -111,6 +113,13 @@ public class FeatureReviewFragment extends ListFragment {
         mListener = null;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        displayView();
+        refreshList();
+    }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {

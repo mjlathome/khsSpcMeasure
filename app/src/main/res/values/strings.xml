@@ -21,6 +21,8 @@
     <string name="text_limit_upper">Upper</string>
     <string name="text_limit_lower">Lower</string>
     <string name="text_measurement">Measurement</string>
+    <string name="text_range">Range</string>
+    <string name="text_cause">Cause</string>
     <string name="text_mess_delete_piece">Are you sure you want to Delete Piece created on %s?</string>
     <string name="text_mess_delete_piece_not_open">Cannot delete as Piece create on %s is not OPEN</string>
     <string name="text_mess_piece_deleted">Piece has been Deleted"</string>
@@ -31,14 +33,17 @@
     <string name="text_mess_arguments_invalid">Arguments are invalid.  Contact Administrator.</string>
     <string name="text_mess_prod_id_invalid">Product Id is invalid.  Contact Administrator.</string>
     <string name="text_mess_piece_id_invalid">Piece Id is invalid.  Contact Administrator.</string>
+    <string name="text_meas_not_cleared">Measurement already set.  Please clear and try again</string>
     <string name="text_new_piece">New Piece</string>
     <string name="text_no_data">No Data</string>
     <string name="text_okay">OK</string>
     <string name="text_open">Open</string>
     <string name="text_out_control">Out of Control</string>
+    <string name="text_out_control_choose_cause">Reading is Out of Control.  Please select Cause.</string>
     <string name="text_piece_already_closed">Piece is already closed.</string>
     <string name="text_piece_now_closed">Piece is now Closed.</string>
     <string name="text_product">Product</string>
+    <string name="text_simple_code_imp_comp">Simple Code import complete (%s)</string>
     <string name="text_refresh">Refresh</string>
     <string name="text_warning">Warning</string>
     <string name="text_unknown">Unknown</string>

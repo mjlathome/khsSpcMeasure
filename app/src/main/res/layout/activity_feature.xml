@@ -9,35 +9,55 @@
         android:orientation="vertical" android:padding="4dip"
         android:gravity="center_horizontal"
         android:layout_width="match_parent" android:layout_height="match_parent">
-
     <android.support.v4.view.ViewPager
             android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="0px"
             android:layout_weight="1">
-        <TextView
-            android:id="@+id/txtProdName"
-            style="?android:attr/textAppearanceMedium"
+        <TextView android:id="@+id/txtProdName"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_small"
+            android:gravity="top"
+            android:text="@string/text_product"
+            android:textSize="@dimen/text_medium"
+            android:textStyle="bold" />
+        <TextView android:id="@+id/txtCollectDt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/text_product" />
+            android:paddingTop="@dimen/margin_small"
+            android:text="@string/text_collect_dt"
+            android:textSize="@dimen/text_medium"
+            android:textStyle="bold" />
+        <TextView android:id="@+id/txtCollStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_open"
+            android:textSize="@dimen/text_medium"
+            android:textStyle="bold" />
         <android.support.v4.view.PagerTabStrip
             android:id="@+id/pagerTabStrip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="top" />
     </android.support.v4.view.ViewPager>
-
-    <LinearLayout android:orientation="horizontal"
-            android:gravity="center" android:measureWithLargestChild="true"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_weight="0">
-        <Button android:id="@+id/goto_first"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:measureWithLargestChild="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0" >
+        <Button
+            android:id="@+id/goto_first"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/first">
         </Button>
-        <Button android:id="@+id/goto_last"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
+        <Button
+            android:id="@+id/goto_last"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/last">
         </Button>
     </LinearLayout>

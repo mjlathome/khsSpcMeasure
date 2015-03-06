@@ -32,9 +32,11 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <service android:name=".SylvacBleService" />
         <activity
             android:name=".SetupListActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -42,48 +44,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".old.MainActivity"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
             android:name=".SetupImportActivity"
             android:label="@string/title_activity_import_setup"
+            android:launchMode="singleTop"
             android:parentActivityName=".SetupListActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".SetupListActivity" />
         </activity>
         <activity
-            android:name=".old.ImportSetupActivity"
-            android:label="@string/title_activity_import_setup"
-            android:parentActivityName=".old.MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".old.MainActivity" />
-        </activity>
-        <activity
             android:name=".MntSetupActivity"
             android:label="@string/title_activity_mnt_setup" >
         </activity>
         <activity
-            android:name=".MeasurementListActivity"
-            android:label="@string/title_measurement_list"
-            android:parentActivityName=".old.PieceListActivity" >
-        </activity>
-        <activity
-            android:name=".MeasurementDetailActivity"
-            android:label="@string/title_measurement_detail"
-            android:parentActivityName=".MeasurementListActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.khs.spcmeasure.MeasurementListActivity" />
-        </activity>
-
-        <service android:name=".SylvacBleService" />
-
-        <activity
             android:name=".PieceListActivity"
             android:label="@string/title_activity_piece_list"
+            android:launchMode="singleTop"
             android:parentActivityName=".SetupListActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -92,6 +68,7 @@
         <activity
             android:name=".FeatureReviewActivity"
             android:label="@string/title_activity_feature_review"
+            android:launchMode="singleTop"
             android:parentActivityName=".PieceListActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -100,6 +77,7 @@
         <activity
             android:name=".FeatureActivity"
             android:label="@string/title_activity_feature"
+            android:launchMode="singleTop"
             android:parentActivityName=".FeatureReviewActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

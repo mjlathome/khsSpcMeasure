@@ -30,6 +30,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+// captures new piece details and launches measurement activity
 public class PieceDialogFragment extends DialogFragment implements OnClickListener{
 
 	private Long mProdId;

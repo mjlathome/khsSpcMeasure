@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.khs.spcmeasure.tasks.DeleteSetupTask;
+import com.khs.spcmeasure.tasks.ImportSimpleCodeTask;
 
 public class SetupListActivity extends Activity implements SetupListFragment.OnSetupListListener, DeleteSetupTask.OnDeleteSetupListener {
     private static final String TAG = "SetupListActivity";
@@ -27,6 +28,9 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
 
         // change title
         this.setTitle(getString(R.string.title_activity_setup_list));
+
+        // import Action Cause Simple Codes
+        new ImportSimpleCodeTask(this).execute(ImportSimpleCodeTask.TYPE_ACTION_CAUSE);
     }
 
     @Override

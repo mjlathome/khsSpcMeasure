@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,6 +43,9 @@ public class FeatureReviewActivity extends Activity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feature_review);
+
+        // show the Up button in the action bar.
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         // extract piece id from intent; exit if not found
         Bundle args = getIntent().getExtras();
@@ -86,6 +90,10 @@ public class FeatureReviewActivity extends Activity implements
         int id = item.getItemId();
 
         switch(id) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                Log.d(TAG, "Home");
+                return true;
             case R.id.mnuClosePiece:
                 closePiece();
                 return true;
