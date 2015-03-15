@@ -39,7 +39,7 @@
     <string name="text_okay">OK</string>
     <string name="text_open">Open</string>
     <string name="text_out_control">Out of Control</string>
-    <string name="text_out_control_choose_cause">Reading is Out of Control.  Please select Cause.</string>
+    <string name="text_out_control_select_cause">Out of Control - Select Cause</string>
     <string name="text_piece_already_closed">Piece is already closed.</string>
     <string name="text_piece_now_closed">Piece is now Closed.</string>
     <string name="text_product">Product</string>

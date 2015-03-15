@@ -12,22 +12,29 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.khs.spcmeasure.dao.FeatureDao;
+import com.khs.spcmeasure.dao.MeasurementDao;
+import com.khs.spcmeasure.dao.PieceDao;
 import com.khs.spcmeasure.entity.Feature;
 import com.khs.spcmeasure.entity.Limits;
 import com.khs.spcmeasure.entity.Measurement;
 import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.entity.Product;
 import com.khs.spcmeasure.library.AlertUtils;
+import com.khs.spcmeasure.library.CursorAdapterUtils;
 import com.khs.spcmeasure.library.LimitType;
 import com.khs.spcmeasure.tasks.ImportSimpleCodeTask;
 
+import java.text.DecimalFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * A fragment representing a single Measurement detail screen. This fragment is
@@ -40,7 +47,6 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 
 	// id's
 	private Long mPieceId;
-	private Long mProdId;
 	private Long mFeatId;
 
 	// data
@@ -68,8 +74,14 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 
     // spinner interface calls
     @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        Log.d(TAG, "onItemSelected: i = " + i + "; l = " + l);
+    public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
+        Log.d(TAG, "onItemSelected: pos = " + pos + "; id = " + id);
+
+        if (mMeasurement != null && mMeasurement.getCause() != id) {
+            mMeasurement.setCause(id);
+            saveMeasurement(mMeasurement);
+        }
+
     }
 
     @Override
@@ -282,6 +294,7 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
                 return false;
             }
 
+            // TODO move to Business Task layer
 			// determine whether value is in-control
 			inControl = isInLimit(mLimitCl, value);
 			
@@ -305,16 +318,19 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 		// update display
 		displayMeasurement();
 
-        // navigate to next measurement if in control
-		if (inControl == true) {
-			// TODO implement interface for this?
-			// navigate to the next feature automatically as reading was good
-            FeatureActivity featAct = (FeatureActivity) getActivity();
-            featAct.getNext();
-		} else {
-            AlertUtils.alertDialogShow(getActivity(), getString(R.string.text_warning), getString(R.string.text_out_control_choose_cause));
+        if (mMeasurement != null) {
+            if (mMeasurement.isInControl()) {
+                // TODO implement interface for this?
+                // navigate to next measurement if in control
+                FeatureActivity featAct = (FeatureActivity) getActivity();
+                featAct.getNext();
+            } else {
+                // prompt for cause
+                // AlertUtils.alertDialogShow(getActivity(), getString(R.string.text_warning), getString(R.string.text_out_control_choose_cause));
+                mSpnMeasCause.performClick();
+            }
         }
-		
+
 		return success;
 	}
 	
@@ -332,7 +348,7 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 		
 		return d;	
 	}
-		
+
 //	public void setBleService(SylvacBleService serv) {
 //		mBleService = serv;
 //	}
@@ -533,15 +549,41 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 
     // display Measurement layout views
 	private void displayMeasurement() {
+        DecimalFormat df = new DecimalFormat("#.000");
+        Integer pos = 0;
+
 		if (mMeasurement != null) {
 			Log.d(TAG, "dispMeas - isInCtrl = " + mMeasurement.isInControl());
 			
-			mTxtMeasValue.setText(Double.toString(mMeasurement.getValue()));
+			// mTxtMeasValue.setText(Double.toString(mMeasurement.getValue()));
+            // mTxtMeasRange.setText(Double.toString(mMeasurement.getRange()));
+            mTxtMeasValue.setText(df.format(mMeasurement.getValue()));
+            mTxtMeasRange.setText(df.format(mMeasurement.getRange()));
 			mImgInControl.setImageResource(mMeasurement.isInControl() ? R.drawable.ic_meas_in_control : R.drawable.ic_meas_out_control);
+
+            // display cause
+            if (mMeasurement.getCause() != null) {
+                pos = CursorAdapterUtils.getPosForId((CursorAdapter) mSpnMeasCause.getAdapter(), mMeasurement.getCause());
+//                SimpleCursorAdapter adapter = (SimpleCursorAdapter) mSpnMeasCause.getAdapter();
+//                for (int pos = 0; pos < adapter.getCount(); pos++) {
+//                    if (adapter.getItemId(pos) == mMeasurement.getCause()) {
+//                        mSpnMeasCause.setSelection(pos);
+//                    }
+//                }
+            }
+
+            Log.d(TAG, "Spinner: count = " + mSpnMeasCause.getCount() + "; pos = " + pos + "; cause = " + mMeasurement.getCause());
+            if (pos == null || pos < 0 || pos >= mSpnMeasCause.getCount()) {
+                pos = 0;
+            }
+            mSpnMeasCause.setSelection(pos);
             mSpnMeasCause.setVisibility(mMeasurement.isInControl() ? View.INVISIBLE : View.VISIBLE);
+
 		} else {
 			mTxtMeasValue.setText("");
+            mTxtMeasRange.setText("");
             mImgInControl.setImageResource(R.drawable.ic_meas_unknown);
+            mSpnMeasCause.setSelection(0);
             mSpnMeasCause.setVisibility(View.INVISIBLE);
 		}			
 
@@ -549,27 +591,41 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 	}	
 
 	// create Measurement object
-	private Measurement createMeasurement(Double value) {		
+	private Measurement createMeasurement(Double value) {
+        // calculate cause, use first entry in spinner if out-of-control
+        boolean inCtrl = isInLimit(mLimitCl, value);
+        Long cause = (inCtrl? null : mSpnMeasCause.getAdapter().getItemId(0));   // use first entry in spinner if out-of-control
+
+        Log.d(TAG, "createMeas: prodId = " + mPiece.getProdId());
+
 		Measurement meas = new Measurement(mPieceId, mPiece.getProdId(), mFeatId, 
 				new Date(), // TODO is this required? was: mPiece.getCollectDt() 
 				mPiece.getOperator(),	// TODO needs to be current user, not the one who created the piece?  
-				value, 0.0, 0, mFeature.getLimitRev(),
-				isInLimit(mLimitCl, value), isInLimit(mLimitEng, value));  
+				value,
+                calcRange(mPiece.getProdId(), mFeatId, mPiece.getCollectDt(), value),
+                cause,
+                mFeature.getLimitRev(),
+				inCtrl,
+                isInLimit(mLimitEng, value));
 		
 		return meas;
 	}
 	
 	// update Measurement object
 	private boolean updateMeasurement(Double value) {
-		boolean success = false;
-		
+        boolean success = false;
+
+        // calculate cause, use first entry in spinner if out-of-control
+        boolean inCtrl = isInLimit(mLimitCl, value);
+        Long cause = (inCtrl? null : mSpnMeasCause.getAdapter().getItemId(0));   // use first entry in spinner if out-of-control
+
 		if (mMeasurement != null) {
 			mMeasurement.setCollectDt(new Date());	// TODO is actual dt collected for measurement required?
 			mMeasurement.setOperator(mPiece.getOperator());	// TODO should this be from the actual logged in user
 			mMeasurement.setValue(value);
-            mMeasurement.setRange(0.0);
-            mMeasurement.setCause(0);
-			mMeasurement.setInControl(isInLimit(mLimitCl, value));
+            mMeasurement.setRange(calcRange(mPiece.getProdId(), mFeatId, mPiece.getCollectDt(), value));
+            mMeasurement.setCause(cause);
+			mMeasurement.setInControl(inCtrl);
 			mMeasurement.setInEngLim(isInLimit(mLimitEng, value));
 			
 			success = true;
@@ -591,5 +647,32 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 		}
 		return inLim;		
 	}
-		
+
+    // calculate the range for Feature between the current and previous value
+    private double calcRange(long prodId, long featId, Date collDate, double value) {
+        double range = 0.0;
+
+        // create Dao's
+        PieceDao pieceDao = new PieceDao(getActivity());
+        MeasurementDao measDao = new MeasurementDao(getActivity());
+
+        // extract previous list of Pieces, if any
+        // order is already descending from the db query
+        List<Piece> pieceList = pieceDao.getPrevPieces(prodId, collDate);
+        Log.d(TAG, "calcRange: pieceList size = " + pieceList.size());
+
+        // calculate range using the previous Measurement
+        for (Piece piece : pieceList) {
+            Log.d(TAG, "calcRange: Prev Piece Date = " + piece.getCollectDt());
+            Measurement prevMeas = measDao.getMeasurement(piece.getId(), piece.getProdId(), featId);
+            if (prevMeas != null) {
+                Log.d(TAG, "calcRange: value = " + value + "; Prev Meas = " + prevMeas.getValue());
+
+                range = value - prevMeas.getValue();
+                break;
+            }
+        }
+
+        return range;
+    }
 }

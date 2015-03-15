@@ -19,6 +19,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.Date;
+
+
+// handles Sqlite interaction
+// TODO handle entity specific Table and Field values in Dao
+// TODO entity creation within Dao
 public class DBAdapter {
 	
 	private static final String TAG = "DbAdapter";
@@ -500,7 +506,7 @@ public class DBAdapter {
 		// insert row
 		return db.insert(TABLE_PIECE, null, pieceToValues(piece));
 	};
-    	
+
 	// get all pieces by prodId
 	public Cursor getAllPieces(long prodId) {
 		// select all query
@@ -560,8 +566,21 @@ public class DBAdapter {
 		}
 		
 		return c;
-	};	
-	
+	};
+
+    // get previous Pieces by prodId and collect date
+    public Cursor getPrevPieces(long prodId, Date collDate) {
+        // select all query
+        String selectQuery = "SELECT * FROM " + TABLE_PIECE + " WHERE " +
+                KEY_PROD_ID + " = " + Long.toString(prodId) + " AND " +
+                "datetime(" + KEY_COLLECT_DATETIME + ") < datetime('" + DateTimeUtils.getDateTimeStr(collDate) + "')" +
+                " ORDER BY datetime(" + KEY_COLLECT_DATETIME + ") DESC";
+
+        Log.d(TAG, "getPrevPieces: query = " + selectQuery);
+
+        return db.rawQuery(selectQuery, null);
+    };
+
 	// update single piece
 	public boolean updatePiece(Piece piece) {	
 		Log.d("DEBUG update Piece prodId; sgId; pieceNum; collDT = ", 
@@ -672,15 +691,16 @@ public class DBAdapter {
 		
 		return c;
 	};
-	
+
 	// update single measurement
 	public boolean updateMeasurement(Measurement meas) {	
-		Log.d(TAG, "updateMeas pieceId; featId; value; inCtrl = " + 
-				String.valueOf(meas.getPieceId()) 	+ "; " + 
-				String.valueOf(meas.getFeatId()) 	+ "; " +
-				String.valueOf(meas.getValue())     + "; " +
-				meas.isInControl());
-		
+		Log.d(TAG, "updateMeas pieceId = " + meas.getPieceId() +
+                "; featId = " + meas.getFeatId() +
+                "; value = " + meas.getValue() +
+                "; range = " + meas.getRange() +
+                "; inCtrl = " + meas.isInControl() +
+                "; cause = " + meas.getCause());
+
 		return db.update(TABLE_MEASUREMENT, measurementToValues(meas), 
 				KEY_ROWID + "=" + meas.getId(), null) > 0; 
 	};	
@@ -703,7 +723,7 @@ public class DBAdapter {
 				c.getString(c.getColumnIndex(KEY_OPERATOR)),
 				c.getDouble(c.getColumnIndex(KEY_VALUE)),
                 c.getDouble(c.getColumnIndex(KEY_RANGE)),
-                c.getInt(c.getColumnIndex(KEY_CAUSE)),
+                c.getLong(c.getColumnIndex(KEY_CAUSE)),
 				c.getLong(c.getColumnIndex(KEY_LIMIT_REV)),
 				intToBool(c.getInt(c.getColumnIndex(KEY_IN_CONTROL))),
 				intToBool(c.getInt(c.getColumnIndex(KEY_IN_ENG_LIM))));							
@@ -722,7 +742,7 @@ public class DBAdapter {
 			values.put(KEY_ROWID, meas.getId());	
 		}		
 		
-		Log.d(TAG, "meaToVal - InCtrl = " + meas.isInControl());
+		Log.d(TAG, "meaToVal - InCtrl = " + meas.isInControl() + "; cause = " + meas.getCause());
 		
 		values.put(KEY_PIECE_ID, meas.getPieceId());
 		values.put(KEY_PROD_ID, meas.getProdId());

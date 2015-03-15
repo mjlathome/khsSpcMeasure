@@ -228,7 +228,7 @@ public final class R {
         public static final int text_okay=0x7f060030;
         public static final int text_open=0x7f060031;
         public static final int text_out_control=0x7f060032;
-        public static final int text_out_control_choose_cause=0x7f060033;
+        public static final int text_out_control_select_cause=0x7f060033;
         public static final int text_piece_already_closed=0x7f060034;
         public static final int text_piece_now_closed=0x7f060035;
         public static final int text_product=0x7f060036;

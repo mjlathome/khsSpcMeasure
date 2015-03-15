@@ -74,7 +74,8 @@
         style="?android:attr/textAppearanceMedium"
         android:layout_width="fill_parent"
         android:layout_height="40dp"
-        android:text="@string/text_cause" />
+        android:prompt="@string/text_out_control_select_cause" 
+        android:spinnerMode="dialog" />
 
     <LinearLayout
         android:orientation="horizontal"

@@ -8,6 +8,7 @@ import com.khs.spcmeasure.DBAdapter;
 import com.khs.spcmeasure.entity.Piece;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class PieceDao {
@@ -59,6 +60,34 @@ public class PieceDao {
 
             // query the database
             Cursor cPiece = db.getAllPieces(prodId);
+
+            // iterate the results
+            if (cPiece.moveToFirst()) {
+                do {
+                    // add feature to the list
+                    pieceList.add(db.cursorToPiece(cPiece));
+                } while(cPiece.moveToNext());
+            }
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.close();
+        }
+
+        return pieceList;
+    }
+
+    // list previous Pieces for provided product id and collect date
+    public List<Piece> getPrevPieces(long prodId, Date collDate) {
+        List pieceList = new ArrayList();
+
+        // DBAdapter db = new DBAdapter(getActivity());
+        try {
+            db.open();
+
+            // query the database
+            Cursor cPiece = db.getPrevPieces(prodId, collDate);
 
             // iterate the results
             if (cPiece.moveToFirst()) {

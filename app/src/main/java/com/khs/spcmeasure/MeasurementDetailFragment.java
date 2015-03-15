@@ -522,7 +522,7 @@ public class MeasurementDetailFragment extends Fragment {
 		Measurement meas = new Measurement(mPieceId, mPiece.getProdId(), mFeatId, 
 				new Date(), // TODO is this required? was: mPiece.getCollectDt() 
 				mPiece.getOperator(),	// TODO needs to be current user, not the one who created the piece?  
-				value, 0.0, 0, mFeature.getLimitRev(),
+				value, 0.0, null, mFeature.getLimitRev(),
 				isInLimit(mLimitCl, value), isInLimit(mLimitEng, value));  
 		
 		return meas;
@@ -537,7 +537,6 @@ public class MeasurementDetailFragment extends Fragment {
 			mMeasurement.setOperator(mPiece.getOperator());	// TODO should this be from the actual logged in user
 			mMeasurement.setValue(value);
             mMeasurement.setRange(0.0);
-            mMeasurement.setCause(0);
 			mMeasurement.setInControl(isInLimit(mLimitCl, value));
 			mMeasurement.setInEngLim(isInLimit(mLimitEng, value));
 			
