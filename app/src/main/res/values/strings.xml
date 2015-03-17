@@ -62,6 +62,14 @@
     <string name="text_ble_set_zero">Set Zero</string>
     <string name="text_ble_get_battery">Get Battery</string>
 
+    <!-- label strings -->
+    <string name="label_ucl">UCL:</string>
+    <string name="label_lcl">LCL:</string>
+    <string name="label_value">Value:</string>
+    <string name="label_range">Range:</string>
+    <string name="label_cause">Cause:</string>
+
+    <!-- title strings -->
     <string name="title_activity_import_setup">Import Setup</string>
     <string name="title_setup_list">Setup</string>
     <string name="title_setup_detail">Setup Detail</string>

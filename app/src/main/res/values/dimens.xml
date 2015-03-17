@@ -5,7 +5,9 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <!-- custom margins -->
-    <dimen name="margin_small">8sp</dimen>
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_large">16dp</dimen>
+    <dimen name="margin_label">50dp</dimen>
 
     <!-- custom text sizes entered base upon:
     http://stackoverflow.com/questions/5611411/what-is-the-default-text-size-on-android

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="fieldHeader">#D7D7D7</color>
+    <color name="inControl">#FFF467</color>
+    <color name="outControl">#ACD372</color>
+</resources>

@@ -29,6 +29,7 @@ import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.entity.Product;
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.CursorAdapterUtils;
+import com.khs.spcmeasure.library.DateTimeUtils;
 import com.khs.spcmeasure.library.LimitType;
 import com.khs.spcmeasure.tasks.ImportSimpleCodeTask;
 
@@ -529,7 +530,7 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 	
 	// display Piece layout views 
 	private void displayPiece() {
-		mTxtCollDt.setText(mPiece.getCollectDt().toString());
+		mTxtCollDt.setText(DateTimeUtils.getDateTimeStr(mPiece.getCollectDt()));
 		mTxtCollSt.setText(mPiece.getStatus().name());
 		return;
 	}	

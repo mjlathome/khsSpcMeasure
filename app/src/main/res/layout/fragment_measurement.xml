@@ -1,79 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="@dimen/margin_small"
-    android:gravity="start"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.khs.spcmeasure.MeasurementFragment">
 
     <TextView
         android:id="@+id/txtProdName"
-        style="?android:attr/textAppearanceMedium"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/text_product" />
+        android:layout_marginStart="@dimen/margin_small"
+        android:gravity="top"
+        android:text="@string/text_product"
+        android:textSize="@dimen/text_medium"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/txtCollDt"
-        style="?android:attr/textAppearanceMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/text_collect_dt" />
+        android:layout_below="@id/txtProdName"
+        android:layout_alignStart="@id/txtProdName"
+        android:paddingTop="@dimen/margin_small"
+        android:text="@string/text_collect_dt"
+        android:textSize="@dimen/text_medium"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/txtCollSt"
-        style="?android:attr/textAppearanceMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/text_collect_status" />
+        android:layout_alignBottom="@id/txtCollDt"
+        android:layout_alignEnd="@id/txtProdName"
+        android:text="@string/text_collect_status"
+        android:textSize="@dimen/text_medium"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/txtFeatName"
-        style="?android:attr/textAppearanceMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/text_feature" />
+        android:layout_below="@id/txtCollDt"
+        android:layout_alignStart="@id/txtCollDt"
+        android:paddingTop="@dimen/margin_small"
+        android:text="@string/text_feature"
+        android:textSize="@dimen/text_large"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/lblLimUpper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtFeatName"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="@dimen/margin_label"
+        android:layout_marginTop="@dimen/margin_large"
+        android:labelFor="@+id/txtLimUpper"
+        android:text="@string/label_ucl"
+        android:textSize="@dimen/text_medium"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/txtLimUpper"
-        style="?android:attr/textAppearanceMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/text_limit_upper" />
+        android:layout_alignTop="@id/lblLimUpper"
+        android:layout_toEndOf="@id/lblLimUpper"
+        android:layout_marginStart="@dimen/margin_small"
+        android:text="@string/text_limit_upper"
+        android:textSize="@dimen/text_medium" />
+
+    <TextView
+        android:id="@+id/lblLimLower"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lblLimUpper"
+        android:layout_alignEnd="@id/lblLimUpper"
+        android:layout_marginTop="@dimen/margin_small"
+        android:labelFor="@+id/txtLimLower"
+        android:text="@string/label_lcl"
+        android:textSize="@dimen/text_medium"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/txtLimLower"
-        style="?android:attr/textAppearanceMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/text_limit_lower" />
+        android:layout_alignTop="@id/lblLimLower"
+        android:layout_toEndOf="@id/lblLimLower"
+        android:layout_marginStart="@dimen/margin_small"
+        android:text="@string/text_limit_lower"
+        android:textSize="@dimen/text_medium" />
+
+    <TextView
+        android:id="@+id/lblMeasValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lblLimLower"
+        android:layout_alignEnd="@id/lblLimLower"
+        android:layout_marginTop="@dimen/margin_small"
+        android:labelFor="@+id/txtMeasValue"
+        android:text="@string/label_value"
+        android:textSize="@dimen/text_medium"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/txtMeasValue"
-        style="?android:attr/textAppearanceMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/text_measurement" />
+        android:layout_alignTop="@id/lblMeasValue"
+        android:layout_toEndOf="@id/lblMeasValue"
+        android:layout_marginStart="@dimen/margin_small"
+        android:text="@string/text_measurement"
+        android:textSize="@dimen/text_medium" />
 
     <ImageView
         android:id="@+id/imgInControl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignTop="@id/txtMeasValue"
+        android:layout_toEndOf="@id/txtMeasValue"
+        android:layout_marginStart="@dimen/margin_small"
         android:contentDescription="@string/text_in_control"
         android:src="@drawable/ic_meas_unknown" />
 
     <TextView
-        android:id="@+id/txtMeasRange"
-        style="?android:attr/textAppearanceMedium"
+        android:id="@+id/lblMeasRange"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/text_range" />
+        android:layout_below="@id/imgInControl"
+        android:layout_alignEnd="@id/lblMeasValue"
+        android:layout_marginTop="@dimen/margin_small"
+        android:labelFor="@+id/txtMeasRange"
+        android:text="@string/label_range"
+        android:textSize="@dimen/text_medium"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txtMeasRange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/lblMeasRange"
+        android:layout_toEndOf="@id/lblMeasRange"
+        android:layout_marginStart="@dimen/margin_small"
+        android:text="@string/text_range"
+        android:textSize="@dimen/text_medium" />
+
+    <TextView
+        android:id="@+id/lblMeasCause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lblMeasRange"
+        android:layout_alignEnd="@id/lblMeasRange"
+        android:paddingTop="@dimen/margin_small"
+        android:labelFor="@+id/spnMeasCause"
+        android:text="@string/label_cause"
+        android:textSize="@dimen/text_medium"
+        android:textStyle="bold" />
 
     <Spinner
         android:id="@+id/spnMeasCause"
         style="?android:attr/textAppearanceMedium"
         android:layout_width="fill_parent"
         android:layout_height="40dp"
+        android:layout_below="@id/lblMeasCause"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginStart="@dimen/margin_small"
         android:prompt="@string/text_out_control_select_cause" 
         android:spinnerMode="dialog" />
 
@@ -83,7 +180,8 @@
         android:measureWithLargestChild="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0" >
+        android:layout_weight="0"
+        android:layout_alignParentBottom="true" >
         <Button
             android:id="@+id/btnGetValue"
             android:layout_width="wrap_content"
@@ -100,4 +198,4 @@
         </Button>
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

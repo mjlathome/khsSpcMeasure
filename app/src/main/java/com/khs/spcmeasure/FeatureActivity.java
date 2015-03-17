@@ -482,29 +482,29 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
         // TODO error trap when required data not available
 
-        // display Piece views
-        if (mPiece != null) {
-            // extract views
-            TextView txtProdName = (TextView)findViewById(R.id.txtProdName);
-            TextView txtCollectDt = (TextView)findViewById(R.id.txtCollectDt);
-            TextView txtCollStatus = (TextView)findViewById(R.id.txtCollStatus);
-
-            // configure as decorations
-            ((ViewPager.LayoutParams)txtProdName.getLayoutParams()).isDecor = true;
-            ((ViewPager.LayoutParams)txtCollectDt.getLayoutParams()).isDecor = true;
-            ((ViewPager.LayoutParams)txtCollStatus.getLayoutParams()).isDecor = true;
-
-            // set view data
-            txtCollectDt.setText(DateTimeUtils.getDateTimeStr(mPiece.getCollectDt()));
-            txtCollStatus.setText(mPiece.getStatus().toString());
-
-            // show the Product Name in the TextView
-            DBAdapter db = new DBAdapter(this);
-            db.open();
-            Cursor c = db.getProduct(mPiece.getProdId());
-            txtProdName.setText(c.getString(c.getColumnIndex(DBAdapter.KEY_NAME)));
-            db.close();
-        }
+//        // display Piece views
+//        if (mPiece != null) {
+//            // extract views
+//            TextView txtProdName = (TextView)findViewById(R.id.txtProdName);
+//            TextView txtCollectDt = (TextView)findViewById(R.id.txtCollectDt);
+//            TextView txtCollStatus = (TextView)findViewById(R.id.txtCollStatus);
+//
+//            // configure as decorations
+//            ((ViewPager.LayoutParams)txtProdName.getLayoutParams()).isDecor = true;
+//            ((ViewPager.LayoutParams)txtCollectDt.getLayoutParams()).isDecor = true;
+//            ((ViewPager.LayoutParams)txtCollStatus.getLayoutParams()).isDecor = true;
+//
+//            // set view data
+//            txtCollectDt.setText(DateTimeUtils.getDateTimeStr(mPiece.getCollectDt()));
+//            txtCollStatus.setText(mPiece.getStatus().toString());
+//
+//            // show the Product Name in the TextView
+//            DBAdapter db = new DBAdapter(this);
+//            db.open();
+//            Cursor c = db.getProduct(mPiece.getProdId());
+//            txtProdName.setText(c.getString(c.getColumnIndex(DBAdapter.KEY_NAME)));
+//            db.close();
+//        }
     }
 
     // set measured value
