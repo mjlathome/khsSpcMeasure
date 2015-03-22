@@ -20,8 +20,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.khs.spcmeasure.dao.FeatureDao;
+import com.khs.spcmeasure.dao.LimitsDao;
 import com.khs.spcmeasure.dao.MeasurementDao;
 import com.khs.spcmeasure.dao.PieceDao;
+import com.khs.spcmeasure.dao.ProductDao;
 import com.khs.spcmeasure.entity.Feature;
 import com.khs.spcmeasure.entity.Limits;
 import com.khs.spcmeasure.entity.Measurement;
@@ -70,10 +72,9 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
     private Spinner mSpnMeasCause;
     private ImageView mImgInControl;
 
-	// services
-//	private SylvacBleService mBleService;
+    //region spinner interface calls
 
-    // spinner interface calls
+    // handle cause selection
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
         Log.d(TAG, "onItemSelected: pos = " + pos + "; id = " + id);
@@ -89,6 +90,7 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
     public void onNothingSelected(AdapterView<?> adapterView) {
 
     }
+    //endregion
 
     /**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -232,13 +234,21 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 //			MeasurementListActivity measListAct = (MeasurementListActivity) getActivity();
 //			mBleService = measListAct.getBleService();
 
+            // TODO move Dao to member variable
+            // instantiate Dao's
+            PieceDao pieceDao = new PieceDao(getActivity());
+            ProductDao prodDao = new ProductDao(getActivity());
+            FeatureDao featDao = new FeatureDao(getActivity());
+            LimitsDao limDao = new LimitsDao(getActivity());
+            MeasurementDao measDao = new MeasurementDao(getActivity());
+
             // extract on-screen data
-            mPiece = findPiece(mPieceId);
-            mProduct = findProduct(mPiece.getProdId());
-            mFeature = findFeature(mPiece.getProdId(), mFeatId);
-            mLimitCl  = findLimit(mFeature.getProdId(), mFeature.getFeatId(), mFeature.getLimitRev(), LimitType.CONTROL);
-            mLimitEng = findLimit(mFeature.getProdId(), mFeature.getFeatId(), mFeature.getLimitRev(), LimitType.ENGINEERING);
-            mMeasurement = findMeasurement(mPieceId, mPiece.getProdId(), mFeatId);
+            mPiece = pieceDao.getPiece(mPieceId);
+            mProduct = prodDao.getProduct(mPiece.getProdId());
+            mFeature = featDao.getFeature(mPiece.getProdId(), mFeatId);
+            mLimitCl  = limDao.getLimit(mFeature.getProdId(), mFeature.getFeatId(), mFeature.getLimitRev(), LimitType.CONTROL);
+            mLimitEng = limDao.getLimit(mFeature.getProdId(), mFeature.getFeatId(), mFeature.getLimitRev(), LimitType.ENGINEERING);
+            mMeasurement = measDao.getMeasurement(mPieceId, mPiece.getProdId(), mFeatId);
 
         } catch(Exception e) {
             e.printStackTrace();
@@ -366,112 +376,47 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 //	public void setBleService(SylvacBleService serv) {
 //		mBleService = serv;
 //	}
-	
-	// extracts the piece
-	private Piece findPiece(long pieceId) {
-		Piece piece = null;
-
-		DBAdapter db = new DBAdapter(getActivity());
-		try {		
-			db.open();
-			
-			// get piece
-			Cursor cPiece = db.getPiece(mPieceId);
-			piece = db.cursorToPiece(cPiece);
-			
-		} catch(Exception e) {
-			e.printStackTrace();
-		} finally {
-			db.close();
-		}
-				
-		return piece;
-	}
 
 	// extracts the product
 	private Product findProduct(long prodId) {
 		Product prod = null;
 
 		DBAdapter db = new DBAdapter(getActivity());
-		try {		
+		try {
 			db.open();
-			
+
 			// get product
 			Cursor cProd = db.getProduct(prodId);
 			prod = db.cursorToProduct(cProd);
-			
+
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
 			db.close();
 		}
-				
+
 		return prod;
 	}
-	
+
 	// extracts the feature
 	private Feature findFeature(long prodId, long featId) {
 		Feature feat = null;
 
 		DBAdapter db = new DBAdapter(getActivity());
-		try {		
+		try {
 			db.open();
-			
+
 			// get feature
 			Cursor cFeat = db.getFeature(prodId, featId);
 			feat = db.cursorToFeature(cFeat);
-			
+
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
 			db.close();
 		}
-				
+
 		return feat;
-	}
-	
-	// extracts the limit
-	private Limits findLimit(long prodId, long featId, long rev, LimitType limType) {
-		Limits limit = null;
-
-		DBAdapter db = new DBAdapter(getActivity());
-		try {		
-			db.open();
-			
-			// get limit
-			Cursor cLimit = db.getLimit(prodId, featId, rev, limType);
-			limit = db.cursorToLimit(cLimit);
-			
-		} catch(Exception e) {
-			e.printStackTrace();
-		} finally {
-			db.close();
-		}
-				
-		return limit;
-	}	
-	
-	// extracts the measurement
-	private Measurement findMeasurement(long pieceId, long prodId, long featId) {
-		Measurement meas = null;
-
-		DBAdapter db = new DBAdapter(getActivity());
-		try {		
-			db.open();
-			
-			// get measurement
-			Cursor cMeas = db.getMeasurement(pieceId, prodId, featId);
-			if(cMeas != null && cMeas.getCount() > 0) {
-				meas = db.cursorToMeasurement(cMeas);				
-			}
-				
-		} catch(Exception e) {
-			e.printStackTrace();
-		} finally {
-			db.close();
-		}
-				
-		return meas;
 	}
 
 	// save provided Measurement object into the db

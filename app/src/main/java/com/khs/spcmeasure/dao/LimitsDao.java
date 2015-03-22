@@ -29,18 +29,22 @@ public class LimitsDao {
     // find Limits
     public Limits getLimit(long prodId, long featId, long rev, LimitType limitType) {
         Limits limit = null;
+        Cursor cLimit = null;
 
         // DBAdapter db = new DBAdapter(getActivity());
         try {
             db.open();
 
             // get limit
-            Cursor cLimit = db.getLimit(prodId, featId, rev, limitType);
+            cLimit = db.getLimit(prodId, featId, rev, limitType);
             limit = db.cursorToLimit(cLimit);
 
         } catch(Exception e) {
             e.printStackTrace();
         } finally {
+            if (cLimit != null) {
+                cLimit.close();
+            }
             db.close();
         }
 

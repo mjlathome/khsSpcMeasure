@@ -32,18 +32,22 @@ public class PieceDao {
 		Log.d(TAG, "getPiece id = " + pieceId);
 
         Piece piece = null;
+        Cursor cPiece = null;
 
         // DBAdapter db = new DBAdapter(getActivity());
         try {
             db.open();
 
             // get piece
-            Cursor cPiece = db.getPiece(pieceId);
+            cPiece = db.getPiece(pieceId);
             piece = db.cursorToPiece(cPiece);
 
         } catch(Exception e) {
             e.printStackTrace();
         } finally {
+            if (cPiece != null) {
+                cPiece.close();
+            }
             db.close();
         }
 

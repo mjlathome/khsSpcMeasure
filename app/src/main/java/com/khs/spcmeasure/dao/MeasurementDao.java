@@ -25,13 +25,14 @@ public class MeasurementDao {
     // find Measurement
     public Measurement getMeasurement(long pieceId, long prodId, long featId) {
         Measurement meas = null;
+        Cursor cMeas = null;
 
         // DBAdapter db = new DBAdapter(getActivity());
         try {
             db.open();
 
             // get measurement
-            Cursor cMeas = db.getMeasurement(pieceId, prodId, featId);
+            cMeas = db.getMeasurement(pieceId, prodId, featId);
             if(cMeas != null && cMeas.getCount() > 0) {
                 meas = db.cursorToMeasurement(cMeas);
             }
@@ -39,6 +40,9 @@ public class MeasurementDao {
         } catch(Exception e) {
             e.printStackTrace();
         } finally {
+            if (cMeas != null) {
+                cMeas.close();
+            }
             db.close();
         }
 

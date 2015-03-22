@@ -28,18 +28,22 @@ public class FeatureDao {
     // find Feature
     public Feature getFeature(long prodId, long featId) {
         Feature feat = null;
+        Cursor cFeat = null;
 
         // DBAdapter db = new DBAdapter(getActivity());
         try {
             db.open();
 
             // get feature
-            Cursor cFeat = db.getFeature(prodId, featId);
+            cFeat = db.getFeature(prodId, featId);
             feat = db.cursorToFeature(cFeat);
 
         } catch(Exception e) {
             e.printStackTrace();
         } finally {
+            if (cFeat != null) {
+                cFeat.close();
+            }
             db.close();
         }
 
