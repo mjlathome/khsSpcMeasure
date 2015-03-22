@@ -321,10 +321,23 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 
         if (mMeasurement != null) {
             if (mMeasurement.isInControl()) {
-                // TODO implement interface for this?
+
                 // navigate to next measurement if in control
-                FeatureActivity featAct = (FeatureActivity) getActivity();
-                featAct.getNext();
+                Runnable run = new Runnable() {
+                    @Override
+                    public void run() {
+                        // TODO implement interface for this?
+                        FeatureActivity featAct = (FeatureActivity) getActivity();
+                        featAct.getNext();
+                    }
+                };
+
+                // TODO delay needs to be a user preference
+                getView().postDelayed(run, 3000);
+
+
+//                FeatureActivity featAct = (FeatureActivity) getActivity();
+//                featAct.getNext();
             } else {
                 // prompt for cause
                 // AlertUtils.alertDialogShow(getActivity(), getString(R.string.text_warning), getString(R.string.text_out_control_choose_cause));
@@ -558,6 +571,8 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 			
 			// mTxtMeasValue.setText(Double.toString(mMeasurement.getValue()));
             // mTxtMeasRange.setText(Double.toString(mMeasurement.getRange()));
+            getView().setBackgroundColor(getResources().getColor(mMeasurement.isInControl()? R.color.measInControl : R.color.measOutControl));
+
             mTxtMeasValue.setText(df.format(mMeasurement.getValue()));
             mTxtMeasRange.setText(df.format(mMeasurement.getRange()));
 			mImgInControl.setImageResource(mMeasurement.isInControl() ? R.drawable.ic_meas_in_control : R.drawable.ic_meas_out_control);
@@ -581,6 +596,7 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
             mSpnMeasCause.setVisibility(mMeasurement.isInControl() ? View.INVISIBLE : View.VISIBLE);
 
 		} else {
+            getView().setBackgroundColor(getResources().getColor(android.R.color.background_light));
 			mTxtMeasValue.setText("");
             mTxtMeasRange.setText("");
             mImgInControl.setImageResource(R.drawable.ic_meas_unknown);
