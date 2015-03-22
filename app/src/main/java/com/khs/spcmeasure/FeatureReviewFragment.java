@@ -188,10 +188,7 @@ public class FeatureReviewFragment extends ListFragment {
         Cursor c = db.getAllFeatures(mPiece.getProdId());
         // SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(),
                 // android.R.layout.simple_list_item_activated_1, c,
-        FeatureReviewAdapter adapter = new FeatureReviewAdapter(getActivity(),
-                R.layout.list_row_feature_review, c,
-                new String[] {DBAdapter.KEY_NAME, DBAdapter.KEY_FEAT_ID},
-                new int[] {R.id.txtFeatName, R.id.imgInControl}, 0);
+        FeatureReviewAdapter adapter = new FeatureReviewAdapter(getActivity(), c);
 
         // associate adapter with list view
         setListAdapter(adapter);

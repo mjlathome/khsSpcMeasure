@@ -12,8 +12,8 @@ public final class R {
     }
     public static final class color {
         public static final int fieldHeader=0x7f050000;
-        public static final int inControl=0x7f050001;
-        public static final int outControl=0x7f050002;
+        public static final int measInControl=0x7f050001;
+        public static final int measOutControl=0x7f050002;
     }
     public static final class dimen {
         public static final int activity_horizontal_margin=0x7f060000;
