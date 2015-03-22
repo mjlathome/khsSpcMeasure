@@ -377,48 +377,6 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 //		mBleService = serv;
 //	}
 
-	// extracts the product
-	private Product findProduct(long prodId) {
-		Product prod = null;
-
-		DBAdapter db = new DBAdapter(getActivity());
-		try {
-			db.open();
-
-			// get product
-			Cursor cProd = db.getProduct(prodId);
-			prod = db.cursorToProduct(cProd);
-
-		} catch(Exception e) {
-			e.printStackTrace();
-		} finally {
-			db.close();
-		}
-
-		return prod;
-	}
-
-	// extracts the feature
-	private Feature findFeature(long prodId, long featId) {
-		Feature feat = null;
-
-		DBAdapter db = new DBAdapter(getActivity());
-		try {
-			db.open();
-
-			// get feature
-			Cursor cFeat = db.getFeature(prodId, featId);
-			feat = db.cursorToFeature(cFeat);
-
-		} catch(Exception e) {
-			e.printStackTrace();
-		} finally {
-			db.close();
-		}
-
-		return feat;
-	}
-
 	// save provided Measurement object into the db
 	private boolean saveMeasurement(Measurement meas) {
 		Log.d(TAG, "saveMeas: Inctrl = " +  meas.isInControl());

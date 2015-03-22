@@ -46,7 +46,7 @@ import com.khs.spcmeasure.library.DateTimeUtils;
 import java.util.List;
 
 
-public class FeatureActivity extends FragmentActivity implements ActionBar.OnNavigationListener {
+public class FeatureActivity extends FragmentActivity implements ActionBar.OnNavigationListener, ViewPager.OnPageChangeListener {
 
     final static String TAG = "FeatureActivity";
 
@@ -170,6 +170,30 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         }
     };
 
+
+    //region implement ViewPager OnPageChangeListener interface
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        // extract Feature at the pager position
+        Feature feat = mFeatList.get(position);
+
+        // set feature member variable
+        mFeatId = feat.getId();
+
+        Log.d(TAG, "onPageSelected: mFeatId = " + mFeatId);
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+    //endregion
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -220,14 +244,15 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
         mPager = (ViewPager)findViewById(R.id.pager);
         mPager.setAdapter(mAdapter);
+        mPager.setOnPageChangeListener(this);
 
         final PagerTabStrip pagerTitle = (PagerTabStrip) findViewById(R.id.pagerTabStrip);
         pagerTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
-        pagerTitle.setTextColor(Color.CYAN);
+        pagerTitle.setTextColor(Color.WHITE);
         pagerTitle.setNonPrimaryAlpha(0.64f);
         pagerTitle.setTextSpacing(4);
         pagerTitle.setBackgroundColor(Color.DKGRAY);
-        pagerTitle.setTabIndicatorColor(Color.YELLOW);
+        pagerTitle.setTabIndicatorColor(Color.CYAN);
         pagerTitle.setPadding(0, 10, 0, 0);
 
         // Watch for button clicks.
@@ -305,6 +330,8 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
     protected void onStart() {
         super.onStart();
 
+        Log.d(TAG, "onStart");
+
         // bind to BLE service
         // for Open Pieces only to save battery power
         if (mPiece.getStatus() == CollectStatus.OPEN) {
@@ -316,6 +343,8 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
     @Override
     protected void onStop() {
         super.onStop();
+
+        Log.d(TAG, "onStop");
 
         // unbind from Ble service
         unbindBleService();
@@ -330,9 +359,18 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         }
     }
 
+    // save the current Activity state
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        // Serialize the current dropdown position.
+        Log.d(TAG, "onSaveInstState: FeatId = " + mFeatId);
+
+        // serialize the Piece
+        outState.putLong(DBAdapter.KEY_PIECE_ID, mPieceId);
+
+        // serialize the Feature
+        outState.putLong(DBAdapter.KEY_FEAT_ID, mFeatId);
+
+        // serialize the current dropdown position.
         outState.putInt(STATE_SELECTED_NAVIGATION_ITEM,
                 getActionBar().getSelectedNavigationIndex());
     }
@@ -385,6 +423,16 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         return true;
     }
 
+    // handle Activity destroy
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // close down services
+        Intent intent = new Intent(this, SylvacBleService.class);
+        stopService(intent);
+    }
+
     // extracts arguments from provided Bundle
     private void getArguments(Bundle args) {
         // extract piece id
@@ -394,7 +442,13 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
             }
             if (args.containsKey(DBAdapter.KEY_FEAT_ID)) {
                 mFeatId = args.getLong(DBAdapter.KEY_FEAT_ID);
+                Log.d(TAG, "getArguments: FeatId = " + mFeatId);
             }
+
+//            if (args.containsKey(STATE_SELECTED_NAVIGATION_ITEM)) {
+//                getActionBar().setSelectedNavigationItem(
+//                        args.getInt(STATE_SELECTED_NAVIGATION_ITEM));
+//            }
         }
     }
 
@@ -570,7 +624,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
             // extract Feature at the pager position
             Feature feat = mFeatList.get(position);
-            mFeatId = feat.getId();
+            // mFeatId = feat.getId();
 
             Bundle args;
 
