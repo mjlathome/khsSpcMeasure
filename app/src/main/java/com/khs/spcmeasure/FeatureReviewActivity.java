@@ -21,7 +21,7 @@ import com.khs.spcmeasure.library.CollectStatus;
 // TODO handle Action Bar menu Up button - see Stack Overflow
 
 public class FeatureReviewActivity extends Activity implements
-        FeatureReviewFragment.OnFragmentInteractionListener, FeatureReviewAdapter.OnFeatureReviewAdapter {
+        FeatureReviewFragment.OnFragmentInteractionListener {
 
     private static final String TAG = "FeatureReviewActivity";
 
@@ -31,12 +31,6 @@ public class FeatureReviewActivity extends Activity implements
     public void onFragmentInteraction(long featId) {
         Log.d(TAG, "featId = " + featId);
         selectFeature(featId);
-    }
-
-    // FeatureReviewAdapter interface
-    @Override
-    public Long onGetPieceId() {
-        return mPieceId;
     }
 
     @Override

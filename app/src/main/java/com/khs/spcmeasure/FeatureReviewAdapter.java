@@ -23,24 +23,18 @@ public class FeatureReviewAdapter extends CursorAdapter {
     private static final String TAG = "FeatureReviewCurAdapt";
 
     private Context mContext;
-    private OnFeatureReviewAdapter mFeatRevAdapt;
+    private Long mPieceId;
     private PieceDao mPieceDao;
     private MeasurementDao mMeasurementDao;
 
     // constructor
-    public FeatureReviewAdapter(Context context, Cursor c) {
+    public FeatureReviewAdapter(Context context, Cursor c, Long pieceId) {
         super(context, c, 0);
 
         mContext = context;
+        mPieceId = pieceId;
         mPieceDao = new PieceDao(context);
         mMeasurementDao = new MeasurementDao(context);
-
-        try {
-            mFeatRevAdapt = (OnFeatureReviewAdapter) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(mFeatRevAdapt.toString()
-                    + " must implement OnFeatureReviewAdapter");
-        }
     }
 
     // inflate the view
@@ -65,9 +59,8 @@ public class FeatureReviewAdapter extends CursorAdapter {
         tvFeatName.setText(featName);
 
         // extract Measurement
-        Long pieceId = mFeatRevAdapt.onGetPieceId();
-        Piece piece = mPieceDao.getPiece(pieceId);
-        Measurement meas = mMeasurementDao.getMeasurement(pieceId, piece.getProdId(), featId);
+        Piece piece = mPieceDao.getPiece(mPieceId);
+        Measurement meas = mMeasurementDao.getMeasurement(mPieceId, piece.getProdId(), featId);
 
         // populate ListView image and set row colour according to Measurement in-control state
         if (meas != null) {
@@ -79,12 +72,6 @@ public class FeatureReviewAdapter extends CursorAdapter {
             ivInControl.setImageResource(R.drawable.ic_meas_unknown);
             view.setBackgroundColor(mContext.getResources().getColor(android.R.color.background_light));
         }
-    }
-
-    // this Interface which must be defined by anybody that uses this Adapter
-    public interface OnFeatureReviewAdapter {
-        // extract the Piece Id
-        public Long onGetPieceId();
     }
 
 }
