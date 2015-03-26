@@ -177,6 +177,7 @@ public class SetupListFragment extends ListFragment {
 
         Cursor c = (Cursor) mListView.getItemAtPosition(pos);
         final Product p = new DBAdapter(getActivity()).cursorToProduct(c);
+        c.close();
 
         // confirm with user via dialog
         String message = String.format(getString(R.string.text_mess_delete_setup), p.getName());

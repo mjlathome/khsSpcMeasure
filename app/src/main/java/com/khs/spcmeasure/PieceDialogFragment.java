@@ -99,6 +99,7 @@ public class PieceDialogFragment extends DialogFragment implements OnClickListen
         db.open();
 		Cursor c = db.getProduct(mProdId);
 		Product p = db.cursorToProduct(c);
+        c.close();
 		db.close();
 		
 		// populate dialog widget values

@@ -126,6 +126,8 @@ public class FeatureReviewActivity extends Activity implements
         Cursor cMeas = db.getAllMeasurements(piece.getId());
         numFeat = cFeat.getCount();
         numMeas = cMeas.getCount();
+        cFeat.close();
+        cMeas.close();
         db.close();
 
         // build dialog message

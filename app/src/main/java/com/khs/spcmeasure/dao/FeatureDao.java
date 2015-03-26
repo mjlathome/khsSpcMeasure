@@ -53,13 +53,14 @@ public class FeatureDao {
     // list All Features for provided Product Id
     public List<Feature> getAllFeatures(long prodId) {
         List featList = new ArrayList();
+        Cursor cFeat = null;
 
         // DBAdapter db = new DBAdapter(getActivity());
         try {
             db.open();
 
             // query the database
-            Cursor cFeat = db.getAllFeatures(prodId);
+            cFeat = db.getAllFeatures(prodId);
 
             // iterate the results
             if (cFeat.moveToFirst()) {
@@ -72,6 +73,9 @@ public class FeatureDao {
         } catch(Exception e) {
             e.printStackTrace();
         } finally {
+            if (cFeat != null) {
+                cFeat.close();
+            }
             db.close();
         }
 

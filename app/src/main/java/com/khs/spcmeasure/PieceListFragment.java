@@ -174,6 +174,8 @@ public class PieceListFragment extends ListFragment implements AdapterView.OnIte
             Cursor c = db.getProduct(mProdId);
             ((TextView) getView().findViewById(R.id.txtProdName))
                     .setText(c.getString(c.getColumnIndex(DBAdapter.KEY_NAME)));
+            c.close();
+            db.close();
 
 //            mPiece = db.cursorToPiece(c);
 //            db.close();

@@ -69,6 +69,7 @@ public class FeatureReviewFragment extends ListFragment {
         db.open();
         Cursor c = db.getPiece(mPieceId);
         mPiece = db.cursorToPiece(c);
+        c.close();
         db.close();
     }
 
@@ -165,6 +166,7 @@ public class FeatureReviewFragment extends ListFragment {
             Cursor c = db.getProduct(mPiece.getProdId());
             ((TextView) getView().findViewById(R.id.txtProdName))
                     .setText(c.getString(c.getColumnIndex(DBAdapter.KEY_NAME)));
+            c.close();
             db.close();
         }
     }

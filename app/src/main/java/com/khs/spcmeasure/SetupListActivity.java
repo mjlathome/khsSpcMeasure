@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.khs.spcmeasure.service.SimpleCodeService;
 import com.khs.spcmeasure.tasks.DeleteSetupTask;
 import com.khs.spcmeasure.tasks.ImportSimpleCodeTask;
 
@@ -30,7 +31,8 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
         this.setTitle(getString(R.string.title_activity_setup_list));
 
         // import Action Cause Simple Codes
-        new ImportSimpleCodeTask(this).execute(ImportSimpleCodeTask.TYPE_ACTION_CAUSE);
+        // new ImportSimpleCodeTask(this).execute(ImportSimpleCodeTask.TYPE_ACTION_CAUSE);
+        SimpleCodeService.startActionImport(this, SimpleCodeService.TYPE_ACTION_CAUSE);
     }
 
     @Override

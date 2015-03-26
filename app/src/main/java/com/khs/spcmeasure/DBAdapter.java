@@ -249,6 +249,7 @@ public class DBAdapter {
 				
 			} while(cFeat.moveToNext());
 		}
+        cFeat.close();
 
 		// delete all associated Pieces
 		Cursor cPiece = getAllPieces(rowId);		
@@ -259,7 +260,8 @@ public class DBAdapter {
 				
 			} while(cPiece.moveToNext());
 		}		
-		
+		cPiece.close();
+
 		// delete the product
 		return db.delete(TABLE_PRODUCT, KEY_ROWID + "=" + rowId, null) > 0; 
 	};	
@@ -352,8 +354,10 @@ public class DBAdapter {
 				do {				
 					deleteLimit(cLim.getInt(cLim.getColumnIndex(KEY_ROWID)));				
 				} while(cLim.moveToNext());
-			}					
-		}		
+			}
+            cLim.close();
+		}
+        cFeat.close();
 			
 		// delete the feature
 		return db.delete(TABLE_FEATURE, KEY_ROWID + "=" + rowId, null) > 0; 
@@ -602,7 +606,8 @@ public class DBAdapter {
 			do {				
 				deleteMeasurement(cMeas.getInt(cMeas.getColumnIndex(KEY_ROWID)));				
 			} while(cMeas.moveToNext());
-		}					
+		}
+        cMeas.close();
 		
 		return db.delete(TABLE_PIECE, KEY_ROWID + "=" + rowId, null) > 0; 
 	};		

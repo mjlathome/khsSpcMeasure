@@ -54,13 +54,14 @@ public class LimitsDao {
     // list All Limits for provided Product and Feature
     public List<Limits> getAllLimits(long prodId, long featId) {
         List limitList = new ArrayList();
+        Cursor cLimit = null;
 
         // DBAdapter db = new DBAdapter(getActivity());
         try {
             db.open();
 
             // query the database
-            Cursor cLimit = db.getAllLimits(prodId, featId);
+            cLimit = db.getAllLimits(prodId, featId);
 
             // iterate the results
             if (cLimit.moveToFirst()) {
@@ -73,6 +74,9 @@ public class LimitsDao {
         } catch(Exception e) {
             e.printStackTrace();
         } finally {
+            if (cLimit != null) {
+                cLimit.close();
+            }
             db.close();
         }
 

@@ -57,13 +57,14 @@ public class PieceDao {
     // list All Pieces for provided Product
     public List<Piece> getAllPieces(long prodId) {
         List pieceList = new ArrayList();
+        Cursor cPiece = null;
 
         // DBAdapter db = new DBAdapter(getActivity());
         try {
             db.open();
 
             // query the database
-            Cursor cPiece = db.getAllPieces(prodId);
+            cPiece = db.getAllPieces(prodId);
 
             // iterate the results
             if (cPiece.moveToFirst()) {
@@ -76,6 +77,9 @@ public class PieceDao {
         } catch(Exception e) {
             e.printStackTrace();
         } finally {
+            if (cPiece != null) {
+                cPiece.close();
+            }
             db.close();
         }
 
@@ -85,13 +89,14 @@ public class PieceDao {
     // list previous Pieces for provided product id and collect date
     public List<Piece> getPrevPieces(long prodId, Date collDate) {
         List pieceList = new ArrayList();
+        Cursor cPiece = null;
 
         // DBAdapter db = new DBAdapter(getActivity());
         try {
             db.open();
 
             // query the database
-            Cursor cPiece = db.getPrevPieces(prodId, collDate);
+            cPiece = db.getPrevPieces(prodId, collDate);
 
             // iterate the results
             if (cPiece.moveToFirst()) {
@@ -104,6 +109,9 @@ public class PieceDao {
         } catch(Exception e) {
             e.printStackTrace();
         } finally {
+            if (cPiece != null) {
+                cPiece.close();
+            }
             db.close();
         }
 
