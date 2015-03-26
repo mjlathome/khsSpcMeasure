@@ -1,6 +1,9 @@
 package com.khs.spcmeasure.service;
 
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.Context;
 import android.util.Log;
@@ -8,6 +11,7 @@ import android.widget.Toast;
 
 import com.khs.spcmeasure.DBAdapter;
 import com.khs.spcmeasure.R;
+import com.khs.spcmeasure.SetupListActivity;
 import com.khs.spcmeasure.entity.SimpleCode;
 import com.khs.spcmeasure.library.JSONParser;
 
@@ -49,6 +53,11 @@ public class SimpleCodeService extends IntentService {
     private static final String TAG_INT_CODE = "intCode";
     private static final String TAG_ACTIVE = "active";
 
+    // notification members
+    private NotificationManager mNotificationManager;
+    private int mNotifyId = 1;
+    private PendingIntent mSetupListIntent;
+
     /**
      * Starts this service to perform action IMPORT with the given parameters. If
      * the service is already performing a task this action will be queued.
@@ -62,8 +71,21 @@ public class SimpleCodeService extends IntentService {
         context.startService(intent);
     }
 
+    // constructor
     public SimpleCodeService() {
         super("SimpleCodeService");
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        // extract notification manager
+        mNotificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+
+        // build pending intent for Setup List
+        Intent intent = new Intent(SimpleCodeService.this, SetupListActivity.class);
+        mSetupListIntent = PendingIntent.getActivity(SimpleCodeService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     @Override
@@ -89,48 +111,70 @@ public class SimpleCodeService extends IntentService {
             // get JSON from URL
             JSONObject json = jParser.getJSONFromUrl(url + codeType);
 
-            // TODO check for success within all json operations
-            // get JSON Array from URL
-            // JSONObject jSuccess = json.getJSONObject(TAG_SUCCESS);
+            // verify json was successful
+            if (json == null || json.getBoolean(TAG_SUCCESS) != true) {
+                String alertText = this.getString(R.string.text_simple_code_imp_fail, codeType);
+                updateNotification(alertText);
+            } else {
+                // open the DB
+                DBAdapter db = new DBAdapter(this);
+                db.open();
 
-            // open the DB
-            DBAdapter db = new DBAdapter(this);
-            db.open();
+                // create SimpleCodes
+                JSONArray jSimpleCodeArr = json.getJSONArray(TAG_SIMPLE_CODE);
+                for (int i = 0; i < jSimpleCodeArr.length(); i++) {
+                    JSONObject jSimpleCode = jSimpleCodeArr.getJSONObject(i);
 
-            // create SimpleCodes
-            JSONArray jSimpleCodeArr = json.getJSONArray(TAG_SIMPLE_CODE);
-            for(int i = 0; i < jSimpleCodeArr.length(); i++) {
+                    // extract Simple Code fields from json data
+                    long id = Long.valueOf(jSimpleCode.getString(TAG_ID));
+                    String type = jSimpleCode.getString(TAG_TYPE);
+                    String code = jSimpleCode.getString(TAG_CODE);
+                    String desc = jSimpleCode.getString(TAG_DESC);
+                    String intCode = jSimpleCode.getString(TAG_INT_CODE);
+                    boolean active = Boolean.valueOf(jSimpleCode.getString(TAG_ACTIVE));
 
-                JSONObject jSimpleCode = jSimpleCodeArr.getJSONObject(i);
+                    // create the SimpleCode object
+                    SimpleCode simpleCode = new SimpleCode(id, type, code, desc, intCode, active);
+                    Log.d(TAG, "onPostExecute id = " + id);
 
-                // extract Simple Code fields from json data
-                long id = Long.valueOf(jSimpleCode.getString(TAG_ID));
-                String type = jSimpleCode.getString(TAG_TYPE);
-                String code = jSimpleCode.getString(TAG_CODE);
-                String desc = jSimpleCode.getString(TAG_DESC);
-                String intCode = jSimpleCode.getString(TAG_INT_CODE);
-                boolean active = Boolean.valueOf(jSimpleCode.getString(TAG_ACTIVE));
+                    // update or insert SimpleCode into the DB
+                    if (db.updateSimpleCode(simpleCode) == false) {
+                        db.createSimpleCode(simpleCode);
+                    }
+                }  // create SimpleCodes
 
-                // create the SimpleCode object
-                SimpleCode simpleCode = new SimpleCode(id, type, code, desc, intCode, active);
-                Log.d(TAG, "onPostExecute id = " + id);
+                // close the DB
+                db.close();
 
-                // update or insert SimpleCode into the DB
-                if (db.updateSimpleCode(simpleCode) == false) {
-                    db.createSimpleCode(simpleCode);
-                }
-
-            }  // create SimpleCodes
-
-            // close the DB
-            db.close();
-
-            Toast.makeText(this, this.getString(R.string.text_simple_code_imp_comp, codeType), Toast.LENGTH_LONG).show();
+                // notify user
+                String alertText = this.getString(R.string.text_simple_code_imp_comp, codeType);
+                updateNotification(alertText);
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
+    // create service notification
+    private Notification getNotification(String text) {
+        Notification.Builder nb = new Notification.Builder(this);
+        nb.setSmallIcon(R.drawable.ic_launcher);
+        nb.setContentTitle("Spc Measure");
+        nb.setContentText(text);
+        nb.setContentIntent(mSetupListIntent);
+        return nb.build();
+    }
+
+    // update service notification - uses text string provided
+    private void updateNotification(String text) {
+        mNotificationManager.notify(mNotifyId, getNotification(text));
+        return;
+    }
+
+    // remove service notification
+    private void removeNotification() {
+        mNotificationManager.cancel(mNotifyId);
+        return;
+    }
 }

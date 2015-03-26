@@ -251,23 +251,24 @@ public final class R {
         public static final int text_range=0x7f07003c;
         public static final int text_refresh=0x7f07003d;
         public static final int text_simple_code_imp_comp=0x7f07003e;
-        public static final int text_unknown=0x7f07003f;
-        public static final int text_warning=0x7f070040;
-        public static final int title_activity_feature=0x7f070041;
-        public static final int title_activity_feature_review=0x7f070042;
-        public static final int title_activity_import_setup=0x7f070043;
-        public static final int title_activity_mnt_setup=0x7f070044;
-        public static final int title_activity_piece_list=0x7f070045;
-        public static final int title_activity_setup_list=0x7f070046;
-        public static final int title_chart=0x7f070047;
-        public static final int title_limits=0x7f070048;
-        public static final int title_measurement=0x7f070049;
-        public static final int title_measurement_detail=0x7f07004a;
-        public static final int title_measurement_list=0x7f07004b;
-        public static final int title_piece_detail=0x7f07004c;
-        public static final int title_piece_list=0x7f07004d;
-        public static final int title_setup_detail=0x7f07004e;
-        public static final int title_setup_list=0x7f07004f;
+        public static final int text_simple_code_imp_fail=0x7f07003f;
+        public static final int text_unknown=0x7f070040;
+        public static final int text_warning=0x7f070041;
+        public static final int title_activity_feature=0x7f070042;
+        public static final int title_activity_feature_review=0x7f070043;
+        public static final int title_activity_import_setup=0x7f070044;
+        public static final int title_activity_mnt_setup=0x7f070045;
+        public static final int title_activity_piece_list=0x7f070046;
+        public static final int title_activity_setup_list=0x7f070047;
+        public static final int title_chart=0x7f070048;
+        public static final int title_limits=0x7f070049;
+        public static final int title_measurement=0x7f07004a;
+        public static final int title_measurement_detail=0x7f07004b;
+        public static final int title_measurement_list=0x7f07004c;
+        public static final int title_piece_detail=0x7f07004d;
+        public static final int title_piece_list=0x7f07004e;
+        public static final int title_setup_detail=0x7f07004f;
+        public static final int title_setup_list=0x7f070050;
     }
     public static final class style {
         /** 
