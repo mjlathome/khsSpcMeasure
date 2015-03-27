@@ -8,6 +8,8 @@
     <string name="text_clear_value">Clear Value</string>
     <string name="text_collect_dt">Collect Datetime</string>
     <string name="text_collect_status">Collect Status</string>
+    <string name="text_cp">Cp</string>
+    <string name="text_cpk">Cpk</string>
     <string name="text_delete">Delete</string>
     <string name="text_deleting_setups">Deleting Setup(s)...</string>
     <string name="text_error">Error</string>
@@ -71,6 +73,8 @@
     <string name="label_value">Value:</string>
     <string name="label_range">Range:</string>
     <string name="label_cause">Cause:</string>
+    <string name="label_cp">Cp:</string>
+    <string name="label_cpk">Cpk:</string>
 
     <!-- title strings -->
     <string name="title_activity_import_setup">Import Setup</string>

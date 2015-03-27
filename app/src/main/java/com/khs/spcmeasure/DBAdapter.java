@@ -31,7 +31,7 @@ public class DBAdapter {
 	
 	// All Static variables
     // Database Version
-    static final int DATABASE_VERSION = 13;
+    static final int DATABASE_VERSION = 14;
  
     // Database Name
     public static final String DATABASE_NAME = "spcMeasure";
@@ -59,6 +59,8 @@ public class DBAdapter {
     public static final String KEY_LIMIT_TYPE = "limitType";
     public static final String KEY_UPPER = "upper";
     public static final String KEY_LOWER = "lower";
+    public static final String KEY_CP = "cp";
+    public static final String KEY_CPK = "cpk";
     public static final String KEY_COLLECT_DATETIME = "collectDt";
     public static final String KEY_COLLECT_STATUS = "collectStatus";
     public static final String KEY_OPERATOR = "operator";
@@ -87,7 +89,9 @@ public class DBAdapter {
 			KEY_FEAT_ID + " INTEGER KEY NOT NULL," +
 			KEY_NAME + " TEXT," +
 			KEY_ACTIVE + " INTEGER," +
-			KEY_LIMIT_REV + " INTEGER" + ")";
+			KEY_LIMIT_REV + " INTEGER," +
+            KEY_CP + " REAL," +
+            KEY_CPK + " REAL" + ")";
 
     static final String CREATE_TABLE_LIMITS = "CREATE TABLE " + TABLE_LIMITS + "(" + 
 			KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -168,7 +172,7 @@ public class DBAdapter {
 		// deletes and re-creates all SQLite tables
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			Log.d("DEBUG Upgrade DB ", "drop all");
+			Log.d(TAG, "onUpgrade: drop all");
 			try {
 				// drop older tables if they exist
 				db.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUCT);
@@ -195,11 +199,12 @@ public class DBAdapter {
     // close the database
     public void close() {
     	DBHelper.close();
-    }    
-    
-	// create new Product
+    }
+
+    //region Product
+    // create new Product
 	public long createProduct(Product product) {
-		Log.d("DEBUG create Prod Id = ", String.valueOf(product.getId()));
+		Log.d(TAG, "createProduct: Id = " + String.valueOf(product.getId()));
 		// insert row
 		return db.insert(TABLE_PRODUCT, null, productToValues(product));
 	};
@@ -233,7 +238,7 @@ public class DBAdapter {
 		
 	// update single Product
 	public boolean updateProduct(Product product) {	
-		Log.d("DEBUG update Prod Id = ", String.valueOf(product.getId()));
+		Log.d(TAG, "updateProduct: Id = " + String.valueOf(product.getId()));
 		return db.update(TABLE_PRODUCT, productToValues(product), KEY_ROWID + "=" + product.getId(), null) > 0; 
 	};	
 	
@@ -291,10 +296,12 @@ public class DBAdapter {
 		
 		return values;
 	}
-		
-	// create new Feature
+    //endregion
+
+    //region Feature
+    // create new Feature
 	public long createFeature(Feature feature) {
-		Log.d("DEBUG create Feat prodId; featId = ", String.valueOf(feature.getProdId()) + "; " + String.valueOf(feature.getFeatId()));
+		Log.d(TAG, "createFeature: p; f = " + String.valueOf(feature.getProdId()) + "; " + String.valueOf(feature.getFeatId()));
 		// insert row
 		return db.insert(TABLE_FEATURE, null, featureToValues(feature));
 	};
@@ -309,7 +316,7 @@ public class DBAdapter {
 	// get single Feature by rowId
 	public Cursor getFeature(long rowId) {
 		Cursor c = db.query(TABLE_FEATURE,  
-				new String[] {KEY_ROWID, KEY_PROD_ID, KEY_FEAT_ID, KEY_NAME, KEY_ACTIVE, KEY_LIMIT_REV},
+				new String[] {KEY_ROWID, KEY_PROD_ID, KEY_FEAT_ID, KEY_NAME, KEY_ACTIVE, KEY_LIMIT_REV, KEY_CP, KEY_CPK},
 				KEY_ROWID + "=" + rowId, 
 				null, null, null, null, null);
 		
@@ -323,7 +330,7 @@ public class DBAdapter {
 	// get single Feature by prodId and featId
 	public Cursor getFeature(long prodId, long featId) {
 		Cursor c = db.query(TABLE_FEATURE,  
-				new String[] {KEY_ROWID, KEY_PROD_ID, KEY_FEAT_ID, KEY_NAME, KEY_ACTIVE, KEY_LIMIT_REV},
+				new String[] {KEY_ROWID, KEY_PROD_ID, KEY_FEAT_ID, KEY_NAME, KEY_ACTIVE, KEY_LIMIT_REV, KEY_CP, KEY_CPK},
 				KEY_PROD_ID + "=" + prodId + " AND " + KEY_FEAT_ID + "=" + featId, 
 				null, null, null, null, null);
 		
@@ -337,7 +344,13 @@ public class DBAdapter {
 	// update single Feature
 	public boolean updateFeature(Feature feature) {	
 		Log.d(TAG, "updFest:  RowId; Prod Id = " + String.valueOf(feature.getId()) + "; " + String.valueOf(feature.getProdId()));
-		return db.update(TABLE_FEATURE, featureToValues(feature), KEY_ROWID + "=" + feature.getId(), null) > 0; 
+
+        // TODO remove later as was always failing, due to null id value, which then caused new rows to be created during import
+		// return db.update(TABLE_FEATURE, featureToValues(feature), KEY_ROWID + "=" + feature.getId(), null) > 0;
+
+        return db.update(TABLE_FEATURE, featureToValues(feature),
+                KEY_PROD_ID + "=" + feature.getProdId() + " AND " +
+                KEY_FEAT_ID + "=" + feature.getFeatId(), null) > 0;
 	};	
 	
 	// delete single Feature
@@ -371,7 +384,9 @@ public class DBAdapter {
 				c.getLong(c.getColumnIndex(KEY_FEAT_ID)),
 				c.getString(c.getColumnIndex(KEY_NAME)),
 				Boolean.parseBoolean(c.getString(c.getColumnIndex(KEY_ACTIVE))),
-				c.getLong(c.getColumnIndex(KEY_LIMIT_REV)));
+				c.getLong(c.getColumnIndex(KEY_LIMIT_REV)),
+                c.getDouble(c.getColumnIndex(KEY_CP)),
+                c.getDouble(c.getColumnIndex(KEY_CPK)));
 		
 		return feature;			
 	}	
@@ -391,13 +406,17 @@ public class DBAdapter {
 		values.put(KEY_NAME, feature.getName());
 		values.put(KEY_ACTIVE, feature.isActive());
 		values.put(KEY_LIMIT_REV, feature.getLimitRev());
+        values.put(KEY_CP, feature.getCp());
+        values.put(KEY_CPK, feature.getCpk());
 		
 		return values;
-	}  
-	
-	// create new limit
+	}
+    //endregion
+
+    //region Limit
+    // create new limit
 	public long createLimit(Limits limit) {
-		Log.d("DEBUG create Limit prodId; featId; rev; type = ", 
+		Log.d(TAG, "createLimit: p; f; r; t = " +
 				String.valueOf(limit.getProdId()) 	+ "; " + 
 				String.valueOf(limit.getFeatId()) 		+ "; " +
 				String.valueOf(limit.getLimitRev()	+ "; " +
@@ -436,13 +455,13 @@ public class DBAdapter {
 	
 	// update single Limit
 	public boolean updateLimit(Limits limit) {	
-		Log.d("DEBUG update Limit prodId; featId; rev; type = ", 
+		Log.d(TAG, "updateLimit: prodId; featId; rev; type = " +
 				String.valueOf(limit.getProdId()) 	+ "; " + 
 				String.valueOf(limit.getFeatId()) 		+ "; " +
 				String.valueOf(limit.getLimitRev()	+ "; " +
 				limit.getLimitType().getValue()) );		
 
-		Log.d("DEBUG update SQL = ", KEY_PROD_ID + "=" + limit.getProdId() + " AND " +
+		Log.d(TAG, "updateLimit: SQL = " + KEY_PROD_ID + "=" + limit.getProdId() + " AND " +
 				KEY_FEAT_ID + "=" + limit.getFeatId() + " AND " +
 				KEY_LIMIT_REV + "=" + limit.getLimitRev() + " AND " +
 				KEY_LIMIT_TYPE + "='" + limit.getLimitType().getValue() + "'");
@@ -477,7 +496,7 @@ public class DBAdapter {
 	private ContentValues limitToValues(Limits limit) {
 		ContentValues values = new ContentValues();
 
-		Log.d("DEBUG limToVal Limit Id, prodId; featId; rev; type = ",
+		Log.d(TAG, "limitToValues: Limit Id, prodId; featId; rev; type = " +
 				String.valueOf(limit.getId()) + "; " +
 				String.valueOf(limit.getProdId()) 	+ "; " + 
 				String.valueOf(limit.getFeatId()) 		+ "; " +
@@ -486,7 +505,7 @@ public class DBAdapter {
 		
 		// don't output id if not known 
 		if(limit.getId() != null) {
-			Log.d("DEBUG limToVal output rowid", String.valueOf(limit.getId()));
+			Log.d(TAG, "limitToValues: output rowid" + String.valueOf(limit.getId()));
 			values.put(KEY_ROWID, limit.getId());	
 		}		
 		values.put(KEY_PROD_ID, limit.getProdId());
@@ -497,11 +516,13 @@ public class DBAdapter {
 		values.put(KEY_LOWER, limit.getLower());
 				
 		return values;
-	}  
+	}
+    //endregion
 
-	// create new piece
+    //region Piece
+    // create new piece
 	public long createPiece(Piece piece) {
-		Log.d("DEBUG create Piece prodId; sgId; pieceNum; collDT = ", 
+		Log.d(TAG, "createPiece: prodId; sgId; pieceNum; collDT = " +
 				String.valueOf(piece.getProdId()) 	+ "; " + 
 				String.valueOf(piece.getSgId()) 		+ "; " +
 				String.valueOf(piece.getPieceNum())	+ "; " +
@@ -587,7 +608,7 @@ public class DBAdapter {
 
 	// update single piece
 	public boolean updatePiece(Piece piece) {	
-		Log.d("DEBUG update Piece prodId; sgId; pieceNum; collDT = ", 
+		Log.d(TAG, "updatePiece: prodId; sgId; pieceNum; collDT = " +
 				String.valueOf(piece.getProdId()) 	+ "; " + 
 				String.valueOf(piece.getSgId()) 		+ "; " +
 				String.valueOf(piece.getPieceNum())	+ "; " +
@@ -637,7 +658,7 @@ public class DBAdapter {
 
 		// don't output id if not known 
 		if(piece.getId() != null) {
-			Log.d("DEBUG pieceToVal output rowid", String.valueOf(piece.getId()));
+			Log.d(TAG, "pieceToValues: output rowid" + String.valueOf(piece.getId()));
 			values.put(KEY_ROWID, piece.getId());	
 		}		
 				
@@ -645,7 +666,7 @@ public class DBAdapter {
 		
 		// don't output sgId if not known 
 		if(piece.getSgId() != null) {
-			Log.d("DEBUG pieceToVal output sgId", String.valueOf(piece.getSgId()));
+			Log.d(TAG, "pieceToValues: output sgId" + String.valueOf(piece.getSgId()));
 			values.put(KEY_SUB_GRP_ID, piece.getSgId());	
 		}		
 				
@@ -656,11 +677,11 @@ public class DBAdapter {
 		values.put(KEY_COLLECT_STATUS, piece.getStatus().getValue());
 				
 		return values;
-	} 	
+	}
+    //endregion
 
-    // START - Measurement methods
-
-	// create new measurement
+    //region Measurement
+    // create new measurement
 	public long createMeasurement(Measurement meas) {
 		Log.d(TAG, "createMeas pieceId; featId; value = " + 
 				String.valueOf(meas.getPieceId()) 	+ "; " + 
@@ -763,11 +784,9 @@ public class DBAdapter {
 								
 		return values;
 	}
+    //endregion
 
-    // END - Measurement methods
-
-    // START - SimpleCode methods
-
+    //region SimpleCode
     // create new Simple Code
     public long createSimpleCode(SimpleCode code) {
         Log.d(TAG, "createSimpleCode: Id = " + String.valueOf(code.getId()));
@@ -841,8 +860,7 @@ public class DBAdapter {
 
         return values;
     }
-
-    // END - SimpleCode methods
+    //endregion
 
 	// convert boolean to int
 	public static int boolToInt(boolean boolVal) {

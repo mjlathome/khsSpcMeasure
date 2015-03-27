@@ -135,7 +135,7 @@ public class ImportSetupTask extends AsyncTask<Long, String, JSONObject>{
 				long limitRev = Long.valueOf(jFeature.getString(TAG_LIMIT_REV));
 				
 				// create the Feature object
-				Feature feature = new Feature(product.getId(), featId, name, active, limitRev);
+				Feature feature = new Feature(product.getId(), featId, name, active, limitRev, 0.0, 0.0);
 				Log.d("DEBUG feat id;name = ", Long.toString(featId) + "; " + name);
 
 				// update or insert Feature into the DB

@@ -165,8 +165,15 @@ public class SetupService extends IntentService {
                     active = Boolean.valueOf(jFeature.getString(TAG_ACTIVE));
                     long limitRev = Long.valueOf(jFeature.getString(TAG_LIMIT_REV));
 
+                    // FUTURE:
+                    // double cp 	 = jFeature.getDouble(TAG_CP);
+                    // double cpk     = jFeature.getDouble(TAG_CPK);
+                    // TODO remove later
+                    double cp = 0.1;
+                    double cpk = 0.2;
+
                     // create the Feature object
-                    Feature feature = new Feature(product.getId(), featId, name, active, limitRev);
+                    Feature feature = new Feature(product.getId(), featId, name, active, limitRev, cp, cpk);
                     Log.d(TAG, "feat id;name = " + Long.toString(featId) + "; " + name);
 
                     // update or insert Feature into the DB
