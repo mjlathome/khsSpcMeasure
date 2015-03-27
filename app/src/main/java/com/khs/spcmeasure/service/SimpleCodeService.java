@@ -7,13 +7,13 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.khs.spcmeasure.DBAdapter;
 import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.SetupListActivity;
 import com.khs.spcmeasure.entity.SimpleCode;
 import com.khs.spcmeasure.library.JSONParser;
+import com.khs.spcmeasure.library.NotificationId;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,7 +38,7 @@ public class SimpleCodeService extends IntentService {
     // Simple Code types supported
     public static final String TYPE_ACTION_CAUSE = "actionCause";
 
-    // url addresses
+    // url address
     private static String url = "http://thor/spc/get_simple_code.php?type=";
 
     // JSON node names
@@ -55,8 +55,8 @@ public class SimpleCodeService extends IntentService {
 
     // notification members
     private NotificationManager mNotificationManager;
-    private int mNotifyId = 1;
     private PendingIntent mSetupListIntent;
+    private int mNotifyId = 1;
 
     /**
      * Starts this service to perform action IMPORT with the given parameters. If
@@ -160,15 +160,16 @@ public class SimpleCodeService extends IntentService {
     private Notification getNotification(String text) {
         Notification.Builder nb = new Notification.Builder(this);
         nb.setSmallIcon(R.drawable.ic_launcher);
-        nb.setContentTitle("Spc Measure");
+        nb.setContentTitle("Spc Measure - Simple Code Service");      // TODO string
         nb.setContentText(text);
         nb.setContentIntent(mSetupListIntent);
+        nb.setAutoCancel(true);
         return nb.build();
     }
 
     // update service notification - uses text string provided
     private void updateNotification(String text) {
-        mNotificationManager.notify(mNotifyId, getNotification(text));
+        mNotificationManager.notify(NotificationId.getId(), getNotification(text));
         return;
     }
 

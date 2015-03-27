@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.khs.spcmeasure.service.SetupService;
 import com.khs.spcmeasure.service.SimpleCodeService;
 import com.khs.spcmeasure.tasks.DeleteSetupTask;
 import com.khs.spcmeasure.tasks.ImportSimpleCodeTask;
@@ -69,6 +70,11 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
         // store the Product Id for use later
         this.mProdId = prodId;
         Log.d(TAG, "prodId = " + Long.toString(prodId));
+
+        // download the latest setup for the Product
+        SetupService.startActionImport(this, prodId);
+
+        // launch Piece List Activity for Product
         Intent intent = new Intent(this, PieceListActivity.class);
         intent.putExtra(DBAdapter.KEY_PROD_ID, prodId);
         startActivity(intent);

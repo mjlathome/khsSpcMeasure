@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.khs.spcmeasure.entity.Product;
 import com.khs.spcmeasure.library.AlertUtils;
+import com.khs.spcmeasure.service.SetupService;
 import com.khs.spcmeasure.tasks.ImportSetupTask;
 
 import android.app.Activity;
@@ -244,7 +245,8 @@ public class SetupImportFragment extends ListFragment
 						Product p = (Product) listV.getItemAtPosition(i);				
 						Log.d(TAG, "importSetup selected = " + p.getName());
 						importSetup[count++] = p.getId();
-						new ImportSetupTask(getActivity()).execute(p.getId());
+						// new ImportSetupTask(getActivity()).execute(p.getId());
+                        SetupService.startActionImport(getActivity(), p.getId());
 					}
 				}
 				

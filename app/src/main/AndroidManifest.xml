@@ -91,6 +91,10 @@
             android:name=".service.SimpleCodeService"
             android:exported="false" >
         </service>
+        <service
+            android:name=".service.SetupService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>
