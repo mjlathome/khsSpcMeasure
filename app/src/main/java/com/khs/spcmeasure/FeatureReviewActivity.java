@@ -17,6 +17,7 @@ import com.khs.spcmeasure.dao.PieceDao;
 import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.CollectStatus;
+import com.khs.spcmeasure.service.MeasurementService;
 
 // TODO handle Action Bar menu Up button - see Stack Overflow
 
@@ -118,7 +119,7 @@ public class FeatureReviewActivity extends Activity implements
             return true;
         }
 
-        // TODO move to another layer
+        // TODO move to another layer i.e. asynctask
         // extract features and measurements for the product/piece
         DBAdapter db = new DBAdapter(this);
         db.open();
@@ -149,16 +150,16 @@ public class FeatureReviewActivity extends Activity implements
                 // TODO use DAO?
                 DBAdapter db = new DBAdapter(FeatureReviewActivity.this);
 
-                // mark Piece as closed, update db and unbind Ble service as not required
+                // mark Piece as closed, update db and immediately send Piece to the server
                 try {
                     piece.setStatus(CollectStatus.CLOSED);
                     db.open();
                     db.updatePiece(piece);
                     Toast.makeText(FeatureReviewActivity.this, getString(R.string.text_piece_now_closed), Toast.LENGTH_LONG).show();
-                    // unbindBleService();
                     // TODO need to ensure no further readings can take place
                     // TODO need to refresh on-screen Piece Status via Fragment call
                     // TODO need to refresh Piece List screen upon return
+                    MeasurementService.startActionExport(FeatureReviewActivity.this, mPieceId);
                 } catch(Exception e) {
                     e.printStackTrace();
                 } finally {

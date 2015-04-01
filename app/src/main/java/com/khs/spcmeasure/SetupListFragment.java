@@ -6,17 +6,20 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.app.ListFragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import com.khs.spcmeasure.entity.Product;
 import com.khs.spcmeasure.library.AlertUtils;
+import com.khs.spcmeasure.library.CursorAdapterUtils;
 import com.khs.spcmeasure.tasks.DeleteSetupTask;
 
 /**
@@ -29,6 +32,7 @@ import com.khs.spcmeasure.tasks.DeleteSetupTask;
 public class SetupListFragment extends ListFragment {
 
     private static final String TAG = "SetupListFragment";
+
     private static ListView mListView;
 
 
@@ -226,4 +230,23 @@ public class SetupListFragment extends ListFragment {
         // remove progress indicator.
         setListShown(true);
     }
+
+    // refresh listview and scroll to Product provided
+    public void refreshList(long prodId) {
+        Log.d(TAG, "refreshList: prodId = " + prodId);
+        refreshList();
+        if (prodId > 0) {
+            final Integer pos = CursorAdapterUtils.getPosForId((CursorAdapter) getListAdapter(), prodId);
+            Log.d(TAG, "refreshList: pos = " + pos);
+            if (pos != null) {
+                getListView().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        getListView().smoothScrollToPosition(pos);
+                    }
+                });
+            }
+        }
+    }
+
 }

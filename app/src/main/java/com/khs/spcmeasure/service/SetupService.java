@@ -6,8 +6,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.Context;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.khs.spcmeasure.DBAdapter;
 import com.khs.spcmeasure.R;
@@ -15,7 +15,7 @@ import com.khs.spcmeasure.SetupListActivity;
 import com.khs.spcmeasure.entity.Feature;
 import com.khs.spcmeasure.entity.Limits;
 import com.khs.spcmeasure.entity.Product;
-import com.khs.spcmeasure.entity.SimpleCode;
+import com.khs.spcmeasure.library.ActionStatus;
 import com.khs.spcmeasure.library.JSONParser;
 import com.khs.spcmeasure.library.LimitType;
 import com.khs.spcmeasure.library.NotificationId;
@@ -23,6 +23,9 @@ import com.khs.spcmeasure.library.NotificationId;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -35,10 +38,15 @@ public class SetupService extends IntentService {
     private static final String TAG = "SetupService";
 
     // supported actions
-    private static final String ACTION_IMPORT = "com.khs.spcmeasure.service.action.IMPORT";
+    public static final String ACTION_IMPORT = "com.khs.spcmeasure.service.action.IMPORT";
 
     // supported parameters
-    private static final String EXTRA_PROD_ID = "com.khs.spcmeasure.service.extra.PROD_ID";
+    public static final String EXTRA_PROD_ID = "com.khs.spcmeasure.service.extra.PROD_ID";
+    public static final String EXTRA_STATUS = "com.khs.spcmeasure.service.extra.STATUS";
+
+    // cancelled Product ids.  see:
+    // http://stackoverflow.com/questions/7318666/android-intentservice-how-abort-or-skip-a-task-in-the-handleintent-queue
+    private static List<Long> canceledImportProdId = new ArrayList<Long>();
 
     // url address
     private static String url = "http://thor/spc/get_setup.php?prodId=";
@@ -82,11 +90,17 @@ public class SetupService extends IntentService {
     // constructor
     public SetupService() {
         super("SetupService");
+
+        // don't redeliver Intents if process dies
+        // setIntentRedelivery(false);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // notify user - create
+        broadcastUpdate(ACTION_IMPORT, -1, ActionStatus.CREATE);
 
         // extract notification manager
         mNotificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
@@ -97,12 +111,28 @@ public class SetupService extends IntentService {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        // notify user - destroy
+        broadcastUpdate(ACTION_IMPORT, -1, ActionStatus.DESTROY);
+    }
+
+    @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_IMPORT.equals(action)) {
                 final Long prodId = intent.getLongExtra(EXTRA_PROD_ID, -1);
-                handleActionImport(prodId);
+
+                if(canceledImportProdId.contains(prodId)) {
+                    // remove cancellation to ensure it's re-tried in the future
+                    canceledImportProdId.remove(prodId);
+                } else {
+                    // import Product
+                    broadcastUpdate(ACTION_IMPORT, prodId, ActionStatus.START);
+                    handleActionImport(prodId);
+                }
             }
         }
     }
@@ -112,6 +142,8 @@ public class SetupService extends IntentService {
      * parameters.
      */
     private void handleActionImport(Long setupId) {
+        // notify user - starting
+        // broadcastUpdate(ACTION_IMPORT, setupId, ActionStatus.STARTING);
 
         try {
             JSONParser jParser = new JSONParser();
@@ -121,6 +153,8 @@ public class SetupService extends IntentService {
 
             // verify json was successful
             if (json == null || json.getBoolean(TAG_SUCCESS) != true) {
+                // notify user - failure
+                broadcastUpdate(ACTION_IMPORT, setupId, ActionStatus.FAIL);
                 String alertText = this.getString(R.string.text_setup_imp_fail, setupId);
                 updateNotification(alertText);
             } else {
@@ -211,14 +245,22 @@ public class SetupService extends IntentService {
                 // close the DB
                 db.close();
 
-                // notify user
+                // notify user - success
+                broadcastUpdate(ACTION_IMPORT, setupId, ActionStatus.OKAY);
                 String alertText = this.getString(R.string.text_setup_imp_comp, product.getName());
                 updateNotification(alertText);
             }
 
         } catch (JSONException e) {
+            // cancel import to stop re-try
+            cancelImport(setupId);
             e.printStackTrace();
         }
+    }
+
+    // allows import cancel for provided Product Id
+    public static void cancelImport(Long prodId) {
+        canceledImportProdId.add(prodId);
     }
 
     // create service notification
@@ -243,4 +285,16 @@ public class SetupService extends IntentService {
         mNotificationManager.cancel(mNotifyId);
         return;
     }
+
+    // broadcast action
+    private void broadcastUpdate(final String action, final long prodId, final ActionStatus actStat) {
+        Log.d(TAG, "broadcastUpdate: action = " + action + "; prodId = " + prodId + "; actStat = " + actStat);
+
+        Intent intent = new Intent(action);
+        // intent.addCategory(Intent.CATEGORY_DEFAULT);
+        intent.putExtra(EXTRA_PROD_ID, prodId);
+        intent.putExtra(EXTRA_STATUS, actStat);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
 }

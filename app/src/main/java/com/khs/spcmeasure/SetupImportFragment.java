@@ -3,27 +3,15 @@
  */
 package com.khs.spcmeasure;
 
-import java.util.List;
-
-import com.khs.spcmeasure.entity.Product;
-import com.khs.spcmeasure.library.AlertUtils;
-import com.khs.spcmeasure.service.SetupService;
-import com.khs.spcmeasure.tasks.ImportSetupTask;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.Loader;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.widget.SearchView;
-import android.widget.TextView;
-import android.widget.SearchView.OnCloseListener;
-import android.widget.SearchView.OnQueryTextListener;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -34,6 +22,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.SearchView.OnCloseListener;
+import android.widget.SearchView.OnQueryTextListener;
+import android.widget.TextView;
+
+import com.khs.spcmeasure.entity.Product;
+import com.khs.spcmeasure.library.AlertUtils;
+import com.khs.spcmeasure.service.SetupService;
+
+import java.util.List;
 
 /**
  * @author Mark
@@ -52,7 +50,7 @@ public class SetupImportFragment extends ListFragment
 
     // If non-null, this is the current filter the user has provided.
     String mCurFilter;
-			
+
 	@Override
 	public void onAttach(Activity activity) {		
 		super.onAttach(activity);
@@ -225,8 +223,7 @@ public class SetupImportFragment extends ListFragment
 	// TODO make importSetup task accept multiple id's with Progress bar
 	public void importSetup() {			
 		// confirm with user
-		String message = String.format(getString(R.string.text_mess_import_setup,
-            getListView().getCheckedItemCount()));
+		String message = String.format(getString(R.string.text_mess_import_setup, getListView().getCheckedItemCount()));
 		AlertDialog.Builder dlgAlert = AlertUtils.createAlert(getActivity(), getString(R.string.text_warning), message);
 		dlgAlert.setPositiveButton(getString(R.string.text_okay), new DialogInterface.OnClickListener() {
 			@Override
@@ -249,11 +246,12 @@ public class SetupImportFragment extends ListFragment
                         SetupService.startActionImport(getActivity(), p.getId());
 					}
 				}
-				
+
+                // TODO was closed automatically - now left open
 				// inform callee and close
-				Intent intent = new Intent();
-				getActivity().setResult(Activity.RESULT_OK, intent);
-				getActivity().finish();
+				// Intent intent = new Intent();
+				// getActivity().setResult(Activity.RESULT_OK, intent);
+				// getActivity().finish();
 				
 			}
 		}); 		

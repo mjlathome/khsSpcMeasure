@@ -1,6 +1,7 @@
 package com.khs.spcmeasure;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,12 +11,60 @@ import android.view.MenuItem;
 import com.khs.spcmeasure.service.SetupService;
 import com.khs.spcmeasure.service.SimpleCodeService;
 import com.khs.spcmeasure.tasks.DeleteSetupTask;
-import com.khs.spcmeasure.tasks.ImportSimpleCodeTask;
 
 public class SetupListActivity extends Activity implements SetupListFragment.OnSetupListListener, DeleteSetupTask.OnDeleteSetupListener {
+
     private static final String TAG = "SetupListActivity";
+
+    // Activity result codes
+    private static int RESULT_IMPORT = 1;
+
+    // ensure Action Cause list is only imported once
+    private static boolean importActionCause = true;
+
     private SetupListFragment mSetupListFrag;
     private Long mProdId;
+
+
+    // TODO remove later - now in Setup Import
+    // handle Setup import
+//    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String action = intent.getAction();
+//            Log.d(TAG, "mMessageReceiver Action = " + action);
+//
+//            if (SetupService.ACTION_IMPORT.equals(action)) {
+//                // get extras
+//                final long prodId = intent.getLongExtra(SetupService.EXTRA_PROD_ID, -1);
+//                final ActionStatus actStat = (ActionStatus) intent.getSerializableExtra(SetupService.EXTRA_STATUS);
+//
+//                Log.d(TAG, "mMessageReceiver: prodId = " + prodId + "; actStat = " + actStat + "; mSetupListFrag = " + mSetupListFrag);
+//
+//                if (mSetupListFrag != null) {
+//                    switch(actStat) {
+//                        case STARTING:
+//                            Log.d(TAG, "mMessageReceiver: starting; prodId = " + prodId);
+//                            break;
+//                        case COMPLETE:
+//                            Log.d(TAG, "mMessageReceiver: complete; prodId = " + prodId);
+//                            runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    mSetupListFrag.refreshList(prodId);
+//                                }
+//                            });
+//                            break;
+//                        case FAILED:
+//                            Log.d(TAG, "mMessageReceiver: failed; prodId = " + prodId);
+//                            mSetupListFrag.refreshList();
+//                            break;
+//                    }
+//                }
+//            }
+//            return;
+//        }
+//    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +81,58 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
         this.setTitle(getString(R.string.title_activity_setup_list));
 
         // import Action Cause Simple Codes
-        // new ImportSimpleCodeTask(this).execute(ImportSimpleCodeTask.TYPE_ACTION_CAUSE);
-        SimpleCodeService.startActionImport(this, SimpleCodeService.TYPE_ACTION_CAUSE);
+        if (importActionCause == true) {
+            importActionCause = false;
+            // new ImportSimpleCodeTask(this).execute(ImportSimpleCodeTask.TYPE_ACTION_CAUSE);
+            SimpleCodeService.startActionImport(this, SimpleCodeService.TYPE_ACTION_CAUSE);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+
+
+        // TODO remove later - now in Setup Import
+        // Log.d(TAG, "OnResume");
+        // register local broadcast receiver for Setup import
+        // IntentFilter setupFilter = new IntentFilter();
+        // setupFilter.addAction(SetupService.ACTION_IMPORT);
+        // LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, setupFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // TODO remove later - now in Setup Import
+        // unregister local broadcast receiver
+        // LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+
+        // keep track of fragment upon orientation change
+        mSetupListFrag = (SetupListFragment) fragment;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // super.onActivityResult(requestCode, resultCode, data);
+
+        Log.d(TAG, "onActivityResult: requestCode = " + requestCode + "; resultCode = " + resultCode);
+
+        // handle Activity results
+        if (requestCode == RESULT_IMPORT && resultCode == RESULT_OK) {
+            long prodId = data.getLongExtra(SetupImportActivity.RESULT_PROD_ID, -1);
+            Log.d(TAG, "onActivityResult: prodId = " + prodId);
+            if (mSetupListFrag != null) {
+                mSetupListFrag.refreshList(prodId);
+            }
+        }
     }
 
     @Override
@@ -55,7 +154,7 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
                 Log.d(TAG, "Menu: Import");
                 // run the Import Setup Activity
                 Intent intent = new Intent(this, SetupImportActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, RESULT_IMPORT);
                 return true;
             case R.id.action_settings:
                 Log.d(TAG, "Menu: Settings");

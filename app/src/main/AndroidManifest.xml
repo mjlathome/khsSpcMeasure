@@ -95,6 +95,11 @@
             android:name=".service.SetupService"
             android:exported="false" >
         </service>
+        <service
+            android:name=".service.MeasurementService"
+            android:exported="false" >
+        </service>
+
     </application>
 
 </manifest>
