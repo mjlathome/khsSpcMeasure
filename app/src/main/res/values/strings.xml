@@ -51,6 +51,7 @@
     <string name="text_setup_imp_fail">Simple Code import failed (%s)</string>
     <string name="text_meas_exp_comp">Measurement export complete (%s)</string>
     <string name="text_meas_exp_fail">Measurement export failed (%s)</string>
+    <string name="text_piece_serv_text">CLOSED pieces processed (%1$s of %2$s)</string>
     <string name="text_refresh">Refresh</string>
     <string name="text_warning">Warning</string>
     <string name="text_unknown">Unknown</string>

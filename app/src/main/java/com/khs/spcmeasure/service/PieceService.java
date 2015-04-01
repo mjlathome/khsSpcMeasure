@@ -92,6 +92,9 @@ public class PieceService extends Service {
     private void exportClosedPiece() {
         Log.d(TAG, "exportClosedPiece");
 
+        int found = 0;
+        int export = 0;
+
         try {
             // open the DB
             DBAdapter db = new DBAdapter(this);
@@ -99,11 +102,13 @@ public class PieceService extends Service {
 
             // extract all closed pieces
             Cursor cPiece = db.getAllPieces(CollectStatus.CLOSED);
+            found = cPiece.getCount();
             Log.d(TAG, "cPiece count = " + cPiece.getCount());
             if (cPiece.moveToFirst()) {
                 do {
                     // export Measurements for Piece
-                    MeasurementService.startActionExport(this, cPiece.getLong(cPiece.getColumnIndex(DBAdapter.KEY_PIECE_ID)));
+                    MeasurementService.startActionExport(this, cPiece.getLong(cPiece.getColumnIndex(DBAdapter.KEY_ROWID)));
+                    export++;
                 } while(cPiece.moveToNext());
             }
             cPiece.close();
@@ -113,22 +118,28 @@ public class PieceService extends Service {
         } catch(Exception e) {
             e.printStackTrace();
         }
+
+        // notify user
+        String alertText = this.getString(R.string.text_piece_serv_text, export, found);
+        updateNotification(alertText, export);
     }
 
     // create service notification
-    private Notification getNotification(String text) {
+    private Notification getNotification(String text, int export) {
         Notification.Builder nb = new Notification.Builder(this);
         nb.setSmallIcon(R.drawable.ic_launcher);
         nb.setContentTitle("Spc Measure - Piece Service");
         nb.setContentText(text);
         nb.setContentIntent(mSetupListIntent);
-        nb.setOngoing(true);	// block user cancel
+        nb.setNumber(export);
+        nb.setAutoCancel(true);
+        nb.setShowWhen(true);
         return nb.build();
     }
 
     // update service notification - uses text string provided
-    private void updateNotification(String text) {
-        mNotificationManager.notify(mNotifyId, getNotification(text));
+    private void updateNotification(String text, int export) {
+        mNotificationManager.notify(mNotifyId, getNotification(text, export));
         return;
     }
 

@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.khs.spcmeasure.service.PieceService;
 import com.khs.spcmeasure.service.SetupService;
 import com.khs.spcmeasure.service.SimpleCodeService;
 import com.khs.spcmeasure.tasks.DeleteSetupTask;
@@ -79,6 +80,9 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
 
         // change title
         this.setTitle(getString(R.string.title_activity_setup_list));
+
+        // start Piece Service
+        startService(new Intent(getBaseContext(), PieceService.class));
 
         // import Action Cause Simple Codes
         if (importActionCause == true) {
