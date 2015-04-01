@@ -146,23 +146,30 @@ public class MeasurementService extends IntentService {
             // build json for the piece/measurements
             JSONObject jResults = getJsonResults(pieceId);
 
-            Log.d(TAG, "results of " + pieceId + " = " + jResults.toString());
-
-            // post json request
-            JSONParser jParser = new JSONParser();
-            JSONObject json = jParser.getJSONFromUrl(url, jResults.toString());
-
-            // process json response
-            if (processResponse(json) == true) {
-                // notify user - success
-                broadcastUpdate(ACTION_EXPORT, pieceId, ActionStatus.OKAY);
-                String alertText = this.getString(R.string.text_meas_exp_comp, label);
-                updateNotification(alertText, pieceId);
-            } else {
+            if (jResults == null) {
                 // notify user - failure
                 broadcastUpdate(ACTION_EXPORT, pieceId, ActionStatus.FAIL);
                 String alertText = this.getString(R.string.text_meas_exp_fail, label);
                 updateNotification(alertText, pieceId);
+            } else {
+                Log.d(TAG, "results of " + pieceId + " = " + jResults.toString());
+
+                // post json request
+                JSONParser jParser = new JSONParser();
+                JSONObject json = jParser.getJSONFromUrl(url, jResults.toString());
+
+                // process json response
+                if (processResponse(json) == true) {
+                    // notify user - success
+                    broadcastUpdate(ACTION_EXPORT, pieceId, ActionStatus.OKAY);
+                    String alertText = this.getString(R.string.text_meas_exp_comp, label);
+                    updateNotification(alertText, pieceId);
+                } else {
+                    // notify user - failure
+                    broadcastUpdate(ACTION_EXPORT, pieceId, ActionStatus.FAIL);
+                    String alertText = this.getString(R.string.text_meas_exp_fail, label);
+                    updateNotification(alertText, pieceId);
+                }
             }
 
         } catch (Exception e) {
