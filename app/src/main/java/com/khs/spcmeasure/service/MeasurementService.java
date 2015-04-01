@@ -13,19 +13,14 @@ import android.util.Log;
 import com.khs.spcmeasure.DBAdapter;
 import com.khs.spcmeasure.FeatureReviewActivity;
 import com.khs.spcmeasure.R;
-import com.khs.spcmeasure.SetupListActivity;
-import com.khs.spcmeasure.dao.FeatureDao;
 import com.khs.spcmeasure.dao.PieceDao;
 import com.khs.spcmeasure.dao.ProductDao;
-import com.khs.spcmeasure.entity.Feature;
-import com.khs.spcmeasure.entity.Limits;
 import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.entity.Product;
 import com.khs.spcmeasure.library.ActionStatus;
 import com.khs.spcmeasure.library.CollectStatus;
 import com.khs.spcmeasure.library.DateTimeUtils;
 import com.khs.spcmeasure.library.JSONParser;
-import com.khs.spcmeasure.library.LimitType;
 import com.khs.spcmeasure.library.NotificationId;
 
 import org.json.JSONArray;
@@ -196,7 +191,8 @@ public class MeasurementService extends IntentService {
             Cursor cPiece = db.getPiece(rowId);
             Log.d(TAG, "cPiece count = " + cPiece.getCount());
 
-            if (cPiece.moveToFirst()) {
+            // verify Piece is available and CLOSED
+            if (cPiece.moveToFirst() && CollectStatus.fromValue(cPiece.getString(cPiece.getColumnIndex(DBAdapter.KEY_COLLECT_STATUS))) == CollectStatus.CLOSED) {
                 // initialize json results
                 jResults = new JSONObject();
 
@@ -279,6 +275,7 @@ public class MeasurementService extends IntentService {
                 // extract Piece
                 Cursor cPiece = db.getPiece(rowId);
                 Piece piece = db.cursorToPiece(cPiece);
+                cPiece.close();
 
                 // update Piece
                 piece.setSgId(sgId);

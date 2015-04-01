@@ -89,17 +89,24 @@
 
         <service
             android:name=".service.SimpleCodeService"
+            android:enabled="true"
             android:exported="false" >
         </service>
         <service
             android:name=".service.SetupService"
+            android:enabled="true"
             android:exported="false" >
         </service>
         <service
             android:name=".service.MeasurementService"
+            android:enabled="true"
             android:exported="false" >
         </service>
-
+        <service
+            android:name=".service.PieceService"
+            android:enabled="true"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>
