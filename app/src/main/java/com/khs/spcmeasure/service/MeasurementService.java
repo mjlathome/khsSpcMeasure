@@ -135,41 +135,45 @@ public class MeasurementService extends IntentService {
      */
     private void handleActionExport(Long pieceId) {
         // notify user - starting
-        broadcastUpdate(ACTION_EXPORT, pieceId, ActionStatus.START);
+        broadcastUpdate(ACTION_EXPORT, pieceId, ActionStatus.WORKING);
+
+        // assume failure
+        ActionStatus actStat = ActionStatus.FAILED;
+        String notifyText = pieceId.toString();
 
         try {
             // extract data
             Piece piece = mPieceDao.getPiece(pieceId);
             Product product = mProductDao.getProduct(piece.getProdId());
-            String label = product.getName() + " - " + DateTimeUtils.getDateTimeStr(piece.getCollectDt());
+            notifyText = product.getName() + " - " + DateTimeUtils.getDateTimeStr(piece.getCollectDt());
 
-            // build json for the piece/measurements
-            JSONObject jResults = getJsonResults(pieceId);
+            if (piece.getStatus() == CollectStatus.CLOSED) {
 
-            if (jResults == null) {
-                // notify user - failure
-                broadcastUpdate(ACTION_EXPORT, pieceId, ActionStatus.FAIL);
-                String alertText = this.getString(R.string.text_meas_exp_fail, label);
-                updateNotification(alertText, pieceId);
-            } else {
-                Log.d(TAG, "results of " + pieceId + " = " + jResults.toString());
+                // build json for the piece/measurements
+                JSONObject jResults = getJsonResults(pieceId);
 
-                // post json request
-                JSONParser jParser = new JSONParser();
-                JSONObject json = jParser.getJSONFromUrl(url, jResults.toString());
-
-                // process json response
-                if (processResponse(json) == true) {
-                    // notify user - success
-                    broadcastUpdate(ACTION_EXPORT, pieceId, ActionStatus.OKAY);
-                    String alertText = this.getString(R.string.text_meas_exp_comp, label);
-                    updateNotification(alertText, pieceId);
-                } else {
+                if (jResults == null) {
                     // notify user - failure
-                    broadcastUpdate(ACTION_EXPORT, pieceId, ActionStatus.FAIL);
-                    String alertText = this.getString(R.string.text_meas_exp_fail, label);
-                    updateNotification(alertText, pieceId);
+                    actStat = ActionStatus.FAILED;
+                } else {
+                    Log.d(TAG, "results of " + pieceId + " = " + jResults.toString());
+
+                    // post json request
+                    JSONParser jParser = new JSONParser();
+                    JSONObject json = jParser.getJSONFromUrl(url, jResults.toString());
+
+                    // process json response
+                    if (processResponse(json) == true) {
+                        // notify user - success
+                        actStat = ActionStatus.COMPLETE;
+                    } else {
+                        // notify user - failure
+                        actStat = ActionStatus.FAILED;
+                    }
                 }
+            } else {
+                // notify user - skipped
+                actStat = ActionStatus.SKIPPED;
             }
 
         } catch (Exception e) {
@@ -179,10 +183,12 @@ public class MeasurementService extends IntentService {
             cancelExport(pieceId);
 
             // notify user - failure
-            broadcastUpdate(ACTION_EXPORT, pieceId, ActionStatus.FAIL);
-            String alertText = this.getString(R.string.text_meas_exp_fail, pieceId);
-            updateNotification(alertText, pieceId);
+            actStat = ActionStatus.FAILED;
         }
+
+        // notify user
+        broadcastUpdate(ACTION_EXPORT, pieceId, actStat);
+        updateNotification(ACTION_EXPORT, actStat, notifyText, pieceId);
     }
 
     // builds JSON piece/measurement data for the given piece Id
@@ -317,7 +323,7 @@ public class MeasurementService extends IntentService {
     }
 
     // create service notification
-    private Notification getNotification(String text, Long pieceId) {
+    private Notification getNotification(String title, String text, Long pieceId) {
         // build pending intent for Feature Review
         Intent intent = new Intent(MeasurementService.this, FeatureReviewActivity.class);
         intent.putExtra(DBAdapter.KEY_PIECE_ID, pieceId);
@@ -326,16 +332,22 @@ public class MeasurementService extends IntentService {
         // build Notification
         Notification.Builder nb = new Notification.Builder(this);
         nb.setSmallIcon(R.drawable.ic_launcher);
-        nb.setContentTitle("Spc Measure - Measurement Service");      // TODO string
+        nb.setContentTitle(title);
         nb.setContentText(text);
         nb.setContentIntent(notifyIntent);
         nb.setAutoCancel(true);
+        nb.setShowWhen(true);
         return nb.build();
     }
 
     // update service notification - uses text string provided
-    private void updateNotification(String text, Long pieceId) {
-        mNotificationManager.notify(NotificationId.getId(), getNotification(text, pieceId));
+    private void updateNotification(String action, ActionStatus actStat, String text, Long pieceId) {
+        String title = this.getString(R.string.text_unknown);
+        if (action.equals(ACTION_EXPORT)) {
+            title = this.getString(R.string.text_meas_export, actStat);
+        }
+
+        mNotificationManager.notify(NotificationId.getId(), getNotification(title, text, pieceId));
         return;
     }
 

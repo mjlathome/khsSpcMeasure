@@ -111,7 +111,7 @@ public class ImportSimpleCodeTask extends AsyncTask<String, String, JSONObject>{
 			// close the DB			
 			db.close();
 			
-			Toast.makeText(mContext, mContext.getString(R.string.text_simple_code_imp_comp, mType), Toast.LENGTH_LONG).show();
+			Toast.makeText(mContext, mContext.getString(R.string.text_simple_code_import, mType), Toast.LENGTH_LONG).show();
 			
 		} catch (JSONException e) {
 			e.printStackTrace();

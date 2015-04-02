@@ -12,6 +12,7 @@ import com.khs.spcmeasure.DBAdapter;
 import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.SetupListActivity;
 import com.khs.spcmeasure.entity.SimpleCode;
+import com.khs.spcmeasure.library.ActionStatus;
 import com.khs.spcmeasure.library.JSONParser;
 import com.khs.spcmeasure.library.NotificationId;
 
@@ -105,6 +106,10 @@ public class SimpleCodeService extends IntentService {
      */
     private void handleActionImport(String codeType) {
 
+        // assume failure
+        ActionStatus actStat = ActionStatus.FAILED;
+        String notifyText = codeType;
+
         try {
             JSONParser jParser = new JSONParser();
 
@@ -113,8 +118,8 @@ public class SimpleCodeService extends IntentService {
 
             // verify json was successful
             if (json == null || json.getBoolean(TAG_SUCCESS) != true) {
-                String alertText = this.getString(R.string.text_simple_code_imp_fail, codeType);
-                updateNotification(alertText);
+                // notify user - failure
+                actStat = ActionStatus.FAILED;
             } else {
                 // open the DB
                 DBAdapter db = new DBAdapter(this);
@@ -146,21 +151,22 @@ public class SimpleCodeService extends IntentService {
                 // close the DB
                 db.close();
 
-                // notify user
-                String alertText = this.getString(R.string.text_simple_code_imp_comp, codeType);
-                updateNotification(alertText);
-            }
+                // notify user - success
+                actStat = ActionStatus.COMPLETE;            }
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        // notify user
+        updateNotification(ACTION_IMPORT, actStat, notifyText);
     }
 
     // create service notification
-    private Notification getNotification(String text) {
+    private Notification getNotification(String title, String text) {
         Notification.Builder nb = new Notification.Builder(this);
         nb.setSmallIcon(R.drawable.ic_launcher);
-        nb.setContentTitle("Spc Measure - Simple Code Service");      // TODO string
+        nb.setContentTitle(title);
         nb.setContentText(text);
         nb.setContentIntent(mSetupListIntent);
         nb.setAutoCancel(true);
@@ -168,8 +174,13 @@ public class SimpleCodeService extends IntentService {
     }
 
     // update service notification - uses text string provided
-    private void updateNotification(String text) {
-        mNotificationManager.notify(NotificationId.getId(), getNotification(text));
+    private void updateNotification(String action, ActionStatus actStat, String text) {
+        String title = this.getString(R.string.text_unknown);
+        if (action.equals(ACTION_IMPORT)) {
+            title = this.getString(R.string.text_simple_code_import, actStat);
+        }
+
+        mNotificationManager.notify(NotificationId.getId(), getNotification(title, text));
         return;
     }
 

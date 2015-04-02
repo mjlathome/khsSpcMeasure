@@ -12,6 +12,7 @@ import android.util.Log;
 import com.khs.spcmeasure.DBAdapter;
 import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.SetupListActivity;
+import com.khs.spcmeasure.library.ActionStatus;
 import com.khs.spcmeasure.library.CollectStatus;
 import com.khs.spcmeasure.library.NotificationId;
 
@@ -23,7 +24,7 @@ public class PieceService extends Service {
 
     private static final int MIN_5_MILLI_SEC = 5 * 60 * 60 * 1000;
 
-    // timer members
+    // timer members - uses its own thread
     private Timer mTimer = new Timer();
 
     // notification members
@@ -92,6 +93,9 @@ public class PieceService extends Service {
     private void exportClosedPiece() {
         Log.d(TAG, "exportClosedPiece");
 
+        // assume failure
+        ActionStatus actStat = ActionStatus.FAILED;
+
         int found = 0;
         int export = 0;
 
@@ -115,20 +119,27 @@ public class PieceService extends Service {
 
             // close the DB
             db.close();
+
+            // notify user - success
+            actStat = ActionStatus.COMPLETE;
+
         } catch(Exception e) {
             e.printStackTrace();
+
+            // notify user - failure
+            actStat = ActionStatus.FAILED;
         }
 
         // notify user
-        String alertText = this.getString(R.string.text_piece_serv_text, export, found);
-        updateNotification(alertText, export);
+        String notifyText = this.getString(R.string.text_piece_export_text, export, found);
+        updateNotification(actStat, notifyText, export);
     }
 
     // create service notification
-    private Notification getNotification(String text, int export) {
+    private Notification getNotification(String title, String text, int export) {
         Notification.Builder nb = new Notification.Builder(this);
         nb.setSmallIcon(R.drawable.ic_launcher);
-        nb.setContentTitle("Spc Measure - Piece Service");
+        nb.setContentTitle(title);
         nb.setContentText(text);
         nb.setContentIntent(mSetupListIntent);
         nb.setNumber(export);
@@ -138,8 +149,10 @@ public class PieceService extends Service {
     }
 
     // update service notification - uses text string provided
-    private void updateNotification(String text, int export) {
-        mNotificationManager.notify(mNotifyId, getNotification(text, export));
+    private void updateNotification(ActionStatus actStat, String text, int export) {
+        String title = this.getString(R.string.text_piece_export_title, actStat);
+
+        mNotificationManager.notify(mNotifyId, getNotification(title, text, export));
         return;
     }
 

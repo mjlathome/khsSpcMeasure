@@ -7,7 +7,9 @@ import java.util.Map;
  * Created by Mark on 29/03/2015.
  */
 public enum ActionStatus {
-    CREATE("C"), START("S"), OKAY("C"), FAIL("F"), DESTROY("D");
+    // TODO rework notification statuses
+    WORKING("W"), SKIPPED("S"), OKAY("O"), FAILED("F"), COMPLETE("C");
+    // CREATE("C"), START("S"), OKAY("C"), FAIL("F"), DESTROY("D");
 
     // value to be stored
     private final String value;

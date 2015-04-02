@@ -39,7 +39,7 @@ public class SetupImportActivity extends Activity {
                 Log.d(TAG, "mMessageReceiver: prodId = " + prodId + "; actStat = " + actStat);
 
                 switch(actStat) {
-                    case START:
+                    case WORKING:
                         setProgressBarIndeterminateVisibility(true);
                         break;
                     case OKAY:
@@ -60,11 +60,8 @@ public class SetupImportActivity extends Activity {
 //                            }
 //                        });
                         break;
-                    case FAIL:
+                    default:
                         setProgressBarIndeterminateVisibility(false);
-                        break;
-                    case DESTROY:
-                        returnResult();
                         break;
                 }
             }

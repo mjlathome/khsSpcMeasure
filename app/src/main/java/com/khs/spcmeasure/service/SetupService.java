@@ -10,6 +10,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.khs.spcmeasure.DBAdapter;
+import com.khs.spcmeasure.PieceListActivity;
 import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.SetupListActivity;
 import com.khs.spcmeasure.entity.Feature;
@@ -99,13 +100,11 @@ public class SetupService extends IntentService {
     public void onCreate() {
         super.onCreate();
 
-        // notify user - create
-        broadcastUpdate(ACTION_IMPORT, -1, ActionStatus.CREATE);
-
         // extract notification manager
         mNotificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 
         // build pending intent for Setup List
+        // TODO use this if import is unsuccessful?
         Intent intent = new Intent(SetupService.this, SetupListActivity.class);
         mSetupListIntent = PendingIntent.getActivity(SetupService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
@@ -113,9 +112,6 @@ public class SetupService extends IntentService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        // notify user - destroy
-        broadcastUpdate(ACTION_IMPORT, -1, ActionStatus.DESTROY);
     }
 
     @Override
@@ -130,7 +126,6 @@ public class SetupService extends IntentService {
                     canceledImportProdId.remove(prodId);
                 } else {
                     // import Product
-                    broadcastUpdate(ACTION_IMPORT, prodId, ActionStatus.START);
                     handleActionImport(prodId);
                 }
             }
@@ -143,7 +138,11 @@ public class SetupService extends IntentService {
      */
     private void handleActionImport(Long setupId) {
         // notify user - starting
-        // broadcastUpdate(ACTION_IMPORT, setupId, ActionStatus.STARTING);
+        broadcastUpdate(ACTION_IMPORT, setupId, ActionStatus.WORKING);
+
+        // assume failure
+        ActionStatus actStat = ActionStatus.FAILED;
+        String notifyText = setupId.toString();
 
         try {
             JSONParser jParser = new JSONParser();
@@ -154,9 +153,7 @@ public class SetupService extends IntentService {
             // verify json was successful
             if (json == null || json.getBoolean(TAG_SUCCESS) != true) {
                 // notify user - failure
-                broadcastUpdate(ACTION_IMPORT, setupId, ActionStatus.FAIL);
-                String alertText = this.getString(R.string.text_setup_imp_fail, setupId);
-                updateNotification(alertText);
+                actStat = ActionStatus.FAILED;
             } else {
                 // get JSON Array from URL
                 JSONObject jSetup = json.getJSONObject(TAG_SETUP);
@@ -172,6 +169,7 @@ public class SetupService extends IntentService {
                 // extract Product fields from json data
                 long prodId = Long.valueOf(jProduct.getString(TAG_ID));
                 String name = jProduct.getString(TAG_NAME);
+                notifyText = name;
 
                 boolean active = Boolean.valueOf(jProduct.getString(TAG_ACTIVE));
                 String customer = jProduct.getString(TAG_CUSTOMER);
@@ -246,16 +244,22 @@ public class SetupService extends IntentService {
                 db.close();
 
                 // notify user - success
-                broadcastUpdate(ACTION_IMPORT, setupId, ActionStatus.OKAY);
-                String alertText = this.getString(R.string.text_setup_imp_comp, product.getName());
-                updateNotification(alertText);
+                actStat = ActionStatus.COMPLETE;
             }
 
         } catch (JSONException e) {
+            e.printStackTrace();
+
             // cancel import to stop re-try
             cancelImport(setupId);
-            e.printStackTrace();
+
+            // notify user - failure
+            actStat = ActionStatus.FAILED;
         }
+
+        // notify user
+        broadcastUpdate(ACTION_IMPORT, setupId, actStat);
+        updateNotification(ACTION_IMPORT, actStat, notifyText, setupId);
     }
 
     // allows import cancel for provided Product Id
@@ -264,19 +268,29 @@ public class SetupService extends IntentService {
     }
 
     // create service notification
-    private Notification getNotification(String text) {
+    private Notification getNotification(String title, String text, Long prodId) {
+        // build pending intent for Feature Review
+        Intent intent = new Intent(SetupService.this, PieceListActivity.class);
+        intent.putExtra(DBAdapter.KEY_PROD_ID, prodId);
+        PendingIntent notifyIntent = PendingIntent.getActivity(SetupService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         Notification.Builder nb = new Notification.Builder(this);
         nb.setSmallIcon(R.drawable.ic_launcher);
-        nb.setContentTitle("Spc Measure - Setup Service");      // TODO string
+        nb.setContentTitle(title);
         nb.setContentText(text);
-        nb.setContentIntent(mSetupListIntent);
+        nb.setContentIntent(notifyIntent);
         nb.setAutoCancel(true);
         return nb.build();
     }
 
     // update service notification - uses text string provided
-    private void updateNotification(String text) {
-        mNotificationManager.notify(NotificationId.getId(), getNotification(text));
+    private void updateNotification(String action, ActionStatus actStat, String text, Long prodId) {
+        String title = this.getString(R.string.text_unknown);
+        if (action.equals(ACTION_IMPORT)) {
+            title = this.getString(R.string.text_setup_import, actStat);
+        }
+
+        mNotificationManager.notify(NotificationId.getId(), getNotification(title, text, prodId));
         return;
     }
 
