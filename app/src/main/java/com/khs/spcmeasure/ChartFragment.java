@@ -2,6 +2,7 @@ package com.khs.spcmeasure;
 
 
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.support.annotation.Nullable;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.androidplot.Plot;
 import com.androidplot.xy.BoundaryMode;
 import com.androidplot.xy.LineAndPointFormatter;
 import com.androidplot.xy.PointLabelFormatter;
@@ -42,10 +44,129 @@ public class ChartFragment extends Fragment {
     private Long mProdId = null;
     private Long mFeatId  = null;
 
+    // chart members
     private XYPlot plot;
+    private List<Number> mSeriesVal;
+    private List<Number> mSeriesUcl;
+    private List<Number> mSeriesLcl;
 
     public ChartFragment() {
         // Required empty public constructor
+    }
+
+    // render chart nested class -  ensures work is done off the UI thread to prevent ANR
+    private class RenderChartTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            // initialize our XYPlot reference:
+            plot = (XYPlot) getView().findViewById(R.id.mySimpleXYPlot);
+            plot.clear();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            // instantiate Dao's
+            FeatureDao featDao = new FeatureDao(getActivity());
+            LimitsDao limDao = new LimitsDao(getActivity());
+            PieceDao pieceDao = new PieceDao(getActivity());
+            MeasurementDao measDao = new MeasurementDao(getActivity());
+
+            // create y-value arrays to plot
+            Feature feat = featDao.getFeature(mProdId, mFeatId);
+            Limits limits = limDao.getLimit(mProdId, mFeatId, feat.getLimitRev(), LimitType.CONTROL);
+            List<Piece> listPieces = pieceDao.getAllPieces(mProdId);
+
+            // initialize series
+            mSeriesVal = new ArrayList<Number>();
+            mSeriesUcl = new ArrayList<Number>();
+            mSeriesLcl = new ArrayList<Number>();
+
+            for (Piece piece : listPieces) {
+                // TODO throw away unwanted pieces based upon CollectStatus?
+                // Log.d(TAG, "Piece = " + piece.getProdId());
+
+                // add measured value, if any
+                Measurement meas = measDao.getMeasurement(piece.getId(), piece.getProdId(), feat.getFeatId());
+                if (meas != null) {
+                    Log.d(TAG, "renderChart: meas = " + meas.getValue());
+                    mSeriesVal.add(meas.getValue());
+                } else {
+                    Log.d(TAG, "renderChart: meas = null");
+                    mSeriesVal.add(null);
+                }
+
+                // add in limits
+                mSeriesUcl.add(limits.getUpper());
+                mSeriesLcl.add(limits.getLower());
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            // Turn the above arrays into XYSeries':
+            XYSeries series1 = new SimpleXYSeries(
+                    // Arrays.asList(series1Numbers),          // SimpleXYSeries takes a List so turn our array into a List
+                    mSeriesVal,
+                    SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, // Y_VALS_ONLY means use the element index as the x value
+                    "X");
+
+            // same as above
+            XYSeries series2 = new SimpleXYSeries(
+                    // Arrays.asList(series2Numbers),
+                    mSeriesUcl,
+                    SimpleXYSeries.ArrayFormat.Y_VALS_ONLY,
+                    "UCL");
+
+            XYSeries series3 = new SimpleXYSeries(
+                    // Arrays.asList(series3Numbers),
+                    mSeriesLcl,
+                    SimpleXYSeries.ArrayFormat.Y_VALS_ONLY,
+                    "LCL");
+
+            // Create a formatter to use for drawing a series using LineAndPointRenderer
+            // and configure it from xml:
+            LineAndPointFormatter series1Format = new LineAndPointFormatter();
+            series1Format.setPointLabelFormatter(new PointLabelFormatter());
+            series1Format.configure(getActivity().getApplicationContext(),
+                    R.xml.line_point_formatter_with_plf1);
+
+            // add a new series' to the xyplot:
+            plot.addSeries(series1, series1Format);
+
+            // same as above:
+            LineAndPointFormatter series2Format = new LineAndPointFormatter();
+            series2Format.setPointLabelFormatter(new PointLabelFormatter());
+            series2Format.configure(getActivity().getApplicationContext(),
+                    R.xml.line_point_formatter_limits);
+            plot.addSeries(series2, series2Format);
+
+            LineAndPointFormatter series3Format = new LineAndPointFormatter();
+            series3Format.setPointLabelFormatter(new PointLabelFormatter());
+            series3Format.configure(getActivity().getApplicationContext(),
+                    R.xml.line_point_formatter_limits);
+            plot.addSeries(series3, series3Format);
+
+            // reduce the number of range labels
+            plot.setTicksPerRangeLabel(3);
+            plot.getGraphWidget().setDomainLabelOrientation(-45);
+
+            plot.setUserRangeOrigin(0);
+            plot.setDrawRangeOriginEnabled(true);
+
+            // TODO use this to set the lowest boundary
+            // plot.setRangeLowerBoundary(-2.75, BoundaryMode.FIXED);
+            plot.getGraphWidget().getDomainLabelPaint().setColor(Color.TRANSPARENT);
+
+            // draw plot
+            plot.redraw();
+        }
     }
 
     @Override
@@ -81,7 +202,8 @@ public class ChartFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         // draw the chart
-        renderChart();
+        // renderChart();
+        new RenderChartTask().execute();
     }
 
     // extracts arguments from provided Bundle
@@ -103,99 +225,99 @@ public class ChartFragment extends Fragment {
         return (mProdId != null && mFeatId != null);
     }
 
-    // render the chart
-    // TODO to much being done in UI.  Consider background task?
-    private void renderChart() {
-        // initialize our XYPlot reference:
-        plot = (XYPlot) getView().findViewById(R.id.mySimpleXYPlot);
-
-        // instantiate Dao's
-        FeatureDao featDao = new FeatureDao(getActivity());
-        LimitsDao limDao = new LimitsDao(getActivity());
-        PieceDao pieceDao = new PieceDao(getActivity());
-        MeasurementDao measDao = new MeasurementDao(getActivity());
-
-        // create y-value arrays to plot
-        Feature feat = featDao.getFeature(mProdId, mFeatId);
-        Limits limits = limDao.getLimit(mProdId, mFeatId, feat.getLimitRev(), LimitType.CONTROL);
-        List<Piece> listPieces = pieceDao.getAllPieces(mProdId);
-
-        // initialize series
-        List<Number> seriesVal = new ArrayList<Number>();
-        List<Number> seriesUcl = new ArrayList<Number>();
-        List<Number> seriesLcl = new ArrayList<Number>();
-
-        for (Piece piece : listPieces) {
-            // TODO throw away unwanted pieces based upon CollectStatus?
-            // Log.d(TAG, "Piece = " + piece.getProdId());
-
-            // add measured value, if any
-            Measurement meas = measDao.getMeasurement(piece.getId(), piece.getProdId(), feat.getFeatId());
-            if (meas != null) {
-                Log.d(TAG, "renderChart: meas = " + meas.getValue());
-                seriesVal.add(meas.getValue());
-            } else {
-                Log.d(TAG, "renderChart: meas = null");
-                seriesVal.add(null);
-            }
-
-            // add in limits
-            seriesUcl.add(limits.getUpper());
-            seriesLcl.add(limits.getLower());
-        }
-
-        // Turn the above arrays into XYSeries':
-        XYSeries series1 = new SimpleXYSeries(
-                // Arrays.asList(series1Numbers),          // SimpleXYSeries takes a List so turn our array into a List
-                seriesVal,
-                SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, // Y_VALS_ONLY means use the element index as the x value
-                "X");
-
-        // same as above
-        XYSeries series2 = new SimpleXYSeries(
-                // Arrays.asList(series2Numbers),
-                seriesUcl,
-                SimpleXYSeries.ArrayFormat.Y_VALS_ONLY,
-                "UCL");
-
-        XYSeries series3 = new SimpleXYSeries(
-                // Arrays.asList(series3Numbers),
-                seriesLcl,
-                SimpleXYSeries.ArrayFormat.Y_VALS_ONLY,
-                "LCL");
-
-        // Create a formatter to use for drawing a series using LineAndPointRenderer
-        // and configure it from xml:
-        LineAndPointFormatter series1Format = new LineAndPointFormatter();
-        series1Format.setPointLabelFormatter(new PointLabelFormatter());
-        series1Format.configure(getActivity().getApplicationContext(),
-                R.xml.line_point_formatter_with_plf1);
-
-        // add a new series' to the xyplot:
-        plot.addSeries(series1, series1Format);
-
-        // same as above:
-        LineAndPointFormatter series2Format = new LineAndPointFormatter();
-        series2Format.setPointLabelFormatter(new PointLabelFormatter());
-        series2Format.configure(getActivity().getApplicationContext(),
-                R.xml.line_point_formatter_limits);
-        plot.addSeries(series2, series2Format);
-
-        LineAndPointFormatter series3Format = new LineAndPointFormatter();
-        series3Format.setPointLabelFormatter(new PointLabelFormatter());
-        series3Format.configure(getActivity().getApplicationContext(),
-                R.xml.line_point_formatter_limits);
-        plot.addSeries(series3, series3Format);
-
-        // reduce the number of range labels
-        plot.setTicksPerRangeLabel(3);
-        plot.getGraphWidget().setDomainLabelOrientation(-45);
-
-        plot.setUserRangeOrigin(0);
-        plot.setDrawRangeOriginEnabled(true);
-
-        // TODO use this to set the lowest boundary
-        // plot.setRangeLowerBoundary(-2.75, BoundaryMode.FIXED);
-        plot.getGraphWidget().getDomainLabelPaint().setColor(Color.TRANSPARENT);
-    }
+//    // render the chart
+//    // TODO to much being done in UI.  Consider background task?
+//    private void renderChart() {
+//        // initialize our XYPlot reference:
+//        plot = (XYPlot) getView().findViewById(R.id.mySimpleXYPlot);
+//
+//        // instantiate Dao's
+//        FeatureDao featDao = new FeatureDao(getActivity());
+//        LimitsDao limDao = new LimitsDao(getActivity());
+//        PieceDao pieceDao = new PieceDao(getActivity());
+//        MeasurementDao measDao = new MeasurementDao(getActivity());
+//
+//        // create y-value arrays to plot
+//        Feature feat = featDao.getFeature(mProdId, mFeatId);
+//        Limits limits = limDao.getLimit(mProdId, mFeatId, feat.getLimitRev(), LimitType.CONTROL);
+//        List<Piece> listPieces = pieceDao.getAllPieces(mProdId);
+//
+//        // initialize series
+//        List<Number> seriesVal = new ArrayList<Number>();
+//        List<Number> seriesUcl = new ArrayList<Number>();
+//        List<Number> seriesLcl = new ArrayList<Number>();
+//
+//        for (Piece piece : listPieces) {
+//            // TODO throw away unwanted pieces based upon CollectStatus?
+//            // Log.d(TAG, "Piece = " + piece.getProdId());
+//
+//            // add measured value, if any
+//            Measurement meas = measDao.getMeasurement(piece.getId(), piece.getProdId(), feat.getFeatId());
+//            if (meas != null) {
+//                Log.d(TAG, "renderChart: meas = " + meas.getValue());
+//                seriesVal.add(meas.getValue());
+//            } else {
+//                Log.d(TAG, "renderChart: meas = null");
+//                seriesVal.add(null);
+//            }
+//
+//            // add in limits
+//            seriesUcl.add(limits.getUpper());
+//            seriesLcl.add(limits.getLower());
+//        }
+//
+//        // Turn the above arrays into XYSeries':
+//        XYSeries series1 = new SimpleXYSeries(
+//                // Arrays.asList(series1Numbers),          // SimpleXYSeries takes a List so turn our array into a List
+//                seriesVal,
+//                SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, // Y_VALS_ONLY means use the element index as the x value
+//                "X");
+//
+//        // same as above
+//        XYSeries series2 = new SimpleXYSeries(
+//                // Arrays.asList(series2Numbers),
+//                seriesUcl,
+//                SimpleXYSeries.ArrayFormat.Y_VALS_ONLY,
+//                "UCL");
+//
+//        XYSeries series3 = new SimpleXYSeries(
+//                // Arrays.asList(series3Numbers),
+//                seriesLcl,
+//                SimpleXYSeries.ArrayFormat.Y_VALS_ONLY,
+//                "LCL");
+//
+//        // Create a formatter to use for drawing a series using LineAndPointRenderer
+//        // and configure it from xml:
+//        LineAndPointFormatter series1Format = new LineAndPointFormatter();
+//        series1Format.setPointLabelFormatter(new PointLabelFormatter());
+//        series1Format.configure(getActivity().getApplicationContext(),
+//                R.xml.line_point_formatter_with_plf1);
+//
+//        // add a new series' to the xyplot:
+//        plot.addSeries(series1, series1Format);
+//
+//        // same as above:
+//        LineAndPointFormatter series2Format = new LineAndPointFormatter();
+//        series2Format.setPointLabelFormatter(new PointLabelFormatter());
+//        series2Format.configure(getActivity().getApplicationContext(),
+//                R.xml.line_point_formatter_limits);
+//        plot.addSeries(series2, series2Format);
+//
+//        LineAndPointFormatter series3Format = new LineAndPointFormatter();
+//        series3Format.setPointLabelFormatter(new PointLabelFormatter());
+//        series3Format.configure(getActivity().getApplicationContext(),
+//                R.xml.line_point_formatter_limits);
+//        plot.addSeries(series3, series3Format);
+//
+//        // reduce the number of range labels
+//        plot.setTicksPerRangeLabel(3);
+//        plot.getGraphWidget().setDomainLabelOrientation(-45);
+//
+//        plot.setUserRangeOrigin(0);
+//        plot.setDrawRangeOriginEnabled(true);
+//
+//        // TODO use this to set the lowest boundary
+//        // plot.setRangeLowerBoundary(-2.75, BoundaryMode.FIXED);
+//        plot.getGraphWidget().getDomainLabelPaint().setColor(Color.TRANSPARENT);
+//    }
 }
