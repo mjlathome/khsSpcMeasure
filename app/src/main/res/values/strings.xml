@@ -92,11 +92,22 @@
     <string name="title_activity_feature">Feature</string>
 
     <!-- Feature Activity - Tab titles -->
-    <string name="title_measurement">Measurement</string>
-    <string name="title_chart">Chart</string>
-    <string name="title_limits">Limits</string>
+    <string name="tab_title_measurement">Measurement</string>
+    <string name="tab_title_chart_individual">Chart Individual</string>
+    <string name="tab_title_chart_range">Chart Range</string>
+    <string name="tab_title_information">Information</string>
 
     <string name="first">First</string>
     <string name="last">Last</string>
+
+    <!-- Chart strings -->
+    <string name="chart_title_individual">Individual Reading (X) vs Time</string>
+    <string name="chart_title_range">Moving Range (MR) vs Time</string>
+    <string name="chart_label_individual_value">X</string>
+    <string name="chart_label_individual_upper">UCL</string>
+    <string name="chart_label_individual_lower">LCL</string>
+    <string name="chart_label_range_value">MR</string>
+    <string name="chart_label_range_upper">URL</string>
+    <string name="chart_label_range_lower">LRL</string>
 
 </resources>

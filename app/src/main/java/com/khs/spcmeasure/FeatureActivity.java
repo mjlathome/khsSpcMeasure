@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -32,7 +31,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.khs.spcmeasure.dao.FeatureDao;
@@ -41,7 +39,6 @@ import com.khs.spcmeasure.entity.Feature;
 import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.CollectStatus;
-import com.khs.spcmeasure.library.DateTimeUtils;
 
 import java.util.List;
 
@@ -52,8 +49,9 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
     /// tab constants
     private static final int TAB_POS_MEASUREMENT = 0;
-    private static final int TAB_POS_CHART = 1;
-    private static final int TAB_POS_LIMITS = 2;
+    private static final int TAB_POS_CHART_INDIVIDUAL = 1;
+    private static final int TAB_POS_CHART_RANGE = 2;
+    private static final int TAB_POS_INFORMATION = 3;
 
     private Long mPieceId = null;
     private Long mFeatId  = null;
@@ -226,9 +224,10 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
                         android.R.layout.simple_list_item_1,
                         android.R.id.text1,
                         new String[]{
-                                getString(R.string.title_measurement),
-                                getString(R.string.title_chart),
-                                getString(R.string.title_limits),
+                                getString(R.string.tab_title_measurement),
+                                getString(R.string.tab_title_chart_individual),
+                                getString(R.string.tab_title_chart_range),
+                                getString(R.string.tab_title_information),
                         }),
                 this);
 
@@ -637,16 +636,22 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
                     MeasurementFragment measFrag = new MeasurementFragment();
                     measFrag.setArguments(args);
                     return measFrag;
-                case TAB_POS_CHART:
-                    // create the measurement fragment
+                case TAB_POS_CHART_INDIVIDUAL:
+                case TAB_POS_CHART_RANGE:
+                    // create the chart fragment
                     args = new Bundle();
+                    if (mTabPos == TAB_POS_CHART_INDIVIDUAL) {
+                        args.putInt(ChartFragment.CHART_TYPE, ChartFragment.CHART_TYPE_INDIVIDUAL);
+                    } else {
+                        args.putInt(ChartFragment.CHART_TYPE, ChartFragment.CHART_TYPE_RANGE);
+                    }
                     args.putLong(DBAdapter.KEY_PROD_ID, feat.getProdId());
                     args.putLong(DBAdapter.KEY_FEAT_ID, feat.getFeatId());
                     ChartFragment chartFrag = new ChartFragment();
                     chartFrag.setArguments(args);
                     return chartFrag;
-                case TAB_POS_LIMITS:
-                    // create the measurement fragment
+                case TAB_POS_INFORMATION:
+                    // create the information fragment
                     args = new Bundle();
                     args.putLong(DBAdapter.KEY_PROD_ID, feat.getProdId());
                     args.putLong(DBAdapter.KEY_FEAT_ID, feat.getFeatId());
