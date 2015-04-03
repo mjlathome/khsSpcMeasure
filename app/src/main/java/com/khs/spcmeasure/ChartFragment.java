@@ -56,6 +56,8 @@ public class ChartFragment extends Fragment {
     private List<Number> mSeriesUpper;
     private List<Number> mSeriesLower;
 
+    private RenderChartTask renderTask = new RenderChartTask();;
+
     public ChartFragment() {
         // Required empty public constructor
     }
@@ -67,6 +69,10 @@ public class ChartFragment extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
 
+            // get out if plot is now invalid - due to user interaction
+            if (isCancelled() == true) {
+                return;
+            }
             // initialize our XYPlot reference:
             plot = (XYPlot) getView().findViewById(R.id.mySimpleXYPlot);
             plot.setTitle(mChartTitle);
@@ -76,56 +82,66 @@ public class ChartFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            // instantiate Dao's
-            FeatureDao featDao = new FeatureDao(getActivity());
-            LimitsDao limDao = new LimitsDao(getActivity());
-            PieceDao pieceDao = new PieceDao(getActivity());
-            MeasurementDao measDao = new MeasurementDao(getActivity());
 
-            // extract data
-            Feature feat = featDao.getFeature(mProdId, mFeatId);
-            Limits limits = null;
-            List<Piece> listPieces = pieceDao.getAllPieces(mProdId);
-
-            switch(mChartType) {
-                case CHART_TYPE_INDIVIDUAL:
-                    limits = limDao.getLimit(mProdId, mFeatId, feat.getLimitRev(), LimitType.CONTROL);
-                    break;
-                case CHART_TYPE_RANGE:
-                    limits = limDao.getLimit(mProdId, mFeatId, feat.getLimitRev(), LimitType.SIGNIFICANT_CONTROL);
-                    break;
+            // get out if plot is now invalid - due to user interaction
+            if (isCancelled() == true) {
+                return null;
             }
 
-            // initialize series
-            mSeriesValue = new ArrayList<Number>();
-            mSeriesUpper = new ArrayList<Number>();
-            mSeriesLower = new ArrayList<Number>();
+            try {
+                // instantiate Dao's
+                FeatureDao featDao = new FeatureDao(getActivity());
+                LimitsDao limDao = new LimitsDao(getActivity());
+                PieceDao pieceDao = new PieceDao(getActivity());
+                MeasurementDao measDao = new MeasurementDao(getActivity());
 
-            // create y-value arrays to plot
-            for (Piece piece : listPieces) {
-                // TODO throw away unwanted pieces based upon CollectStatus?
-                // Log.d(TAG, "Piece = " + piece.getProdId());
+                // extract data
+                Feature feat = featDao.getFeature(mProdId, mFeatId);
+                Limits limits = null;
+                List<Piece> listPieces = pieceDao.getAllPieces(mProdId);
 
-                // add value, if any
-                Measurement meas = measDao.getMeasurement(piece.getId(), piece.getProdId(), feat.getFeatId());
-                if (meas != null) {
-                    Log.d(TAG, "renderChart: meas = " + meas.getValue());
-                    switch(mChartType) {
-                        case CHART_TYPE_INDIVIDUAL:
-                            mSeriesValue.add(meas.getValue());
-                            break;
-                        case CHART_TYPE_RANGE:
-                            mSeriesValue.add(meas.getRange());
-                            break;
-                    }
-                } else {
-                    Log.d(TAG, "renderChart: meas = null");
-                    mSeriesValue.add(null);
+                switch (mChartType) {
+                    case CHART_TYPE_INDIVIDUAL:
+                        limits = limDao.getLimit(mProdId, mFeatId, feat.getLimitRev(), LimitType.CONTROL);
+                        break;
+                    case CHART_TYPE_RANGE:
+                        limits = limDao.getLimit(mProdId, mFeatId, feat.getLimitRev(), LimitType.SIGNIFICANT_CONTROL);
+                        break;
                 }
 
-                // add in limits
-                mSeriesUpper.add(limits.getUpper());
-                mSeriesLower.add(limits.getLower());
+                // initialize series
+                mSeriesValue = new ArrayList<Number>();
+                mSeriesUpper = new ArrayList<Number>();
+                mSeriesLower = new ArrayList<Number>();
+
+                // create y-value arrays to plot
+                for (Piece piece : listPieces) {
+                    // TODO throw away unwanted pieces based upon CollectStatus?
+                    // Log.d(TAG, "Piece = " + piece.getProdId());
+
+                    // add value, if any
+                    Measurement meas = measDao.getMeasurement(piece.getId(), piece.getProdId(), feat.getFeatId());
+                    if (meas != null) {
+                        Log.d(TAG, "renderChart: meas = " + meas.getValue());
+                        switch (mChartType) {
+                            case CHART_TYPE_INDIVIDUAL:
+                                mSeriesValue.add(meas.getValue());
+                                break;
+                            case CHART_TYPE_RANGE:
+                                mSeriesValue.add(meas.getRange());
+                                break;
+                        }
+                    } else {
+                        Log.d(TAG, "renderChart: meas = null");
+                        mSeriesValue.add(null);
+                    }
+
+                    // add in limits
+                    mSeriesUpper.add(limits.getUpper());
+                    mSeriesLower.add(limits.getLower());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
             return null;
@@ -134,6 +150,11 @@ public class ChartFragment extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+
+            // get out if plot is now invalid - due to user interaction
+            if (isCancelled() == true) {
+                return;
+            }
 
             // Turn the above arrays into XYSeries':
             XYSeries seriesValue = new SimpleXYSeries(
@@ -240,7 +261,13 @@ public class ChartFragment extends Fragment {
         }
 
         // draw the chart
-        new RenderChartTask().execute();
+        renderTask.execute();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        renderTask.cancel(true);
     }
 
     // extracts arguments from provided Bundle
