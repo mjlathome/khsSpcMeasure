@@ -1,6 +1,12 @@
 package com.khs.spcmeasure.entity;
 
 public class SimpleCode {
+
+    private static final String TAG = "SimpleCode";
+
+    // type constants
+    public static final String TYPE_ACTION_CAUSE = "actionCause";
+
 	// private member variables
 	private long id;
 	private String type;

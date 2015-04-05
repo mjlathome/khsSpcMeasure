@@ -3,6 +3,9 @@ package com.khs.spcmeasure.entity;
 import com.khs.spcmeasure.library.LimitType;
 
 public class Limits {
+
+    private static final String TAG = "Limits";
+
 	// private member variables
 	private Long id;		// Object to allow for null
 	private long prodId;

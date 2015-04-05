@@ -5,6 +5,9 @@ import java.util.Date;
 import com.khs.spcmeasure.library.CollectStatus;
 
 public class Piece {
+
+    private static final String TAG = "Piece";
+
 	// private member variables
 	private Long id;		// Object to allow for null
 	private long prodId;

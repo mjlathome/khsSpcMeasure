@@ -1,6 +1,9 @@
 package com.khs.spcmeasure.entity;
 
 public class Product {
+
+    private static final String TAG = "Product";
+
 	// private member variables
 	private long id;
 	private String name;

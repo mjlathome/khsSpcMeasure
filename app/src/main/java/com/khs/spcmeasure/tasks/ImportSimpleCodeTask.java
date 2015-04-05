@@ -21,8 +21,6 @@ import org.json.JSONObject;
 public class ImportSimpleCodeTask extends AsyncTask<String, String, JSONObject>{
     private static final String TAG = "ImportSetupTask";
 
-    public static final String TYPE_ACTION_CAUSE = "actionCause";
-
 	private Context mContext;
 
     private static String url = "http://thor/spc/get_simple_code.php?type=";

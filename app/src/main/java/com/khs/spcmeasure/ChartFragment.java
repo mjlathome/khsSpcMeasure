@@ -56,7 +56,7 @@ public class ChartFragment extends Fragment {
     private List<Number> mSeriesUpper;
     private List<Number> mSeriesLower;
 
-    private RenderChartTask renderTask = new RenderChartTask();;
+    private RenderChartTask renderTask = new RenderChartTask();
 
     public ChartFragment() {
         // Required empty public constructor

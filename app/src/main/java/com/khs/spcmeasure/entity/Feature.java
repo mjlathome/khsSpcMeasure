@@ -1,6 +1,9 @@
 package com.khs.spcmeasure.entity;
 
 public class Feature {
+
+    private static final String TAG = "Feature";
+
 	// private member variables
 	private Long id;		// Object to allow for null
 	private long prodId;

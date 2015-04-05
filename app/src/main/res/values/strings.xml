@@ -36,6 +36,7 @@
     <string name="text_mess_prod_id_invalid">Product Id is invalid.  Contact Administrator.</string>
     <string name="text_mess_piece_id_invalid">Piece Id is invalid.  Contact Administrator.</string>
     <string name="text_meas_not_cleared">Measurement already set.  Please clear and try again</string>
+    <string name="text_meas_save_failed">Measurement save failed.  Contact Administrator.</string>
     <string name="text_new_piece">New Piece</string>
     <string name="text_no_data">No Data</string>
     <string name="text_okay">OK</string>

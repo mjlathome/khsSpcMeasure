@@ -561,8 +561,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
     }
 
     // set measured value
-    private boolean setMeasurement(byte[] value) {
-        boolean success = false;
+    private void setMeasurement(byte[] value) {
 
         // convert characteristic byte array data to a double
         Double myDouble = Double.parseDouble(new String(value));
@@ -571,25 +570,23 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         if (myDouble != null && mTabPos == FeatureActivity.TAB_POS_MEASUREMENT) {
             // communicate measurement to fragment
             MeasurementFragment measFrag = (MeasurementFragment) mAdapter.getCurrentFragment();
-            return measFrag.setValue(myDouble);
+            measFrag.setValue(myDouble);
         } else {
             // ignore as not on the Measurement fragment
-            return success;
+            return;
         }
     }
 
     // clear measured value
-    private boolean clearMeasurement() {
-        boolean success = false;
-
+    private void clearMeasurement() {
         // clear Measurement value
         if (mTabPos == FeatureActivity.TAB_POS_MEASUREMENT) {
             // communicate measurement to fragment
             MeasurementFragment measFrag = (MeasurementFragment) mAdapter.getCurrentFragment();
-            return measFrag.setValue(null);
+            measFrag.setValue(null);
         } else {
             // ignore as not on the Measurement fragment
-            return success;
+            return;
         }
     }
 

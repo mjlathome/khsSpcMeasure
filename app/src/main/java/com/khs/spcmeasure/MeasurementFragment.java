@@ -2,6 +2,7 @@ package com.khs.spcmeasure;
 
 import android.app.Activity;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -29,6 +30,7 @@ import com.khs.spcmeasure.entity.Limits;
 import com.khs.spcmeasure.entity.Measurement;
 import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.entity.Product;
+import com.khs.spcmeasure.entity.SimpleCode;
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.CursorAdapterUtils;
 import com.khs.spcmeasure.library.DateTimeUtils;
@@ -72,6 +74,100 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
     private Spinner mSpnMeasCause;
     private ImageView mImgInControl;
 
+    private SetMeasValueTask mSetMeasValueTask;
+
+    /**
+     * Mandatory empty constructor for the fragment manager to instantiate the
+     * fragment (e.g. upon screen orientation changes).
+     */
+    public MeasurementFragment() {
+    }
+
+    // set measurement value nested class -  ensures work is done off the UI thread to prevent ANR
+    private class SetMeasValueTask extends AsyncTask<Double, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(Double... args) {
+            // TODO if measurement already set then ignore.
+            // TODO should probably need to create/update/delete the measurement here instead of externally
+            Boolean success = false;
+
+            try {
+                // extract value
+                Double value = args[0];
+
+                Log.d(TAG, "setValue: " + value);
+
+                if (value != null) {
+                    // update or create Measurement object
+                    if (mMeasurement != null) {
+                        if (updateMeasurement(value) == false) {
+                            return false;
+                        }
+                    } else {
+                        mMeasurement = createMeasurement(value);
+                    }
+
+                    // save Measurement db record
+                    success = saveMeasurement(mMeasurement);
+                } else {
+                    // delete db record
+                    success = deleteMeasurement(mMeasurement);
+                    mMeasurement = null;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return success;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+
+            // skip UI update if task was cancelled
+            if (isCancelled()) {
+                return;
+            }
+
+            // handle success/failure
+            if (result == false) {
+                AlertUtils.errorDialogShow(MeasurementFragment.this.getActivity(), getString(R.string.text_meas_save_failed));
+                return;
+            }
+            else {
+                // update display
+                displayMeasurement();
+
+                if (mMeasurement != null) {
+                    if (mMeasurement.isInControl()) {
+
+                        // navigate to next measurement if in control
+                        Runnable run = new Runnable() {
+                            @Override
+                            public void run() {
+                                // TODO implement interface for this?
+                                FeatureActivity featAct = (FeatureActivity) getActivity();
+                                featAct.getNext();
+                            }
+                        };
+
+                        // TODO delay needs to be a user preference
+                        getView().postDelayed(run, 3000);
+                        //                FeatureActivity featAct = (FeatureActivity) getActivity();
+                        //                featAct.getNext();
+                    } else {
+                        // prompt for cause
+                        // AlertUtils.alertDialogShow(getActivity(), getString(R.string.text_warning), getString(R.string.text_out_control_choose_cause));
+                        mSpnMeasCause.performClick();
+                    }
+                }
+            }
+
+            return;
+        }
+    }
+
     //region spinner interface calls
 
     // handle cause selection
@@ -92,13 +188,6 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
     }
     //endregion
 
-    /**
-	 * Mandatory empty constructor for the fragment manager to instantiate the
-	 * fragment (e.g. upon screen orientation changes).
-	 */
-	public MeasurementFragment() {
-	}
-	
 	@Override
 	public void onAttach(Activity activity) {
 		// TODO Auto-generated method stub
@@ -257,8 +346,8 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
         // show the Action Cause list in the Spinner
         DBAdapter db = new DBAdapter(getActivity());
         db.open();
-        // TODO move types const to SimpleCode
-        Cursor c = db.getAllSimpleCode(ImportSimpleCodeTask.TYPE_ACTION_CAUSE);
+
+        Cursor c = db.getAllSimpleCode(SimpleCode.TYPE_ACTION_CAUSE);
 
         // populate spinner for Collect Status and setup handler
         if (c.getCount() > 0) {
@@ -290,72 +379,22 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
     }
 
     // sets the on-screen value
-	public boolean setValue(Double value) {
-        // TODO if measurement already set then ignore.
-		// TODO should probably need to create/update/delete the measurement here instead of externally 
-		boolean success = false;			
-		boolean inControl = false;
-		
+	public void setValue(Double value) {
 		Log.d(TAG, "setValue: " + value);
 				
 		if (value != null) {
             // ignore new measurement if there is already one set
             if (mMeasurement != null) {
-                AlertUtils.alertDialogShow(getActivity(), getString(R.string.text_warning), getString(R.string.text_meas_not_cleared));
-                return false;
-            }
-
-            // TODO move to Business Task layer
-			// determine whether value is in-control
-			inControl = isInLimit(mLimitCl, value);
-			
-			// update or create Measurement object
-			if (mMeasurement != null) {
-				if (updateMeasurement(value) == false) {
-					return false;			
-				}
-			} else {
-				mMeasurement = createMeasurement(value);
-			}
-			
-			// save Measurement db record
-			success = saveMeasurement(mMeasurement);
-		} else {
-			// delete db record
-			success = deleteMeasurement(mMeasurement);
-			mMeasurement = null;
-		}
-		
-		// update display
-		displayMeasurement();
-
-        if (mMeasurement != null) {
-            if (mMeasurement.isInControl()) {
-
-                // navigate to next measurement if in control
-                Runnable run = new Runnable() {
-                    @Override
-                    public void run() {
-                        // TODO implement interface for this?
-                        FeatureActivity featAct = (FeatureActivity) getActivity();
-                        featAct.getNext();
-                    }
-                };
-
-                // TODO delay needs to be a user preference
-                getView().postDelayed(run, 3000);
-
-
-//                FeatureActivity featAct = (FeatureActivity) getActivity();
-//                featAct.getNext();
-            } else {
-                // prompt for cause
-                // AlertUtils.alertDialogShow(getActivity(), getString(R.string.text_warning), getString(R.string.text_out_control_choose_cause));
-                mSpnMeasCause.performClick();
+                AlertUtils.alertDialogShow(getActivity(), getString(R.string.text_information), getString(R.string.text_meas_not_cleared));
+                return;
             }
         }
 
-		return success;
+        // set the measurement value via a background task
+        mSetMeasValueTask = new SetMeasValueTask();
+        mSetMeasValueTask.execute(value);
+
+		return;
 	}
 	
 	// gets the on-screen value
@@ -372,10 +411,6 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 		
 		return d;	
 	}
-
-//	public void setBleService(SylvacBleService serv) {
-//		mBleService = serv;
-//	}
 
 	// save provided Measurement object into the db
 	private boolean saveMeasurement(Measurement meas) {
