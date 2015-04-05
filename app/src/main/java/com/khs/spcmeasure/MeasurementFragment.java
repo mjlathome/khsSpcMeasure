@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
@@ -32,6 +33,7 @@ import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.entity.Product;
 import com.khs.spcmeasure.entity.SimpleCode;
 import com.khs.spcmeasure.library.AlertUtils;
+import com.khs.spcmeasure.library.CollectStatus;
 import com.khs.spcmeasure.library.CursorAdapterUtils;
 import com.khs.spcmeasure.library.DateTimeUtils;
 import com.khs.spcmeasure.library.LimitType;
@@ -78,7 +80,10 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
     private TextView mTxtMeasRange;
     private Spinner mSpnMeasCause;
     private ImageView mImgInControl;
+    private Button mBtnGetValue;
+    private Button mBtnClearValue;
 
+    // set measurement value task member
     private SetMeasValueTask mSetMeasValueTask;
 
     /**
@@ -328,6 +333,8 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
         mTxtMeasRange = (TextView) rootView.findViewById(R.id.txtMeasRange);
         mSpnMeasCause = (Spinner) rootView.findViewById(R.id.spnMeasCause);
 		mImgInControl = (ImageView) rootView.findViewById(R.id.imgInControl);
+        mBtnGetValue = (Button) rootView.findViewById(R.id.btnGetValue);
+        mBtnClearValue = (Button) rootView.findViewById(R.id.btnClearValue);
 
         try {
             // instantiate Dao's
@@ -439,7 +446,18 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 	
 	// display Piece layout views 
 	private void displayPiece() {
-		mTxtCollDt.setText(DateTimeUtils.getDateTimeStr(mPiece.getCollectDt()));
+        // disable/hide/show views based upon Piece collect status
+        if (mPiece.getStatus() == CollectStatus.OPEN) {
+            mSpnMeasCause.setEnabled(true);
+            mBtnGetValue.setVisibility(View.VISIBLE);
+            mBtnClearValue.setVisibility(View.VISIBLE);
+        } else {
+            mSpnMeasCause.setEnabled(false);
+            mBtnGetValue.setVisibility(View.INVISIBLE);
+            mBtnClearValue.setVisibility(View.INVISIBLE);
+        }
+
+        mTxtCollDt.setText(DateTimeUtils.getDateTimeStr(mPiece.getCollectDt()));
 		mTxtCollSt.setText(mPiece.getStatus().name());
 		return;
 	}	
