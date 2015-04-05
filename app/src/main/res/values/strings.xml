@@ -44,6 +44,7 @@
     <string name="text_out_control">Out of Control</string>
     <string name="text_out_control_select_cause">Out of Control - Select Cause</string>
     <string name="text_piece_already_closed">Piece is already closed.</string>
+    <string name="text_piece_not_open">Piece is not Open.</string>
     <string name="text_piece_now_closed">Piece is now Closed.</string>
     <string name="text_product">Product</string>
     <string name="text_simple_code_import">Simple Code Import (%s)</string>
@@ -51,6 +52,11 @@
     <string name="text_meas_export">Measurement Export (%s)</string>
     <string name="text_piece_export_title">Piece Export (%s)</string>
     <string name="text_piece_export_text">CLOSED pieces processed (%1$s of %2$s)</string>
+    <string name="text_piece_close_failed">Piece Close failed.  An unknown error occurred.  Contact Administrator.</string>
+    <string name="text_piece_close_question">Are you sure you wish to Close this piece?</string>
+    <string name="text_piece_feature_measured_none">No Features have been measured.</string>
+    <string name="text_piece_feature_measured_all">All Features have been measured.</string>
+    <string name="text_piece_feature_measured_some">%1$s out of %2$s features have been measured.</string>
     <string name="text_refresh">Refresh</string>
     <string name="text_warning">Warning</string>
     <string name="text_unknown">Unknown</string>

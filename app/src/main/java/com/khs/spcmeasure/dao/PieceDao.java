@@ -118,4 +118,33 @@ public class PieceDao {
 
         return pieceList;
     }
+
+    // save provided Piece into the db
+    public boolean savePiece(Piece piece) {
+        Log.d(TAG, "savePiece: id = " + piece.getId());
+
+        boolean success = false;
+
+        // update db
+        try {
+            db.open();
+
+            // update or insert Piece into the db
+            if (db.updatePiece(piece) == false) {
+                long rowId = db.createPiece(piece);
+                if (rowId >= 0) {
+                    piece.setId(rowId);
+                    success = true;
+                }
+            } else {
+                success = true;
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.close();
+        }
+
+        return success;
+    }
 }
