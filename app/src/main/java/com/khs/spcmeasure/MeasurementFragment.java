@@ -35,11 +35,9 @@ import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.CursorAdapterUtils;
 import com.khs.spcmeasure.library.DateTimeUtils;
 import com.khs.spcmeasure.library.LimitType;
-import com.khs.spcmeasure.tasks.ImportSimpleCodeTask;
+import com.khs.spcmeasure.tasks.MeasurementTask;
 
 import java.text.DecimalFormat;
-import java.util.Date;
-import java.util.List;
 
 /**
  * A fragment representing a single Measurement detail screen. This fragment is
@@ -53,6 +51,13 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 	// id's
 	private Long mPieceId;
 	private Long mFeatId;
+
+    // declare Dao's - cannot initialize yet as require Activity context
+    private PieceDao mPieceDao;
+    private ProductDao mProdDao;
+    private FeatureDao mFeatDao;
+    private LimitsDao mLimDao;
+    private MeasurementDao mMeasDao;
 
 	// data
 	private Product mProduct;
@@ -85,10 +90,19 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 
     // set measurement value nested class -  ensures work is done off the UI thread to prevent ANR
     private class SetMeasValueTask extends AsyncTask<Double, Void, Boolean> {
+
+        MeasurementTask mMeasTask;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            // load required objects
+            mMeasTask = new MeasurementTask(getActivity());
+        }
+
         @Override
         protected Boolean doInBackground(Double... args) {
-            // TODO if measurement already set then ignore.
-            // TODO should probably need to create/update/delete the measurement here instead of externally
             Boolean success = false;
 
             try {
@@ -100,18 +114,18 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
                 if (value != null) {
                     // update or create Measurement object
                     if (mMeasurement != null) {
-                        if (updateMeasurement(value) == false) {
+                        if (mMeasTask.updateMeasurement(mMeasurement, value) == false) {
                             return false;
                         }
                     } else {
-                        mMeasurement = createMeasurement(value);
+                        mMeasurement = mMeasTask.createMeasurement(mPieceId, mFeatId, value);
                     }
 
                     // save Measurement db record
-                    success = saveMeasurement(mMeasurement);
+                    success = mMeasDao.saveMeasurement(mMeasurement);
                 } else {
                     // delete db record
-                    success = deleteMeasurement(mMeasurement);
+                    success = mMeasDao.deleteMeasurement(mMeasurement);
                     mMeasurement = null;
                 }
             } catch (Exception e) {
@@ -177,7 +191,7 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 
         if (mMeasurement != null && mMeasurement.getCause() != id) {
             mMeasurement.setCause(id);
-            saveMeasurement(mMeasurement);
+            mMeasDao.saveMeasurement(mMeasurement);
         }
 
     }
@@ -192,10 +206,7 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 	public void onAttach(Activity activity) {
 		// TODO Auto-generated method stub
 		super.onAttach(activity);
-		
-		// move to the first feature
-		// MeasurementListActivity measListActivity = (MeasurementListActivity) activity;
-		// measListActivity.getFirst();		
+
 	}
 
 	@Override
@@ -300,6 +311,8 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
+        Log.d(TAG, "onActivityCreated");
+
 		// TODO Auto-generated method stub
 		super.onActivityCreated(savedInstanceState);
 		
@@ -317,50 +330,43 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 		mImgInControl = (ImageView) rootView.findViewById(R.id.imgInControl);
 
         try {
-            // TODO implement interface for this?
-            // TODO ensure call works when not 2 pane
-            // extract Ble service for direct communication
-//			MeasurementListActivity measListAct = (MeasurementListActivity) getActivity();
-//			mBleService = measListAct.getBleService();
-
-            // TODO move Dao to member variable
             // instantiate Dao's
-            PieceDao pieceDao = new PieceDao(getActivity());
-            ProductDao prodDao = new ProductDao(getActivity());
-            FeatureDao featDao = new FeatureDao(getActivity());
-            LimitsDao limDao = new LimitsDao(getActivity());
-            MeasurementDao measDao = new MeasurementDao(getActivity());
+            mPieceDao = new PieceDao(getActivity());
+            mProdDao = new ProductDao(getActivity());
+            mFeatDao = new FeatureDao(getActivity());
+            mLimDao = new LimitsDao(getActivity());
+            mMeasDao = new MeasurementDao(getActivity());
 
             // extract on-screen data
-            mPiece = pieceDao.getPiece(mPieceId);
-            mProduct = prodDao.getProduct(mPiece.getProdId());
-            mFeature = featDao.getFeature(mPiece.getProdId(), mFeatId);
-            mLimitCl  = limDao.getLimit(mFeature.getProdId(), mFeature.getFeatId(), mFeature.getLimitRev(), LimitType.CONTROL);
-            mLimitEng = limDao.getLimit(mFeature.getProdId(), mFeature.getFeatId(), mFeature.getLimitRev(), LimitType.ENGINEERING);
-            mMeasurement = measDao.getMeasurement(mPieceId, mPiece.getProdId(), mFeatId);
+            mPiece = mPieceDao.getPiece(mPieceId);
+            mProduct = mProdDao.getProduct(mPiece.getProdId());
+            mFeature = mFeatDao.getFeature(mPiece.getProdId(), mFeatId);
+            mLimitCl  = mLimDao.getLimit(mFeature.getProdId(), mFeature.getFeatId(), mFeature.getLimitRev(), LimitType.CONTROL);
+            mLimitEng = mLimDao.getLimit(mFeature.getProdId(), mFeature.getFeatId(), mFeature.getLimitRev(), LimitType.ENGINEERING);
+            mMeasurement = mMeasDao.getMeasurement(mPieceId, mPiece.getProdId(), mFeatId);
+
+            // show the Action Cause list in the Spinner
+            DBAdapter db = new DBAdapter(getActivity());
+            db.open();
+
+            Cursor c = db.getAllSimpleCode(SimpleCode.TYPE_ACTION_CAUSE);
+
+            // populate spinner for Collect Status and setup handler
+            if (c.getCount() > 0) {
+                String[] from = new String[]{DBAdapter.KEY_DESCRIPTION};
+                // create an array of the display item we want to bind our data to
+                int[] to = new int[]{android.R.id.text1};
+                SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_item, c, from, to, 0);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                mSpnMeasCause.setAdapter(adapter);
+                mSpnMeasCause.setOnItemSelectedListener(this);
+            }
+
+            db.close();
 
         } catch(Exception e) {
             e.printStackTrace();
         }
-
-        // show the Action Cause list in the Spinner
-        DBAdapter db = new DBAdapter(getActivity());
-        db.open();
-
-        Cursor c = db.getAllSimpleCode(SimpleCode.TYPE_ACTION_CAUSE);
-
-        // populate spinner for Collect Status and setup handler
-        if (c.getCount() > 0) {
-            String[] from = new String[]{DBAdapter.KEY_DESCRIPTION};
-            // create an array of the display item we want to bind our data to
-            int[] to = new int[]{android.R.id.text1};
-            SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(), android.R.layout.simple_spinner_item, c, from, to, 0);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            mSpnMeasCause.setAdapter(adapter);
-            mSpnMeasCause.setOnItemSelectedListener(this);
-        }
-
-        db.close();
 
 		return;
 	}
@@ -412,56 +418,6 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 		return d;	
 	}
 
-	// save provided Measurement object into the db
-	private boolean saveMeasurement(Measurement meas) {
-		Log.d(TAG, "saveMeas: Inctrl = " +  meas.isInControl());
-		boolean success = false;
-		long rowId;
-						
-		// update db
-		DBAdapter db = new DBAdapter(getActivity());
-		try {		
-			db.open();
-					
-			// update or insert Measurement into the db
-			if (db.updateMeasurement(meas) == false) {
-				rowId = db.createMeasurement(meas);
-				if (rowId >= 0) {
-					meas.setId(rowId);
-					success = true;
-				}
-			} else {
-				success = true;
-			}
-		} catch(Exception e) {
-			e.printStackTrace();
-		} finally {
-			db.close();
-		}
-		
-		return success;
-	}	
-	
-	// delete provided Measurement object from the db
-	private boolean deleteMeasurement(Measurement meas) {
-		boolean success = true;
-		
-		// delete Measurement if it exists
-		if (meas != null && meas.getId() != null) {					
-			DBAdapter db = new DBAdapter(getActivity());
-			try {		
-				db.open();
-				success = db.deleteMeasurement(meas.getId());				
-			} catch(Exception e) {
-				e.printStackTrace();
-			} finally {
-				db.close();
-			}
-		}
-		
-		return success;
-	}
-
 	// display all layout views
 	private void displayAll() {		
 		Log.d(TAG, "displayAll");
@@ -475,6 +431,8 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 
 	// display Product layout views 
 	private void displayProduct() {
+        Log.d(TAG, "displayProduct: prod = " + mProduct);
+
 		mTxtProdName.setText(mProduct.getName());
 		return;
 	}	
@@ -507,8 +465,6 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 		if (mMeasurement != null) {
 			Log.d(TAG, "dispMeas - isInCtrl = " + mMeasurement.isInControl());
 			
-			// mTxtMeasValue.setText(Double.toString(mMeasurement.getValue()));
-            // mTxtMeasRange.setText(Double.toString(mMeasurement.getRange()));
             getView().setBackgroundColor(getResources().getColor(mMeasurement.isInControl()? R.color.measInControl : R.color.measOutControl));
 
             mTxtMeasValue.setText(df.format(mMeasurement.getValue()));
@@ -545,89 +501,4 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 		return;
 	}	
 
-	// create Measurement object
-	private Measurement createMeasurement(Double value) {
-        // calculate cause, use first entry in spinner if out-of-control
-        boolean inCtrl = isInLimit(mLimitCl, value);
-        Long cause = (inCtrl? null : mSpnMeasCause.getAdapter().getItemId(0));   // use first entry in spinner if out-of-control
-
-        Log.d(TAG, "createMeas: prodId = " + mPiece.getProdId());
-
-		Measurement meas = new Measurement(mPieceId, mPiece.getProdId(), mFeatId, 
-				new Date(), // TODO is this required? was: mPiece.getCollectDt() 
-				mPiece.getOperator(),	// TODO needs to be current user, not the one who created the piece?  
-				value,
-                calcRange(mPiece.getProdId(), mFeatId, mPiece.getCollectDt(), value),
-                cause,
-                mFeature.getLimitRev(),
-				inCtrl,
-                isInLimit(mLimitEng, value));
-		
-		return meas;
-	}
-	
-	// update Measurement object
-	private boolean updateMeasurement(Double value) {
-        boolean success = false;
-
-        // calculate cause, use first entry in spinner if out-of-control
-        boolean inCtrl = isInLimit(mLimitCl, value);
-        Long cause = (inCtrl? null : mSpnMeasCause.getAdapter().getItemId(0));   // use first entry in spinner if out-of-control
-
-		if (mMeasurement != null) {
-			mMeasurement.setCollectDt(new Date());	// TODO is actual dt collected for measurement required?
-			mMeasurement.setOperator(mPiece.getOperator());	// TODO should this be from the actual logged in user
-			mMeasurement.setValue(value);
-            mMeasurement.setRange(calcRange(mPiece.getProdId(), mFeatId, mPiece.getCollectDt(), value));
-            mMeasurement.setCause(cause);
-			mMeasurement.setInControl(inCtrl);
-			mMeasurement.setInEngLim(isInLimit(mLimitEng, value));
-			
-			success = true;
-		}
-		
-		return success;
-	}	
-	
-	// returns whether the provided value is within the Limits
-	private boolean isInLimit(Limits limit, Double value) {
-		
-		if (limit != null) {
-			Log.d(TAG, "isInLimit: U: " + limit.getUpper() + "; L: " + limit.getLower() + "; V: " + value);	
-		}
-				
-		boolean inLim = false;	
-		if (limit != null && value >= limit.getLower() && value <= limit.getUpper()) {
-			inLim = true;
-		}
-		return inLim;		
-	}
-
-    // calculate the range for Feature between the current and previous value
-    private double calcRange(long prodId, long featId, Date collDate, double value) {
-        double range = 0.0;
-
-        // create Dao's
-        PieceDao pieceDao = new PieceDao(getActivity());
-        MeasurementDao measDao = new MeasurementDao(getActivity());
-
-        // extract previous list of Pieces, if any
-        // order is already descending from the db query
-        List<Piece> pieceList = pieceDao.getPrevPieces(prodId, collDate);
-        Log.d(TAG, "calcRange: pieceList size = " + pieceList.size());
-
-        // calculate range using the previous Measurement
-        for (Piece piece : pieceList) {
-            Log.d(TAG, "calcRange: Prev Piece Date = " + piece.getCollectDt());
-            Measurement prevMeas = measDao.getMeasurement(piece.getId(), piece.getProdId(), featId);
-            if (prevMeas != null) {
-                Log.d(TAG, "calcRange: value = " + value + "; Prev Meas = " + prevMeas.getValue());
-
-                range = value - prevMeas.getValue();
-                break;
-            }
-        }
-
-        return range;
-    }
 }

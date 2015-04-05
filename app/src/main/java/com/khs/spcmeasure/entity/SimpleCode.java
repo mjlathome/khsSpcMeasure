@@ -7,6 +7,9 @@ public class SimpleCode {
     // type constants
     public static final String TYPE_ACTION_CAUSE = "actionCause";
 
+    // internal codes constants
+    public static final String INTERNAL_CODE_NO_CAUSE = "0";
+
 	// private member variables
 	private long id;
 	private String type;

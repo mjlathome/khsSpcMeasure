@@ -34,7 +34,6 @@ public class PieceDao {
         Piece piece = null;
         Cursor cPiece = null;
 
-        // DBAdapter db = new DBAdapter(getActivity());
         try {
             db.open();
 
@@ -50,6 +49,8 @@ public class PieceDao {
             }
             db.close();
         }
+
+        Log.d(TAG, "getPiece: " + piece);
 
         return piece;
 	}

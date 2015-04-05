@@ -2,6 +2,7 @@ package com.khs.spcmeasure.dao;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.khs.spcmeasure.DBAdapter;
 import com.khs.spcmeasure.entity.Measurement;
@@ -27,7 +28,6 @@ public class MeasurementDao {
         Measurement meas = null;
         Cursor cMeas = null;
 
-        // DBAdapter db = new DBAdapter(getActivity());
         try {
             db.open();
 
@@ -47,6 +47,54 @@ public class MeasurementDao {
         }
 
         return meas;
+    }
+
+    // save provided Measurement into the db
+    public boolean saveMeasurement(Measurement meas) {
+        Log.d(TAG, "saveMeasurement: InCtrl = " + meas.isInControl());
+
+        boolean success = false;
+
+        // update db
+        try {
+            db.open();
+
+            // update or insert Measurement into the db
+            if (db.updateMeasurement(meas) == false) {
+                long rowId = db.createMeasurement(meas);
+                if (rowId >= 0) {
+                    meas.setId(rowId);
+                    success = true;
+                }
+            } else {
+                success = true;
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.close();
+        }
+
+        return success;
+    }
+
+    // delete provided Measurement from the db
+    public boolean deleteMeasurement(Measurement meas) {
+        boolean success = false;
+
+        // delete Measurement if it exists
+        if (meas != null && meas.getId() != null) {
+            try {
+                db.open();
+                success = db.deleteMeasurement(meas.getId());
+            } catch(Exception e) {
+                e.printStackTrace();
+            } finally {
+                db.close();
+            }
+        }
+
+        return success;
     }
 
 }

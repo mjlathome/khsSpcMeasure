@@ -2,6 +2,7 @@ package com.khs.spcmeasure.dao;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.khs.spcmeasure.DBAdapter;
 import com.khs.spcmeasure.entity.Product;
@@ -19,6 +20,9 @@ public class ProductDao {
     // constructor
     public ProductDao(Context context) {
         super();
+
+        Log.d(TAG, "constructor");
+
         this.mContext = context;
 
         // instantiate db helper
@@ -27,6 +31,8 @@ public class ProductDao {
 
     // extracts the product
     public Product getProduct(long prodId) {
+        Log.d(TAG, "getProduct: prodId = " + prodId);
+
         Product prod = null;
         Cursor cProd = null;
 
@@ -45,6 +51,8 @@ public class ProductDao {
             }
             db.close();
         }
+
+        Log.d(TAG, "getProduct: prod = " + prod);
 
         return prod;
     }

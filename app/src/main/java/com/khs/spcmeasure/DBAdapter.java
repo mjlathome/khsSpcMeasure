@@ -816,6 +816,20 @@ public class DBAdapter {
         return c;
     };
 
+    // get single Simple Code by Internal Code
+    public Cursor getSimpleCodeByTypeIntCode(String type, String intCode) {
+        Cursor c = db.query(TABLE_SIMPLE_CODE,
+                new String[] {KEY_ROWID, KEY_TYPE, KEY_CODE, KEY_DESCRIPTION, KEY_INT_CODE, KEY_ACTIVE},
+                KEY_TYPE + "='" + type + "' AND " + KEY_INT_CODE + "='" + intCode + "'",
+                null, null, null, null, null);
+
+        if (c != null) {
+            c.moveToFirst();
+        }
+
+        return c;
+    };
+
     // get Simple Code count
     public int getSimpleCodeCount(String type) {
         return getAllSimpleCode(type).getCount();
