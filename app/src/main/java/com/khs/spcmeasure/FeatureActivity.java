@@ -693,7 +693,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
                     args = new Bundle();
                     args.putLong(DBAdapter.KEY_PROD_ID, feat.getProdId());
                     args.putLong(DBAdapter.KEY_FEAT_ID, feat.getFeatId());
-                    LimitsFragment limFrag = new LimitsFragment();
+                    FeatureInfoFragment limFrag = new FeatureInfoFragment();
                     limFrag.setArguments(args);
                     return limFrag;
                 default:

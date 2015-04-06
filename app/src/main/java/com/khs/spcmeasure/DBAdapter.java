@@ -434,6 +434,16 @@ public class DBAdapter {
 		return db.rawQuery(selectQuery, null);		
 	};
 
+    // get all Limits by prodId by featId by revision
+    public Cursor getAllLimits(long prodId, long featId, long rev) {
+        // select all query
+        String selectQuery = "SELECT * FROM " + TABLE_LIMITS + " WHERE " +
+                KEY_PROD_ID + " = " + Long.toString(prodId) + " AND " +
+                KEY_FEAT_ID + " = " + Long.toString(featId) + " AND " +
+                KEY_LIMIT_REV + " = " + Long.toString(rev);
+        return db.rawQuery(selectQuery, null);
+    };
+
 	// get single Limit by prodId and featId
 	public Cursor getLimit(long prodId, long featId, long rev, LimitType limitType) {
 		Log.d(TAG, "getLimit - prodId: " + prodId + "; featId = " + featId + "; rev = " + rev + "; type = " + limitType.getValue());

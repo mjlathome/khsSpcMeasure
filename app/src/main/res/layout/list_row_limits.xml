@@ -4,28 +4,17 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal" >
 
-    <TextView android:id="@+id/txtLimRev"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.1"
-        android:layout_marginStart="@dimen/margin_small"
-        android:layout_marginTop="@dimen/margin_small"
-        android:layout_marginBottom="@dimen/margin_small"
-        android:layout_gravity="center_vertical"
-        android:text="@string/text_limit_rev"
-        android:textSize="@dimen/text_medium"
-        />
-
     <TextView android:id="@+id/txtLimType"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.3"
+        android:layout_weight="0.4"
         android:layout_marginStart="@dimen/margin_small"
         android:layout_marginTop="@dimen/margin_small"
         android:layout_marginBottom="@dimen/margin_small"
         android:layout_gravity="center_vertical"
         android:text="@string/text_limit_type"
         android:textSize="@dimen/text_medium"
+        android:textStyle="bold"
         />
     
     <TextView android:id="@+id/txtLimUpper"
@@ -38,6 +27,7 @@
         android:layout_gravity="center_vertical"
         android:text="@string/text_limit_upper"
         android:textSize="@dimen/text_medium"
+        android:textStyle="bold"
         />
 
     <TextView android:id="@+id/txtLimLower"
@@ -50,6 +40,7 @@
         android:layout_gravity="center_vertical"
         android:text="@string/text_limit_lower"
         android:textSize="@dimen/text_medium"
+        android:textStyle="bold"
         />    
     
 </LinearLayout>

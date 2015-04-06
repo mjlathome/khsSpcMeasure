@@ -121,51 +121,6 @@ public class PieceListFragment extends ListFragment implements AdapterView.OnIte
         // register the listview for a context menu
         registerForContextMenu(mListView);
 
-        // TODO remove later as long click handled via context menu
-//		OnItemLongClickListener listener = new OnItemLongClickListener() {
-//			@Override
-//			public boolean onItemLongClick(AdapterView<?> parent, View view,
-//					int position, long id) {
-//
-//				// start the measurement activity
-//				selectPiece(id);
-//
-//				// indicate that event was handled
-//				return true;
-//			}
-//        };
-//
-//        getListView().setOnItemLongClickListener(listener);
-
-        // TODO remove later as playing with default ListFragment ListView didn't work out
-//        LayoutInflater inflater = getActivity().getLayoutInflater();
-//
-//        ListView lv = getListView();
-//        // ViewGroup vg = (ViewGroup) lv.getParent();
-//
-//        View header = inflater.inflate(R.layout.piece_list_header, lv, false);
-//        lv.addHeaderView(header, null, false);
-//        // vg.addView(header);
-//
-//        View empty = inflater.inflate(R.layout.piece_list_empty, lv, false);
-//        // getActivity().addContentView(empty, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-//        empty.setVisibility(View.GONE);
-//        ((ViewGroup)getListView().getParent()).addView(empty);
-//
-//        if (mProdId != null) {
-//            // extract the Product
-//            DBAdapter db = new DBAdapter(getActivity());
-//            db.open();
-//            Cursor c = db.getProduct(mProdId);
-//            ((TextView) header.findViewById(R.id.txtProdName))
-//                .setText(c.getString(c.getColumnIndex(DBAdapter.KEY_NAME)));
-//            ((TextView) empty.findViewById(R.id.android_empty))
-//                .setText(c.getString(c.getColumnIndex(DBAdapter.KEY_NAME)));
-//            empty.findViewById(R.id.android_empty).setVisibility(View.GONE);
-//            lv.setEmptyView(empty);
-//            db.close();
-//        }
-
         // show the Product Name in the TextView
         if (mProdId != null) {
             // extract the Product
@@ -176,10 +131,6 @@ public class PieceListFragment extends ListFragment implements AdapterView.OnIte
                     .setText(c.getString(c.getColumnIndex(DBAdapter.KEY_NAME)));
             c.close();
             db.close();
-
-//            mPiece = db.cursorToPiece(c);
-//            db.close();
-//            Log.d(TAG, "OnCreate Piece St = " + mPiece.getStatus());
         }
 
         // populate spinner for Collect Status and setup handler
