@@ -96,18 +96,23 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
     // set measurement value nested class -  ensures work is done off the UI thread to prevent ANR
     private class SetMeasValueTask extends AsyncTask<Double, Void, Boolean> {
 
-        MeasurementTask mMeasTask;
+        // business logic members
+        private MeasurementTask mMeasTask;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
 
-            // load required objects
+            Log.d(TAG, "onPreExecute");
+
+            // business logic load
             mMeasTask = new MeasurementTask(getActivity());
         }
 
         @Override
         protected Boolean doInBackground(Double... args) {
+            Log.d(TAG, "doInBackground");
+
             Boolean success = false;
 
             try {
@@ -144,6 +149,8 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
 
+            Log.d(TAG, "onPostExecute");
+
             // skip UI update if task was cancelled
             if (isCancelled()) {
                 return;
@@ -160,21 +167,10 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 
                 if (mMeasurement != null) {
                     if (mMeasurement.isInControl()) {
-
                         // navigate to next measurement if in control
-                        Runnable run = new Runnable() {
-                            @Override
-                            public void run() {
-                                // TODO implement interface for this?
-                                FeatureActivity featAct = (FeatureActivity) getActivity();
-                                featAct.getNext();
-                            }
-                        };
-
-                        // TODO delay needs to be a user preference
-                        getView().postDelayed(run, 3000);
-                        //                FeatureActivity featAct = (FeatureActivity) getActivity();
-                        //                featAct.getNext();
+                        // TODO implement interface for this?
+                        FeatureActivity featAct = (FeatureActivity) getActivity();
+                        featAct.moveNext();
                     } else {
                         // prompt for cause
                         // AlertUtils.alertDialogShow(getActivity(), getString(R.string.text_warning), getString(R.string.text_out_control_choose_cause));
@@ -388,6 +384,20 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 
         } catch(Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        Log.d(TAG, "onPause");
+
+        // cancel active Set Value Measurement task, if any
+        if (mSetMeasValueTask != null) {
+            Log.d(TAG, "onPause - task cancel");
+
+            mSetMeasValueTask.cancel(true);
         }
     }
 

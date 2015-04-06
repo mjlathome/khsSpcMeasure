@@ -14,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -71,6 +72,9 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
     // tab member variables
     public int mTabPos = TAB_POS_MEASUREMENT;
+
+    // handler for delayed move to next feature
+    private Handler mHandler = new Handler();
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -522,11 +526,48 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         }
     }
 
+    // get next Position
+    public int getNextPos() {
+        int pos = mPager.getCurrentItem();
+        if (pos != (mFeatList.size() - 1)) {
+            pos += 1;
+        }
+        return pos;
+    }
+
     // navigate to last Feature
     public void getLast() {
         int pos = mPager.getCurrentItem();
         if (pos != (mFeatList.size() - 1)) {
             mPager.setCurrentItem((mFeatList.size() - 1));
+        }
+    }
+
+    // sets the View Pager position
+    public void setPagerPos(int pos) {
+        mPager.setCurrentItem(pos);
+    }
+
+    // moves to the next feature, if any
+    public void moveNext() {
+
+        // extract current and next View Pager positions
+        final int currPos = mPager.getCurrentItem();
+        final int nextPos = getNextPos();
+
+        // if there's a next, then post delayed move
+        if (currPos != nextPos) {
+            Runnable run = new Runnable() {
+                @Override
+                public void run() {
+                    // ensure that user has not updated the displayed feature
+                    if (mPager.getCurrentItem() == currPos) {
+                        setPagerPos(nextPos);
+                    }
+                }
+            };
+            // TODO delay needs to be a user preference
+            mHandler.postDelayed(run, 3000);
         }
     }
 
@@ -684,60 +725,6 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
             return mCurrentFragment;
         }
     }
-
-    // TODO remove later
-//    public static class ArrayListFragment extends ListFragment {
-//        int mNum;
-//
-//        /**
-//         * Create a new instance of CountingFragment, providing "num"
-//         * as an argument.
-//         */
-//        static ArrayListFragment newInstance(int num) {
-//            ArrayListFragment f = new ArrayListFragment();
-//
-//            // Supply num input as an argument.
-//            Bundle args = new Bundle();
-//            args.putInt("num", num);
-//            f.setArguments(args);
-//
-//            return f;
-//        }
-//
-//        /**
-//         * When creating, retrieve this instance's number from its arguments.
-//         */
-//        @Override
-//        public void onCreate(Bundle savedInstanceState) {
-//            super.onCreate(savedInstanceState);
-//            mNum = getArguments() != null ? getArguments().getInt("num") : 1;
-//        }
-//
-//        /**
-//         * The Fragment's UI is just a simple text view showing its
-//         * instance number.
-//         */
-//        @Override
-//        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                                 Bundle savedInstanceState) {
-//            View v = inflater.inflate(R.layout.fragment_pager_list, container, false);
-//            View tv = v.findViewById(R.id.text);
-//            ((TextView)tv).setText("Fragment #" + mNum);
-//            return v;
-//        }
-//
-//        @Override
-//        public void onActivityCreated(Bundle savedInstanceState) {
-//            super.onActivityCreated(savedInstanceState);
-//            setListAdapter(new ArrayAdapter<String>(getActivity(),
-//                    android.R.layout.simple_list_item_1, Cheeses.CHEESES));
-//        }
-//
-//        @Override
-//        public void onListItemClick(ListView l, View v, int position, long id) {
-//            Log.i("FragmentList", "Item clicked: " + id);
-//        }
-//    }
 
     // handle on click of button Get Value
     public void onClickBtnGetValue(View view) {
