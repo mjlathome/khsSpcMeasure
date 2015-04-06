@@ -12,7 +12,8 @@ import java.util.Map;
  *
  */
 public enum LimitType {
-	CONTROL("CL"), SIGNIFICANT_CONTROL("SCL"), ENGINEERING("ENG");
+    // TODO remove SCL once PHP is fixed?
+	CONTROL("CL"), SIGNIFICANT_CONTROL("SCL"), RANGE("RNG"), ENGINEERING("ENG");
 	
 	// value to be stored
 	private final String value;
