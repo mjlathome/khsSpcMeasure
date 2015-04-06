@@ -472,7 +472,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
     // unbind from Ble service
     private void unbindBleService() {
-        if (mBound) {
+        if (mBound == true && mConnection != null) {
             unbindService(mConnection);
             mBound = false;
         }
