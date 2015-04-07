@@ -32,8 +32,7 @@ import java.util.List;
  * An {@link IntentService} subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
  * <p/>
- * TODO: Customize class - update intent actions, extra parameters and static
- * helper methods.
+ * used to import the setup for a Product as json into the Android Sqlite db.
  */
 public class SetupService extends IntentService {
     private static final String TAG = "SetupService";
@@ -65,6 +64,8 @@ public class SetupService extends IntentService {
     private static final String TAG_ACTIVE = "active";
     private static final String TAG_CUSTOMER = "customer";
     private static final String TAG_PROGRAM = "program";
+    private static final String TAG_CP = "cp";
+    private static final String TAG_CPK = "cpk";
     private static final String TAG_LIMIT_REV = "limitRev";
     private static final String TAG_LIMIT_TYPE = "type";
     private static final String TAG_UPPER = "upper";
@@ -195,14 +196,9 @@ public class SetupService extends IntentService {
                     long featId = Long.valueOf(jFeature.getString(TAG_ID));
                     name = jFeature.getString(TAG_NAME);
                     active = Boolean.valueOf(jFeature.getString(TAG_ACTIVE));
+                    Double cp 	 = jFeature.getDouble(TAG_CP);
+                    Double cpk     = jFeature.getDouble(TAG_CPK);
                     long limitRev = Long.valueOf(jFeature.getString(TAG_LIMIT_REV));
-
-                    // FUTURE:
-                    // double cp 	 = jFeature.getDouble(TAG_CP);
-                    // double cpk     = jFeature.getDouble(TAG_CPK);
-                    // TODO remove later
-                    double cp = 0.1;
-                    double cpk = 0.2;
 
                     // create the Feature object
                     Feature feature = new Feature(product.getId(), featId, name, active, limitRev, cp, cpk);

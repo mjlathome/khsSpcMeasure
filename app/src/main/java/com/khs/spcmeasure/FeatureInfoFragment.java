@@ -136,8 +136,20 @@ public class FeatureInfoFragment extends ListFragment {
         try {
             mTxtProdName.setText(mProduct.getName());
             mTxtFeatName.setText(mFeature.getName());
-            mTxtCp.setText(df.format(mFeature.getCp()));
-            mTxtCpk.setText(df.format(mFeature.getCpk()));
+
+            Log.d(TAG, "displayAll: cp = " + mFeature.getCp() + "; cpk = " + mFeature.getCpk());
+
+            if (mFeature.getCp() != null) {
+                mTxtCp.setText(df.format(mFeature.getCp()));
+            } else {
+                mTxtCp.setText("");
+            }
+
+            if (mFeature.getCpk() != null) {
+                mTxtCpk.setText(df.format(mFeature.getCpk()));
+            } else {
+                mTxtCpk.setText("");
+            }
 
         } catch(Exception e) {
             e.printStackTrace();

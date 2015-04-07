@@ -400,15 +400,26 @@ public class DBAdapter {
 			Log.d(TAG, "featToVal: id = " + String.valueOf(feature.getId()));
 			values.put(KEY_ROWID, feature.getId());	
 		}	
-		
+
+
 		values.put(KEY_PROD_ID, feature.getProdId());
 		values.put(KEY_FEAT_ID, feature.getFeatId());
 		values.put(KEY_NAME, feature.getName());
 		values.put(KEY_ACTIVE, feature.isActive());
 		values.put(KEY_LIMIT_REV, feature.getLimitRev());
-        values.put(KEY_CP, feature.getCp());
-        values.put(KEY_CPK, feature.getCpk());
-		
+
+        // don't output cp if not known
+        if(feature.getCp() != null) {
+            Log.d(TAG, "featToVal: cp = " + String.valueOf(feature.getCp()));
+            values.put(KEY_CP, feature.getCp());
+        }
+
+        // don't output cpk if not known
+        if(feature.getCpk() != null) {
+            Log.d(TAG, "featToVal: cpk = " + String.valueOf(feature.getCpk()));
+            values.put(KEY_CPK, feature.getCpk());
+        }
+
 		return values;
 	}
     //endregion

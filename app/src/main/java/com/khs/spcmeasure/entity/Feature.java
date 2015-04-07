@@ -11,14 +11,14 @@ public class Feature {
 	private String name;
 	private boolean active;
 	private long limitRev;
-    private double cp;
-    private double cpk;
+    private Double cp;
+    private Double cpk;
 
 	// empty constructor
 	public Feature() {}
 
 	// constructor
-	public Feature(Long id, long prodId, long featId, String name, boolean active, long limitRev, double cp, double cpk) {
+	public Feature(Long id, long prodId, long featId, String name, boolean active, long limitRev, Double cp, Double cpk) {
 		super();
 		this.id = id;
 		this.prodId = prodId;
@@ -27,10 +27,10 @@ public class Feature {
 		this.active = active;
 		this.limitRev = limitRev;
         this.cp = cp;
-        this.cp = cpk;
+        this.cpk = cpk;
 	}
 	
-	public Feature(long prodId, long featId, String name, boolean active, long limitRev, double cp, double cpk) {
+	public Feature(long prodId, long featId, String name, boolean active, long limitRev, Double cp, Double cpk) {
 		this(null, prodId, featId, name, active, limitRev, cp, cpk);
 	}
 
@@ -83,19 +83,19 @@ public class Feature {
 		this.limitRev = limitRev;
 	}
 
-    public double getCp() {
+    public Double getCp() {
         return cp;
     }
 
-    public void setCp(double cp) {
+    public void setCp(Double cp) {
         this.cp = cp;
     }
 
-    public double getCpk() {
+    public Double getCpk() {
         return cpk;
     }
 
-    public void setCpk(double cpk) {
+    public void setCpk(Double cpk) {
         this.cpk = cpk;
     }
 }
