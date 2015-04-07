@@ -1,7 +1,7 @@
-C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\classes\debug
-C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\internal_impl-21.0.3-394102ab0123c0b297e1f729c89c5659f58bb0fc.jar
-C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\support-annotations-21.0.3-16622f2910aa4516818f673523420b1f2e344443.jar
-C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-2b4c99b0bdbbd96ad23ff3a268588241add32512.jar
-C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\internal_impl-21.0.3-e2bf89c5f222eb804fbf39b2dba6b12e8ccf827b.jar
-C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\androidplot-core-0.6.1-c76aac1cdfecd802d3f70b872639d08d524d6237.jar
-C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-c17c0568c700d475e7db98981c043649bf06203b.jar
+C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\classes\debug
+C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\internal_impl-21.0.3-aacfbbe3d78aa59f2176a3a9a6bf5b5010872682.jar
+C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\support-annotations-21.0.3-9c59b8c4113fb596c4a5a2d5da3d6a11aeb7dd72.jar
+C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-8b580112c03fb5a6a7ef15a4fd5faca6af449458.jar
+C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\internal_impl-21.0.3-1f1b67885d3cb9eb42ddf2310f0016a72844540d.jar
+C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\androidplot-core-0.6.1-574c0364bc175045ba54cb69a1e174ab5e54503d.jar
+C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-53410154e049920c1a5caf279e6fb917b0e0e0b8.jar

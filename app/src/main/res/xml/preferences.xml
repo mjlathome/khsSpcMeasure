@@ -7,8 +7,16 @@
         android:title="@string/pref_title_measurement"
         android:key="measurement_settings">
 
+        <CheckBoxPreference
+            android:key="key_pref_in_control_auto_move"
+            android:title="@string/pref_in_control_auto_move_title"
+            android:summary="@string/pref_in_control_auto_move_summary"
+            android:defaultValue="true"
+        />
+
         <ListPreference
-            android:key="pref_in_control_delay"
+            android:key="key_pref_in_control_delay"
+            android:dependency="key_pref_in_control_auto_move"
             android:title="@string/pref_in_control_delay_title"
             android:summary="@string/pref_in_control_delay_summary"
             android:defaultValue="3000"

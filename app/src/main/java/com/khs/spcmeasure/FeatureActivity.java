@@ -557,29 +557,38 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
     // moves to the next feature, if any
     public void moveNext() {
 
-        // extract current and next View Pager positions
-        final int currPos = mPager.getCurrentItem();
-        final int nextPos = getNextPos();
+        // extract shared preferences
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
-        // if there's a next, then post delayed move
-        if (currPos != nextPos) {
-            // extract delay from preferences
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-            String delayStr = sharedPref.getString(SettingsActivity.KEY_PREF_IN_CONTROL_DELAY, "3000");
-            int delay = Integer.parseInt(delayStr);
-            Log.d(TAG, "moveNext: delay = " + delay);
+        // extract auto move from preferences
+        boolean autoMove = sharedPref.getBoolean(SettingsActivity.KEY_PREF_IN_CONTROL_AUTO_MOVE, true);
+        Log.d(TAG, "moveNext: auto = " + autoMove);
 
-            // post delayed runnable
-            Runnable run = new Runnable() {
-                @Override
-                public void run() {
-                    // ensure that user has not updated the displayed feature
-                    if (mPager.getCurrentItem() == currPos) {
-                        setPagerPos(nextPos);
+        if (autoMove == true) {
+            // extract current and next View Pager positions
+            final int currPos = mPager.getCurrentItem();
+            final int nextPos = getNextPos();
+
+            // if there's a next, then post delayed move
+            if (currPos != nextPos) {
+
+                // extract delay from preferences
+                String delayStr = sharedPref.getString(SettingsActivity.KEY_PREF_IN_CONTROL_DELAY, "3000");
+                int delay = Integer.parseInt(delayStr);
+                Log.d(TAG, "moveNext: delay = " + delay);
+
+                // post delayed runnable
+                Runnable run = new Runnable() {
+                    @Override
+                    public void run() {
+                        // ensure that user has not updated the displayed feature
+                        if (mPager.getCurrentItem() == currPos) {
+                            setPagerPos(nextPos);
+                        }
                     }
-                }
-            };
-            mHandler.postDelayed(run, delay);
+                };
+                mHandler.postDelayed(run, delay);
+            }
         }
     }
 
