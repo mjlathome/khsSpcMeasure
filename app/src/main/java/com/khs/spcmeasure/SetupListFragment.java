@@ -78,14 +78,19 @@ public class SetupListFragment extends ListFragment {
 
         // register the listview for a context menu
         registerForContextMenu(mListView);
-
-        refreshList();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        refreshList();
     }
 
     @Override
