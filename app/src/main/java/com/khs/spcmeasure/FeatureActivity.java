@@ -10,12 +10,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -397,7 +399,11 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         // handle menu item
         switch(id) {
             case R.id.action_settings:
-                return true;
+                Log.d(TAG, "Menu: Settings");
+                // change preferences
+                Intent intentPrefs = new Intent(this, SettingsActivity.class);
+                startActivity(intentPrefs);
+                return true;                        
             case R.id.mnuScanBle:
                 mBleService.scanLeDevice(true);
                 return true;
@@ -557,6 +563,13 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
         // if there's a next, then post delayed move
         if (currPos != nextPos) {
+            // extract delay from preferences
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+            String delayStr = sharedPref.getString(SettingsActivity.KEY_PREF_IN_CONTROL_DELAY, "3000");
+            int delay = Integer.parseInt(delayStr);
+            Log.d(TAG, "moveNext: delay = " + delay);
+
+            // post delayed runnable
             Runnable run = new Runnable() {
                 @Override
                 public void run() {
@@ -566,8 +579,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
                     }
                 }
             };
-            // TODO delay needs to be a user preference
-            mHandler.postDelayed(run, 3000);
+            mHandler.postDelayed(run, delay);
         }
     }
 

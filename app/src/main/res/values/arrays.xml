@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Preference string arrays -->
+    <string-array name="pref_in_control_delay_desc">
+        <item name="0000">No delay</item>
+        <item name="1000">1 second</item>
+        <item name="2000">2 seconds</item>
+        <item name="3000">3 seconds</item>
+        <item name="4000">4 seconds</item>
+        <item name="5000">5 seconds</item>
+    </string-array>
+
+    <string-array name="pref_in_control_delay_value">
+        <item name="0000">0000</item>
+        <item name="1000">1000</item>
+        <item name="2000">2000</item>
+        <item name="3000">3000</item>
+        <item name="4000">4000</item>
+        <item name="5000">5000</item>
+    </string-array>
+
+</resources>

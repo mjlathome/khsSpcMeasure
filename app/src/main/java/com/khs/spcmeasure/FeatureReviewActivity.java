@@ -90,6 +90,10 @@ public class FeatureReviewActivity extends Activity implements
                 Log.d(TAG, "Home");
                 return true;
             case R.id.action_settings:
+                Log.d(TAG, "Menu: Settings");
+                // change preferences
+                Intent intentPrefs = new Intent(this, SettingsActivity.class);
+                startActivity(intentPrefs);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

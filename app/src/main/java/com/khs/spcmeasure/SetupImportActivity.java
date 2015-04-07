@@ -133,8 +133,14 @@ public class SetupImportActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// handle action bar menu items
 		switch (item.getItemId()) {
-		default:
-			return super.onOptionsItemSelected(item);
+            case R.id.action_settings:
+                Log.d(TAG, "Menu: Settings");
+                // change preferences
+                Intent intentPrefs = new Intent(this, SettingsActivity.class);
+                startActivity(intentPrefs);
+                return true;
+		    default:
+			    return super.onOptionsItemSelected(item);
 		}
 	}
 

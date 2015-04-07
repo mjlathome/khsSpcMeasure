@@ -117,4 +117,12 @@
     <string name="chart_label_range_upper">URL</string>
     <string name="chart_label_range_lower">LRL</string>
 
+    <!-- Preference strings -->
+    <string name="pref_title_measurement">Measurement</string>
+    <string name="pref_in_control_delay_title">In-control Delay</string>
+    <string name="pref_in_control_delay_summary">Specify delay used to move onto next Feature after in-control measurement has been taken</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

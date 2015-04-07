@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="@+id/preferences"
+    android:layout_width="match_parent" android:layout_height="match_parent" >
+
+    <PreferenceCategory
+        android:title="@string/pref_title_measurement"
+        android:key="measurement_settings">
+
+        <ListPreference
+            android:key="pref_in_control_delay"
+            android:title="@string/pref_in_control_delay_title"
+            android:summary="@string/pref_in_control_delay_summary"
+            android:defaultValue="3000"
+            android:entries="@array/pref_in_control_delay_desc"
+            android:entryValues="@array/pref_in_control_delay_value"
+        />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

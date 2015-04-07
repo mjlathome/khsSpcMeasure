@@ -15,11 +15,13 @@
         android:title="@string/text_ble_set_mm"
         android:enabled="true"/>
 
+    <!-- zero calibration will be perform in block using gauge
     <item
         android:id="@+id/mnuSetZero"
         android:showAsAction="never"
         android:title="@string/text_ble_set_zero"
         android:enabled="true"/>
+    -->
 
     <item
         android:id="@+id/mnuGetBattery"

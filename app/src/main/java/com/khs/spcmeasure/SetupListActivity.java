@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,50 +27,13 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
     private SetupListFragment mSetupListFrag;
     private Long mProdId;
 
-
-    // TODO remove later - now in Setup Import
-    // handle Setup import
-//    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            String action = intent.getAction();
-//            Log.d(TAG, "mMessageReceiver Action = " + action);
-//
-//            if (SetupService.ACTION_IMPORT.equals(action)) {
-//                // get extras
-//                final long prodId = intent.getLongExtra(SetupService.EXTRA_PROD_ID, -1);
-//                final ActionStatus actStat = (ActionStatus) intent.getSerializableExtra(SetupService.EXTRA_STATUS);
-//
-//                Log.d(TAG, "mMessageReceiver: prodId = " + prodId + "; actStat = " + actStat + "; mSetupListFrag = " + mSetupListFrag);
-//
-//                if (mSetupListFrag != null) {
-//                    switch(actStat) {
-//                        case STARTING:
-//                            Log.d(TAG, "mMessageReceiver: starting; prodId = " + prodId);
-//                            break;
-//                        case COMPLETE:
-//                            Log.d(TAG, "mMessageReceiver: complete; prodId = " + prodId);
-//                            runOnUiThread(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    mSetupListFrag.refreshList(prodId);
-//                                }
-//                            });
-//                            break;
-//                        case FAILED:
-//                            Log.d(TAG, "mMessageReceiver: failed; prodId = " + prodId);
-//                            mSetupListFrag.refreshList();
-//                            break;
-//                    }
-//                }
-//            }
-//            return;
-//        }
-//    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // initialize shared preference to the default values - executed once only
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+
         setContentView(R.layout.activity_setup_list);
         if (savedInstanceState == null) {
             mSetupListFrag = SetupListFragment.newInstance();
@@ -90,29 +54,6 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
             // new ImportSimpleCodeTask(this).execute(ImportSimpleCodeTask.TYPE_ACTION_CAUSE);
             SimpleCodeService.startActionImport(this, SimpleCodeService.TYPE_ACTION_CAUSE);
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-
-
-        // TODO remove later - now in Setup Import
-        // Log.d(TAG, "OnResume");
-        // register local broadcast receiver for Setup import
-        // IntentFilter setupFilter = new IntentFilter();
-        // setupFilter.addAction(SetupService.ACTION_IMPORT);
-        // LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, setupFilter);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        // TODO remove later - now in Setup Import
-        // unregister local broadcast receiver
-        // LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
     }
 
     @Override
@@ -162,6 +103,9 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
                 return true;
             case R.id.action_settings:
                 Log.d(TAG, "Menu: Settings");
+                // change preferences
+                Intent intentPrefs = new Intent(this, SettingsActivity.class);
+                startActivity(intentPrefs);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

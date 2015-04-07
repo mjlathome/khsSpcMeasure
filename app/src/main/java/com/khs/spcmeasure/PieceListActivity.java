@@ -38,31 +38,6 @@ public class PieceListActivity extends Activity implements
     private Long mProdId = null;
     private CollectStatus mCollStat = CollectStatus.OPEN;
 
-    // TODO action bar spinner no longer required
-//    // handle broadcast intents from collect status action provider
-//    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-//
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            // TODO Auto-generated method stub
-//            String action = intent.getAction();
-//            Log.d(TAG, "mMessageReceiver Action = " + action);
-//
-//            // check for collect status item selected
-//            if (action.equals(CollectStatusActionProvider.ACTION_ITEM_SELECTED)) {
-//                if (intent.hasExtra(CollectStatusActionProvider.EXTRA_DATA_ID)) {
-//                    // extract id for collect status
-//                    // TODO was: CollectStatus collStat = (CollectStatus) intent.getSerializableExtra(CollectStatusActionProvider.EXTRA_DATA_ID);
-//                    mCollStat = (CollectStatus) intent.getSerializableExtra(CollectStatusActionProvider.EXTRA_DATA_ID);
-//                    Log.d(TAG, "intent collStat = " + mCollStat);
-//                    // CollectStatus collStat = CollectStatus.fromValue(id);
-//                    refreshPieceList(mCollStat);
-//                }
-//            }
-//        }
-//    };
-
-
     @Override
     public void onFragmentInteraction(long pieceId) {
         selectPiece(pieceId);
@@ -132,20 +107,6 @@ public class PieceListActivity extends Activity implements
 		}
 	}
 
-    // TODO no longer required
-//    // register for Collect Status changed broadcast
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//
-//        // register local broadcast receiver - filter multiple intent actions
-//        IntentFilter collStatFilter = new IntentFilter();
-//        collStatFilter.addAction(CollectStatusActionProvider.ACTION_ITEM_SELECTED);
-//        collStatFilter.addAction(CollectStatusActionProvider.ACTION_NOTHING_SELECTED);
-//
-//        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, collStatFilter);
-//    }
-
     // inflate Action Bar menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -163,25 +124,18 @@ public class PieceListActivity extends Activity implements
 		int id = item.getItemId();
 
         switch(id) {
+            case R.id.action_settings:
+                Log.d(TAG, "Menu: Settings");
+                // change preferences
+                Intent intentPrefs = new Intent(this, SettingsActivity.class);
+                startActivity(intentPrefs);
+                return true;
             case R.id.mnuNewPiece:
                 createPiece();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-
-        // TODO remove later
-//		if (id == android.R.id.home) {
-//			// This ID represents the Home or Up button. In the case of this
-//			// activity, the Up button is shown. For
-//			// more details, see the Navigation pattern on Android Design:
-//			//
-//			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
-//			//
-//
-//			// navigateUpTo(new Intent(this, com.khs.spcmeasure.PieceListActivity.class));
-//			return true;
-//		}
 	}
 
     // save the state prior to exit
