@@ -55,7 +55,7 @@ public class SylvacBleService extends Service {
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothGatt mConnectedGatt;
     private BluetoothDevice mDevice;
-    private String mDeviceAddress;
+    private String mDeviceAddress = null;
     
     private Handler mHandler;
     
@@ -123,9 +123,10 @@ public class SylvacBleService extends Service {
 	        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
 	        	broadcastUpdate(ACTION_BLUETOOTH_NOT_ENABLED);
 	        } else {
-	        	// initiate Ble scan
-	        	// FUTURE use separate Thread?
-	        	scanLeDevice(true);	        	
+                // TODO remove later - now calls connectDevice
+//	        	// initiate Ble scan
+//	        	scanLeDevice(true);
+                connectDevice();
 	        }	        
         }
         
@@ -211,13 +212,20 @@ public class SylvacBleService extends Service {
 	    			@Override
 					public void run() {                    
 	                    if(device != null && device.getName().equals("SY")) {
-	                    	
-	                    	mConnectionState = ConnectionState.CONNECTING;
-	                    	updateNotification();
+                            // immediately stop the BLE scan
+                            scanLeDevice(false);
+
+                            // TODO remove later if not required
+//	                    	mConnectionState = ConnectionState.CONNECTING;
+//	                    	updateNotification();
 	                    	                    	
 	                    	mDeviceAddress = device.getAddress();
-	                        mBluetoothAdapter.stopLeScan(mLeScanCallback);                        
-	                        mConnectedGatt = device.connectGatt(SylvacBleService.this, false, mGattCallback);                        
+                            // TODO remove later - now calls scanLeDevice(false) above
+	                        // mBluetoothAdapter.stopLeScan(mLeScanCallback);
+
+                            // TODO remove later - now calls connectGatt
+//	                        mConnectedGatt = device.connectGatt(SylvacBleService.this, false, mGattCallback);
+                            connectGatt(device);
 	                    }								
 					}					
 				}).start();
@@ -327,13 +335,17 @@ public class SylvacBleService extends Service {
 //            // For all other profiles, writes the data formatted in HEX.
 //            final byte[] data = characteristic.getValue();
 //            Log.d(TAG, "onCharacteristicChanged value = " + new String(data) + "\n" + byteArrayToString(data));
-            
+
+            // TODO only remove the last characteristic written once the result is obtained, so long as characteristic is for the write queue
+            // TODO need to dequeue the next operation here (write queue only)
+
             broadcastUpdate(characteristic);
         }
 
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
 
+            // TODO only remove the last characteristic written once the result is obtained
             // pop the item that we just finishing writing
             characteristicWriteQueue.remove();
 
@@ -355,6 +367,43 @@ public class SylvacBleService extends Service {
             Log.d(TAG, "onReliableWriteCompleted(" + status + ")");
         }
     };
+
+    // connect to the device
+    public void connectDevice() {
+
+        Log.d(TAG, "connectDevice: mDevAddr = " + mDeviceAddress);
+
+        if (mDeviceAddress != null) {
+            // device already discovered so connect directly via MAC address
+            BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(mDeviceAddress);
+            if(device != null && device.getName().equals("SY")) {
+                connectGatt(device);
+            }
+        } else {
+            // perform device discovery and connect the device in the callback
+            scanLeDevice(true);
+        }
+    }
+
+    // connect to the gatt
+    private void connectGatt(final BluetoothDevice device) {
+        // TODO comment out later on
+        Log.d(TAG, "connectGatt: fetch = " + device.fetchUuidsWithSdp());
+        Log.d(TAG, "connectGatt: UUID = " + device.getUuids());
+        Log.d(TAG, "connectGatt: Name = " + device.getName());
+        Log.d(TAG, "connectGatt: Type = " + device.getType());
+        Log.d(TAG, "connectGatt: BT Class = " + device.getBluetoothClass());
+        Log.d(TAG, "connectGatt: Address = " + device.getAddress());
+        Log.d(TAG, "connectGatt: String = " + device.toString());
+
+        if (device != null && device.getName().equals("SY")) {
+
+            mConnectionState = ConnectionState.CONNECTING;
+            updateNotification();
+
+            mConnectedGatt = device.connectGatt(SylvacBleService.this, false, mGattCallback);
+        }
+    }
 
     // Demonstrates how to iterate through the supported GATT
     // Services/Characteristics.

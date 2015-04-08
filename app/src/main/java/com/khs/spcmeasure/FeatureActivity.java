@@ -316,6 +316,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         // displays a dialog requesting user permission to enable Bluetooth.
         if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            // TODO shouldn't ForResult be used to enure that the user enabled BlueTooth?
             // startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             startActivity(enableBtIntent);
             finish();
@@ -337,6 +338,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
         Log.d(TAG, "onStart");
 
+        // TODO should this be in onResume instead?
         // bind to BLE service
         // for Open Pieces only to save battery power
         if (mPiece.getStatus() == CollectStatus.OPEN) {
@@ -351,6 +353,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
         Log.d(TAG, "onStop");
 
+        // TODO should this be in onPause instead?
         // unbind from Ble service
         unbindBleService();
     }
@@ -405,7 +408,9 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
                 startActivity(intentPrefs);
                 return true;                        
             case R.id.mnuScanBle:
-                mBleService.scanLeDevice(true);
+                // TODO remove later - now calls connectDevice
+                // mBleService.scanLeDevice(true);
+                mBleService.connectDevice();
                 return true;
             case R.id.mnuSetUomMm:
                 mBleService.writeCharacteristic(SylvacBleService.COMMAND_SET_MEASUREMENT_UOM_MM);
@@ -437,6 +442,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
     protected void onDestroy() {
         super.onDestroy();
 
+        // TODO may need to close down the GATT etc here first, if already connected
         // close down services
         Intent intent = new Intent(this, SylvacBleService.class);
         stopService(intent);
