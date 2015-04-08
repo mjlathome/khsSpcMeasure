@@ -69,7 +69,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
     ViewPager mPager;
 
     // BLE member variables
-    SylvacBleService mBleService;
+    private SylvacBleService mBleService = null;
     boolean mBound = false;
 
     // tab member variables
@@ -106,6 +106,8 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
             Log.d(TAG, "onServiceDisconnected");
 
             // TODO Auto-generated method stub
+
+            mBleService = null;
             mBound = false;
 
             // TODO tell measurement fragment too?
@@ -328,6 +330,8 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
     protected void onPause() {
         super.onPause();
 
+        Log.d(TAG, "onPause");
+
         // unregister local broadcast receiver
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
     }
@@ -354,6 +358,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         Log.d(TAG, "onStop");
 
         // TODO should this be in onPause instead?
+
         // unbind from Ble service
         unbindBleService();
     }
@@ -484,7 +489,14 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
     // unbind from Ble service
     private void unbindBleService() {
+
         if (mBound == true && mConnection != null) {
+
+            // disconnect device
+            if (mBleService != null) {
+                mBleService.disconnectDevice();
+            }
+
             unbindService(mConnection);
             mBound = false;
         }

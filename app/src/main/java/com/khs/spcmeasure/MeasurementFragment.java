@@ -401,6 +401,12 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
         }
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop");
+    }
+
     // sets the on-screen value
 	public void setValue(Double value) {
 		Log.d(TAG, "setValue: " + value);

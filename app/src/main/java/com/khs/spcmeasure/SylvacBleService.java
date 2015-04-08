@@ -143,7 +143,9 @@ public class SylvacBleService extends Service {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		
+
+        Log.d(TAG, "onDestroy: mConnGatt = " + mConnectedGatt);
+
 		// ensure Ble resources are released
 	    if (mConnectedGatt == null) {
 	        return;
@@ -153,7 +155,8 @@ public class SylvacBleService extends Service {
         mConnectedGatt.disconnect();
 	    mConnectedGatt.close();
 	    mConnectedGatt = null;
-	    
+
+        // TODO do this first?
 	    removeNotification();
 	    
 	    return;
@@ -403,6 +406,19 @@ public class SylvacBleService extends Service {
 
             mConnectedGatt = device.connectGatt(SylvacBleService.this, false, mGattCallback);
         }
+    }
+
+    // disconnect device
+    public void disconnectDevice() {
+        // ensure Ble resources are released
+        if (mConnectedGatt == null) {
+            return;
+        }
+
+        // close gatt connection
+        mConnectedGatt.disconnect();
+        mConnectedGatt.close();
+        mConnectedGatt = null;
     }
 
     // Demonstrates how to iterate through the supported GATT
