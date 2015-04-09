@@ -105,7 +105,7 @@ public class ChartFragment extends Fragment {
                         limits = limDao.getLimit(mProdId, mFeatId, feat.getLimitRev(), LimitType.CONTROL);
                         break;
                     case CHART_TYPE_RANGE:
-                        limits = limDao.getLimit(mProdId, mFeatId, feat.getLimitRev(), LimitType.SIGNIFICANT_CONTROL);
+                        limits = limDao.getLimit(mProdId, mFeatId, feat.getLimitRev(), LimitType.RANGE);
                         break;
                 }
 
