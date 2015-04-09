@@ -11,7 +11,7 @@ public class SylvacGattAttributes {
 	public static String CLIENT_CHARACTERISTIC_CONFIG = "00002902-0000-1000-8000-00805f9b34fb";
 	
 	// Sylvac Ble UUID constants
-	public static String SYLVAC_SERVICE = "c1b25000-caaf-6d0e-4c33-7dae30052840";
+	public static String SYLVAC_METROLOGY_SERVICE = "c1b25000-caaf-6d0e-4c33-7dae30052840";
 	public static String DATA_RECEIVED_FROM_INSTRUMENT = "c1b25010-caaf-6d0e-4c33-7dae30052840";
 	public static String DATA_REQUEST_OR_CMD_TO_INSTRUMENT = "c1b25012-caaf-6d0e-4c33-7dae30052840";
 	public static String ANSWER_TO_REQUEST_OR_CMD_FROM_INSTRUMENT = "c1b25013-caaf-6d0e-4c33-7dae30052840";
@@ -19,7 +19,7 @@ public class SylvacGattAttributes {
 	// build attribute lookup map
 	static {
 		// add Sylvac Services
-		attributes.put(SYLVAC_SERVICE, "Sylvac Service");
+		attributes.put(SYLVAC_METROLOGY_SERVICE, "Sylvac Service");
 
 		// add Sylvac Characteristics
 		attributes.put(DATA_RECEIVED_FROM_INSTRUMENT, "Data Received from Instrument");

@@ -1,13 +1,9 @@
 package com.khs.spcmeasure;
 
 import java.nio.ByteBuffer;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Queue;
-import java.util.Random;
 import java.util.UUID;
 
 import android.app.Notification;
@@ -28,10 +24,8 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
 // handle all Bluetooth Low Energy (BLE) communication
 // queues are now used for the write/read requests.  see:
@@ -147,14 +141,7 @@ public class SylvacBleService extends Service {
         Log.d(TAG, "onDestroy: mConnGatt = " + mConnectedGatt);
 
 		// ensure Ble resources are released
-	    if (mConnectedGatt == null) {
-	        return;
-	    }
-
-        // close gatt connection
-        mConnectedGatt.disconnect();
-	    mConnectedGatt.close();
-	    mConnectedGatt = null;
+        disconnectDevice();
 
         // TODO do this first?
 	    removeNotification();
@@ -411,14 +398,12 @@ public class SylvacBleService extends Service {
     // disconnect device
     public void disconnectDevice() {
         // ensure Ble resources are released
-        if (mConnectedGatt == null) {
-            return;
+        if (mConnectedGatt != null) {
+            // close gatt connection
+            mConnectedGatt.disconnect();
+            mConnectedGatt.close();
+            mConnectedGatt = null;
         }
-
-        // close gatt connection
-        mConnectedGatt.disconnect();
-        mConnectedGatt.close();
-        mConnectedGatt = null;
     }
 
     // Demonstrates how to iterate through the supported GATT
@@ -437,56 +422,74 @@ public class SylvacBleService extends Service {
         for (BluetoothGattService service : gattServices) {
             Log.d(TAG, "Found service: " + service.getUuid());
             Log.d(TAG, "Included service(s): " + service.getIncludedServices());
+
+            // skip if not Sylvac Metrology service
+            if (!service.getUuid().equals(UUID.fromString(SylvacGattAttributes.SYLVAC_METROLOGY_SERVICE))) {
+                continue;
+            }
+
             for (BluetoothGattCharacteristic characteristic : service.getCharacteristics()) {
                 Log.d(TAG, "Found characteristic: " + characteristic.getUuid());
                 Log.d(TAG, "Descriptor: " + characteristic.getDescriptors());
                 Log.d(TAG, "Properties: " + characteristic.getProperties());
-                if(hasProperty(characteristic,
-                        BluetoothGattCharacteristic.PROPERTY_READ)) {
-                    Log.d(TAG, "Read characteristic: " + characteristic.getUuid());
-                    // TODO before queue - remove later
-                    // mConnectedGatt.readCharacteristic(characteristic);
-                    readCharacteristic(characteristic);
-                }
-
-                if(hasProperty(characteristic,
-                        BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE)) {
-                    Log.d(TAG, "Write No Resp characteristic: " + characteristic.getUuid());
-                }
-
-                if(hasProperty(characteristic,
-                        BluetoothGattCharacteristic.PROPERTY_INDICATE)) {
-                    Log.d(TAG, "Register indication for characteristic: " + characteristic.getUuid());
-                    Log.d(TAG, "Register Success = " + mConnectedGatt.setCharacteristicNotification(characteristic, true));
-
-                    /*
-                    BluetoothGattDescriptor descriptor = characteristic.getDescriptor(
-                            UUID.fromString(SylvacGattAttributes.CLIENT_CHARACTERISTIC_CONFIG));
-                    descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
-                    mConnectedGatt.writeDescriptor(descriptor);
-                    */
-                }
-
-                if(hasProperty(characteristic,
-                        BluetoothGattCharacteristic.PROPERTY_NOTIFY)) {
-                    Log.d(TAG, "Register notification for characteristic: " + characteristic.getUuid());
-                    Log.d(TAG, "Register Success = " + mConnectedGatt.setCharacteristicNotification(characteristic, true));
-
-
-                    BluetoothGattDescriptor descriptor = characteristic.getDescriptor(
-                            UUID.fromString(SylvacGattAttributes.CLIENT_CHARACTERISTIC_CONFIG));
-                    descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                    // descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
-
-                    // TODO before queue - remove later
-                    // mConnectedGatt.writeDescriptor(descriptor);
-                    writeGattDescriptor(descriptor);
-                }
 
                 for (BluetoothGattDescriptor descriptor : characteristic.getDescriptors()) {
                     Log.d(TAG, "Found descriptor: " + descriptor.getUuid());
                     Log.d(TAG, "Value: " + descriptor.getValue());
                     Log.d(TAG, "Permissions: " + descriptor.getPermissions());
+                }
+
+                if(hasProperty(characteristic,
+                        BluetoothGattCharacteristic.PROPERTY_READ)) {
+                    Log.d(TAG, "Found Read characteristic: " + characteristic.getUuid());
+                    // TODO before queue - remove later
+                    // mConnectedGatt.readCharacteristic(characteristic);
+                    // TODO read here not required - remove later
+                    // readCharacteristic(characteristic);
+                }
+
+                if(hasProperty(characteristic,
+                        BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE)) {
+                    Log.d(TAG, "Found Write No Resp characteristic: " + characteristic.getUuid());
+                }
+
+                if(hasProperty(characteristic,
+                        BluetoothGattCharacteristic.PROPERTY_INDICATE)) {
+                    Log.d(TAG, "Found indication for characteristic: " + characteristic.getUuid());
+
+                    // enable indication on the Sylvac data received (from instrument) characteristic only
+                    if(characteristic.getUuid().equals(UUID.fromString(SylvacGattAttributes.DATA_RECEIVED_FROM_INSTRUMENT))) {
+                        Log.d(TAG, "Register indication for characteristic: " + characteristic.getUuid());
+                        Log.d(TAG, "Register Success = " + mConnectedGatt.setCharacteristicNotification(characteristic, true));
+
+                        BluetoothGattDescriptor descriptor = characteristic.getDescriptor(
+                                UUID.fromString(SylvacGattAttributes.CLIENT_CHARACTERISTIC_CONFIG));
+                        descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
+
+                        // TODO before queue - remove later
+                        // mConnectedGatt.writeDescriptor(descriptor);
+                        writeGattDescriptor(descriptor);
+                    }
+                }
+
+                if(hasProperty(characteristic,
+                        BluetoothGattCharacteristic.PROPERTY_NOTIFY)) {
+                    Log.d(TAG, "Found notification for characteristic: " + characteristic.getUuid());
+
+                    // enable notify on the Sylvac answer to request or cmd (from instrument) characteristic only
+                    if(characteristic.getUuid().equals(UUID.fromString(SylvacGattAttributes.ANSWER_TO_REQUEST_OR_CMD_FROM_INSTRUMENT))) {
+                        Log.d(TAG, "Register notification for characteristic: " + characteristic.getUuid());
+                        Log.d(TAG, "Register Success = " + mConnectedGatt.setCharacteristicNotification(characteristic, true));
+
+                        BluetoothGattDescriptor descriptor = characteristic.getDescriptor(
+                                UUID.fromString(SylvacGattAttributes.CLIENT_CHARACTERISTIC_CONFIG));
+                        descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                        // descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
+
+                        // TODO before queue - remove later
+                        // mConnectedGatt.writeDescriptor(descriptor);
+                        writeGattDescriptor(descriptor);
+                    }
                 }
             }
         }
@@ -580,7 +583,7 @@ public class SylvacBleService extends Service {
         */
 
         // extract the Service
-        BluetoothGattService gattService = mConnectedGatt.getService(UUID.fromString(SylvacGattAttributes.SYLVAC_SERVICE));
+        BluetoothGattService gattService = mConnectedGatt.getService(UUID.fromString(SylvacGattAttributes.SYLVAC_METROLOGY_SERVICE));
         if (gattService == null) {
             Log.e(TAG, "service not found");
             return false;
@@ -644,7 +647,7 @@ public class SylvacBleService extends Service {
         }
 
         // extract the Service
-        BluetoothGattService gattService = mConnectedGatt.getService(UUID.fromString(SylvacGattAttributes.SYLVAC_SERVICE));
+        BluetoothGattService gattService = mConnectedGatt.getService(UUID.fromString(SylvacGattAttributes.SYLVAC_METROLOGY_SERVICE));
         if (gattService == null) {
             Log.e(TAG, "service not found");
             return false;
