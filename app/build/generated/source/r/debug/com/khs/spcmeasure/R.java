@@ -31,10 +31,11 @@ public final class R {
         public static final int pie_segment_label_font_size=0x7f070008;
         public static final int range_label_font_size=0x7f070009;
         public static final int range_tick_label_font_size=0x7f07000a;
-        public static final int text_large=0x7f07000b;
-        public static final int text_medium=0x7f07000c;
-        public static final int text_small=0x7f07000d;
-        public static final int title_font_size=0x7f07000e;
+        public static final int text_huge=0x7f07000b;
+        public static final int text_large=0x7f07000c;
+        public static final int text_medium=0x7f07000d;
+        public static final int text_small=0x7f07000e;
+        public static final int title_font_size=0x7f07000f;
     }
     public static final class drawable {
         public static final int ic_action_back=0x7f020000;
@@ -80,7 +81,7 @@ public final class R {
         public static final int lblCpk=0x7f0b0010;
         public static final int lblFeatName=0x7f0b0029;
         public static final int lblInControl=0x7f0b002b;
-        public static final int lblLimLower=0x7f0b001b;
+        public static final int lblLimLower=0x7f0b001c;
         public static final int lblLimUpper=0x7f0b0019;
         public static final int lblLot=0x7f0b0013;
         public static final int lblMeasCause=0x7f0b0022;
@@ -132,7 +133,7 @@ public final class R {
         public static final int txtFeatName=0x7f0b000c;
         public static final int txtInControl=0x7f0b002a;
         public static final int txtLabel=0x7f0b000a;
-        public static final int txtLimLower=0x7f0b001c;
+        public static final int txtLimLower=0x7f0b001b;
         public static final int txtLimType=0x7f0b0033;
         public static final int txtLimUpper=0x7f0b001a;
         public static final int txtMeasRange=0x7f0b0021;

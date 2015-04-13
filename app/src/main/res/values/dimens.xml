@@ -15,6 +15,7 @@
     <dimen name="text_small">14sp</dimen>
     <dimen name="text_medium">18sp</dimen>
     <dimen name="text_large">22sp</dimen>
+    <dimen name="text_huge">26sp</dimen>
 
     <!-- AndroidPlot dimensions as per QuickStart tutorial
     http://androidplot.com/docs/quickstart/
