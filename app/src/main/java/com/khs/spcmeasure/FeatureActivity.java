@@ -52,7 +52,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
     /// tab constants
     private static final int TAB_POS_MEASUREMENT = 0;
-    private static final int TAB_POS_CHART_INDIVIDUAL = 1;
+    private static final int TAB_POS_CHART_XBAR  = 1;
     private static final int TAB_POS_CHART_RANGE = 2;
     private static final int TAB_POS_INFORMATION = 3;
 
@@ -248,7 +248,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
                         android.R.id.text1,
                         new String[]{
                                 getString(R.string.tab_title_measurement),
-                                getString(R.string.tab_title_chart_individual),
+                                getString(R.string.tab_title_chart_xbar),
                                 getString(R.string.tab_title_chart_range),
                                 getString(R.string.tab_title_information),
                         }),
@@ -741,12 +741,12 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
                     MeasurementFragment measFrag = new MeasurementFragment();
                     measFrag.setArguments(args);
                     return measFrag;
-                case TAB_POS_CHART_INDIVIDUAL:
+                case TAB_POS_CHART_XBAR:
                 case TAB_POS_CHART_RANGE:
                     // create the chart fragment
                     args = new Bundle();
-                    if (mTabPos == TAB_POS_CHART_INDIVIDUAL) {
-                        args.putInt(ChartFragment.CHART_TYPE, ChartFragment.CHART_TYPE_INDIVIDUAL);
+                    if (mTabPos == TAB_POS_CHART_XBAR) {
+                        args.putInt(ChartFragment.CHART_TYPE, ChartFragment.CHART_TYPE_XBAR);
                     } else {
                         args.putInt(ChartFragment.CHART_TYPE, ChartFragment.CHART_TYPE_RANGE);
                     }

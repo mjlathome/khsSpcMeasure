@@ -100,7 +100,7 @@
 
     <!-- Feature Activity - Tab titles -->
     <string name="tab_title_measurement">Measurement</string>
-    <string name="tab_title_chart_individual">Chart Individual</string>
+    <string name="tab_title_chart_xbar">Chart XBar</string>
     <string name="tab_title_chart_range">Chart Range</string>
     <string name="tab_title_information">Information</string>
 
@@ -108,7 +108,7 @@
     <string name="last">Last</string>
 
     <!-- Chart strings -->
-    <string name="chart_title_individual">Individual Reading (X) vs Time</string>
+    <string name="chart_title_xbar">Individual Reading (X) vs Time</string>
     <string name="chart_title_range">Moving Range (MR) vs Time</string>
     <string name="chart_label_individual_value">X</string>
     <string name="chart_label_individual_upper">UCL</string>

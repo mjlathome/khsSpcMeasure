@@ -15,9 +15,10 @@ public final class R {
     public static final class attr {
     }
     public static final class color {
-        public static final int fieldHeader=0x7f060000;
-        public static final int measInControl=0x7f060001;
-        public static final int measOutControl=0x7f060002;
+        public static final int chartBgColour=0x7f060000;
+        public static final int fieldHeader=0x7f060001;
+        public static final int measInControl=0x7f060002;
+        public static final int measOutControl=0x7f060003;
     }
     public static final class dimen {
         public static final int activity_horizontal_margin=0x7f070000;
@@ -206,8 +207,8 @@ public final class R {
         public static final int chart_label_range_lower=0x7f080005;
         public static final int chart_label_range_upper=0x7f080006;
         public static final int chart_label_range_value=0x7f080007;
-        public static final int chart_title_individual=0x7f080008;
-        public static final int chart_title_range=0x7f080009;
+        public static final int chart_title_range=0x7f080008;
+        public static final int chart_title_xbar=0x7f080009;
         public static final int first=0x7f08000a;
         public static final int hello_blank_fragment=0x7f08000b;
         public static final int hello_world=0x7f08000c;
@@ -224,8 +225,8 @@ public final class R {
         public static final int pref_in_control_delay_summary=0x7f080017;
         public static final int pref_in_control_delay_title=0x7f080018;
         public static final int pref_title_measurement=0x7f080019;
-        public static final int tab_title_chart_individual=0x7f08001a;
-        public static final int tab_title_chart_range=0x7f08001b;
+        public static final int tab_title_chart_range=0x7f08001a;
+        public static final int tab_title_chart_xbar=0x7f08001b;
         public static final int tab_title_information=0x7f08001c;
         public static final int tab_title_measurement=0x7f08001d;
         public static final int text_ble_battery_low=0x7f08001e;

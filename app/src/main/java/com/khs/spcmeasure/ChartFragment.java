@@ -12,9 +12,11 @@ import android.view.ViewGroup;
 
 import com.androidplot.xy.LineAndPointFormatter;
 import com.androidplot.xy.PointLabelFormatter;
+import com.androidplot.xy.PointLabeler;
 import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
 import com.androidplot.xy.XYSeries;
+import com.androidplot.xy.XYStepMode;
 import com.khs.spcmeasure.dao.FeatureDao;
 import com.khs.spcmeasure.dao.LimitsDao;
 import com.khs.spcmeasure.dao.MeasurementDao;
@@ -24,9 +26,16 @@ import com.khs.spcmeasure.entity.Limits;
 import com.khs.spcmeasure.entity.Measurement;
 import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.library.AlertUtils;
+import com.khs.spcmeasure.library.DateTimeUtils;
 import com.khs.spcmeasure.library.LimitType;
 
+import java.text.DecimalFormat;
+import java.text.FieldPosition;
+import java.text.Format;
+import java.text.ParsePosition;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,7 +47,7 @@ public class ChartFragment extends Fragment {
 
     // supported chart types
     final static String CHART_TYPE = "CHART_TYPE";
-    final static int CHART_TYPE_INDIVIDUAL = 0;
+    final static int CHART_TYPE_XBAR  = 0;
     final static int CHART_TYPE_RANGE = 1;
 
     // argument members
@@ -52,11 +61,15 @@ public class ChartFragment extends Fragment {
     private String mLabelUpper;
     private String mLabelLower;
     private XYPlot plot;
+    private List<Date>   mCollectDate;
     private List<Number> mSeriesValue;
     private List<Number> mSeriesUpper;
     private List<Number> mSeriesLower;
 
     private RenderChartTask renderTask = new RenderChartTask();
+
+    // format chart values using 3dp
+    private DecimalFormat df = new DecimalFormat("#.000");
 
     public ChartFragment() {
         // Required empty public constructor
@@ -77,6 +90,8 @@ public class ChartFragment extends Fragment {
             plot = (XYPlot) getView().findViewById(R.id.mySimpleXYPlot);
             plot.setTitle(mChartTitle);
             plot.setRangeLabel(mLabelValue);
+            plot.setRangeValueFormat(df);   // format range using 3dp
+            plot.getGraphWidget().getGridBackgroundPaint().setColor(getResources().getColor(R.color.chartBgColour));
             plot.clear();
         }
 
@@ -101,7 +116,7 @@ public class ChartFragment extends Fragment {
                 List<Piece> listPieces = pieceDao.getAllPieces(mProdId);
 
                 switch (mChartType) {
-                    case CHART_TYPE_INDIVIDUAL:
+                    case CHART_TYPE_XBAR:
                         limits = limDao.getLimit(mProdId, mFeatId, feat.getLimitRev(), LimitType.CONTROL);
                         break;
                     case CHART_TYPE_RANGE:
@@ -109,7 +124,11 @@ public class ChartFragment extends Fragment {
                         break;
                 }
 
+                // reverse Piece list so it's oldest to newest
+                Collections.reverse(listPieces);
+
                 // initialize series
+                mCollectDate = new ArrayList<Date>();
                 mSeriesValue = new ArrayList<Number>();
                 mSeriesUpper = new ArrayList<Number>();
                 mSeriesLower = new ArrayList<Number>();
@@ -119,12 +138,15 @@ public class ChartFragment extends Fragment {
                     // TODO throw away unwanted pieces based upon CollectStatus?
                     // Log.d(TAG, "Piece = " + piece.getProdId());
 
+                    // add Piece collect date
+                    mCollectDate.add(piece.getCollectDt());
+
                     // add value, if any
                     Measurement meas = measDao.getMeasurement(piece.getId(), piece.getProdId(), feat.getFeatId());
                     if (meas != null) {
                         Log.d(TAG, "renderChart: meas = " + meas.getValue());
                         switch (mChartType) {
-                            case CHART_TYPE_INDIVIDUAL:
+                            case CHART_TYPE_XBAR:
                                 mSeriesValue.add(meas.getValue());
                                 break;
                             case CHART_TYPE_RANGE:
@@ -180,6 +202,14 @@ public class ChartFragment extends Fragment {
             series1Format.configure(getActivity().getApplicationContext(),
                     R.xml.line_point_formatter_with_plf1);
 
+            // format series using 3dp
+            series1Format.setPointLabeler(new PointLabeler() {
+                @Override
+                public String getLabel(XYSeries series, int index) {
+                    return df.format(series.getY(index));
+                }
+            });
+
             // add a new series' to the xyplot:
             plot.addSeries(seriesValue, series1Format);
 
@@ -198,14 +228,32 @@ public class ChartFragment extends Fragment {
 
             // reduce the number of range labels
             plot.setTicksPerRangeLabel(3);
-            plot.getGraphWidget().setDomainLabelOrientation(-45);
+            plot.getGraphWidget().setDomainLabelOrientation(-90);
 
             plot.setUserRangeOrigin(0);
             plot.setDrawRangeOriginEnabled(true);
 
             // TODO use this to set the lowest boundary
             // plot.setRangeLowerBoundary(-2.75, BoundaryMode.FIXED);
-            plot.getGraphWidget().getDomainLabelPaint().setColor(Color.TRANSPARENT);
+
+            // TODO don't display domain labels (i.e. x-axis) - remove later
+            // plot.getGraphWidget().getDomainLabelPaint().setColor(Color.TRANSPARENT);
+
+            // label the domain (i.e. x-axis)
+            plot.setDomainStepMode(XYStepMode.INCREMENT_BY_VAL);
+            plot.setDomainValueFormat(new Format() {
+                @Override
+                public StringBuffer format(Object o, StringBuffer stringBuffer, FieldPosition fieldPosition) {
+                    int i = ((Number) o).intValue();
+                    Date date = mCollectDate.get(i);
+                    return new StringBuffer(DateTimeUtils.getDateTimeStr(date, DateTimeUtils.CHART_DATETIME_FORMAT));
+                }
+
+                @Override
+                public Object parseObject(String s, ParsePosition parsePosition) {
+                    return null;
+                }
+            });
 
             // draw plot
             plot.redraw();
@@ -246,8 +294,8 @@ public class ChartFragment extends Fragment {
 
         // set title and labels
         switch(mChartType) {
-            case CHART_TYPE_INDIVIDUAL:
-                mChartTitle = ChartFragment.this.getString(R.string.chart_title_individual);
+            case CHART_TYPE_XBAR:
+                mChartTitle = ChartFragment.this.getString(R.string.chart_title_xbar);
                 mLabelValue = ChartFragment.this.getString(R.string.chart_label_individual_value);
                 mLabelUpper = ChartFragment.this.getString(R.string.chart_label_individual_upper);
                 mLabelLower = ChartFragment.this.getString(R.string.chart_label_individual_lower);
@@ -275,7 +323,7 @@ public class ChartFragment extends Fragment {
         // extract piece id
         if (args != null) {
             if (args.containsKey(CHART_TYPE)) {
-                mChartType = args.getInt(CHART_TYPE, CHART_TYPE_INDIVIDUAL);
+                mChartType = args.getInt(CHART_TYPE, CHART_TYPE_XBAR);
             }
             if (args.containsKey(DBAdapter.KEY_PROD_ID)) {
                 mProdId = args.getLong(DBAdapter.KEY_PROD_ID);
