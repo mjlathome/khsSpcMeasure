@@ -27,4 +27,8 @@
     <dimen name="range_tick_label_font_size">15dp</dimen>
     <dimen name="domain_tick_label_font_size">15dp</dimen>
     <dimen name="legend_text_font_size">20dp</dimen>
+    <dimen name="graph_margin_top">20dp</dimen>
+    <dimen name="graph_margin_bottom">60dp</dimen>
+    <dimen name="graph_margin_left">30dp</dimen>
+    <dimen name="graph_margin_right">20dp</dimen>
 </resources>

@@ -13,7 +13,7 @@ import java.util.Locale;
  */
 public class DateTimeUtils {
 	public static String SQLITE_DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-    public static String CHART_DATETIME_FORMAT = "yyyy-MM-dd HH:mm";
+    public static String CHART_DATETIME_FORMAT = "yy-MM-dd HH:mm";
 
     // convert Date to SQLite date time string
     public static String getDateTimeStr(Date date) {

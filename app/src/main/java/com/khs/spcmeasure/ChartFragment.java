@@ -1,6 +1,7 @@
 package com.khs.spcmeasure;
 
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -88,11 +89,45 @@ public class ChartFragment extends Fragment {
             }
             // initialize our XYPlot reference:
             plot = (XYPlot) getView().findViewById(R.id.mySimpleXYPlot);
+            plot.clear();
+
             plot.setTitle(mChartTitle);
             plot.setRangeLabel(mLabelValue);
             plot.setRangeValueFormat(df);   // format range using 3dp
-            plot.getGraphWidget().getGridBackgroundPaint().setColor(getResources().getColor(R.color.chartBgColour));
-            plot.clear();
+
+            // TODO remove later
+            // plot.getGraphWidget().getGridBackgroundPaint().setColor(getResources().getColor(R.color.chartBgColour));
+
+            // gets rid of the gray grid
+            plot.getGraphWidget().getGridBackgroundPaint().setColor(Color.TRANSPARENT);
+
+            // gets rid of the black border (up to the graph) there is no black border around the labels
+            plot.getBackgroundPaint().setColor(Color.TRANSPARENT);
+
+            // gets rid of the black behind the graph
+            plot.getGraphWidget().getBackgroundPaint().setColor(Color.TRANSPARENT);
+
+            // TODO remove later
+            // plot.getGraphWidget().getBackgroundPaint().setColor(getResources().getColor(android.R.color.background_light));
+            // plot.getGraphWidget().getGridBackgroundPaint().setColor(getResources().getColor(android.R.color.background_light));
+
+            // with a new release of AndroidPlot you have to also set the border paint
+            plot.getBorderPaint().setColor(Color.TRANSPARENT);
+
+            Paint paint = plot.getTitleWidget().getLabelPaint();
+            paint.setColor(Color.BLACK);
+            plot.getTitleWidget().setLabelPaint(paint);
+
+            plot.getGraphWidget().getDomainLabelPaint().setColor(Color.BLACK);
+            plot.getGraphWidget().getRangeLabelPaint().setColor(Color.BLACK);
+
+            plot.getDomainLabelWidget().getLabelPaint().setColor(Color.BLACK);
+            plot.getRangeLabelWidget().getLabelPaint().setColor(Color.BLACK);
+
+            plot.getGraphWidget().getDomainOriginLabelPaint().setColor(Color.BLACK);
+            plot.getGraphWidget().getDomainOriginLinePaint().setColor(Color.BLACK);
+            plot.getGraphWidget().getRangeOriginLinePaint().setColor(Color.BLACK);
+
         }
 
         @Override
@@ -200,7 +235,7 @@ public class ChartFragment extends Fragment {
             LineAndPointFormatter series1Format = new LineAndPointFormatter();
             series1Format.setPointLabelFormatter(new PointLabelFormatter());
             series1Format.configure(getActivity().getApplicationContext(),
-                    R.xml.line_point_formatter_with_plf1);
+                    R.xml.line_point_formatter_value);
 
             // format series using 3dp
             series1Format.setPointLabeler(new PointLabeler() {
@@ -217,18 +252,20 @@ public class ChartFragment extends Fragment {
             LineAndPointFormatter series2Format = new LineAndPointFormatter();
             series2Format.setPointLabelFormatter(new PointLabelFormatter());
             series2Format.configure(getActivity().getApplicationContext(),
-                    R.xml.line_point_formatter_limits);
+                    R.xml.line_point_formatter_limit);
             plot.addSeries(seriesUpper, series2Format);
 
             LineAndPointFormatter series3Format = new LineAndPointFormatter();
             series3Format.setPointLabelFormatter(new PointLabelFormatter());
             series3Format.configure(getActivity().getApplicationContext(),
-                    R.xml.line_point_formatter_limits);
+                    R.xml.line_point_formatter_limit);
             plot.addSeries(seriesLower, series3Format);
 
             // reduce the number of range labels
             plot.setTicksPerRangeLabel(3);
-            plot.getGraphWidget().setDomainLabelOrientation(-90);
+            plot.getGraphWidget().setDomainLabelOrientation(-45);
+            plot.getGraphWidget().getDomainLabelPaint().setTextAlign(Paint.Align.CENTER);
+            // plot.getGraphWidget().setPaddingBottom(500);
 
             plot.setUserRangeOrigin(0);
             plot.setDrawRangeOriginEnabled(true);
@@ -240,6 +277,7 @@ public class ChartFragment extends Fragment {
             // plot.getGraphWidget().getDomainLabelPaint().setColor(Color.TRANSPARENT);
 
             // label the domain (i.e. x-axis)
+            plot.getGraphWidget().getDomainLabelPaint().setColor(Color.BLACK);
             plot.setDomainStepMode(XYStepMode.INCREMENT_BY_VAL);
             plot.setDomainValueFormat(new Format() {
                 @Override
