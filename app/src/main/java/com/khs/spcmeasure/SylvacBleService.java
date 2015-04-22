@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 import java.util.UUID;
 
 import android.app.Notification;
@@ -39,7 +40,8 @@ public class SylvacBleService extends Service {
     // TODO use queue of characteristic and the value written so that this can be correctly returned instead of mLastWrite
     private Queue<BluetoothGattCharacteristic> characteristicWriteQueue = new LinkedList<BluetoothGattCharacteristic>();
 
-	private static final String DEVICE_NAME = "SY";
+	private static final String DEVICE_NAME_BONDED   = "SY";
+    private static final String DEVICE_NAME_UNBONDED = "SY289";
 	
     // Stops scanning after 10 seconds.
     private static final long SCAN_PERIOD = 10000;
@@ -186,41 +188,47 @@ public class SylvacBleService extends Service {
 	
 	// Device scan callback.
     private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
-    	@Override
-		public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
-    		if(device != null && device.getName().equals("SY")) {
-				// TODO comment out later on
-				Log.d(TAG, "fetch = " + device.fetchUuidsWithSdp());
-                Log.d(TAG, "UUID = " + device.getUuids());
-                Log.d(TAG, "Name = " + device.getName());
-                Log.d(TAG, "Type = " + device.getType());
-                Log.d(TAG, "BT Class = " + device.getBluetoothClass());
-                Log.d(TAG, "Address = " + device.getAddress());
-                Log.d(TAG, "String = " + device.toString());                    	
-    			
-	    		new Thread(new Runnable() {	
-	    			@Override
-					public void run() {                    
-	                    if(device != null && device.getName().equals("SY")) {
+        @Override
+        public void onLeScan(final BluetoothDevice device, int rssi, byte[] scanRecord) {
+            if (device != null) {
+                // check whether device name is for Sylvac device
+                String name = device.getName();
+
+                if (name.equals(DEVICE_NAME_BONDED) || name.equals(DEVICE_NAME_UNBONDED)) {
+                    // TODO comment out later on
+                    Log.d(TAG, "fetch = " + device.fetchUuidsWithSdp());
+                    Log.d(TAG, "UUID = " + device.getUuids());
+                    Log.d(TAG, "Name = " + device.getName());
+                    Log.d(TAG, "Type = " + device.getType());
+                    Log.d(TAG, "BT Class = " + device.getBluetoothClass());
+                    Log.d(TAG, "Address = " + device.getAddress());
+                    Log.d(TAG, "String = " + device.toString());
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
                             // immediately stop the BLE scan
                             scanLeDevice(false);
 
                             // TODO remove later if not required
-//	                    	mConnectionState = ConnectionState.CONNECTING;
-//	                    	updateNotification();
-	                    	                    	
-	                    	mDeviceAddress = device.getAddress();
+                            //	                    	mConnectionState = ConnectionState.CONNECTING;
+                            //	                    	updateNotification();
+
+                            // store device address
+                            mDeviceAddress = device.getAddress();
                             // TODO remove later - now calls scanLeDevice(false) above
-	                        // mBluetoothAdapter.stopLeScan(mLeScanCallback);
+                            // mBluetoothAdapter.stopLeScan(mLeScanCallback);
 
                             // TODO remove later - now calls connectGatt
-//	                        mConnectedGatt = device.connectGatt(SylvacBleService.this, false, mGattCallback);
+                            //	                        mConnectedGatt = device.connectGatt(SylvacBleService.this, false, mGattCallback);
+
+                            // connect to the device
                             connectGatt(device);
-	                    }								
-					}					
-				}).start();
-    		}
-		}
+                        }
+                    }).start();
+                }
+            }
+        }
     };
 	
     /*
@@ -358,15 +366,47 @@ public class SylvacBleService extends Service {
         }
     };
 
+    // returns device address as a String or null if not found
+    private String getDeviceAddress(String devName) {
+        String devAddr = null;
+
+        try {
+            // ensure Bluetooth state is on or device list won't work
+            if (mBluetoothAdapter.getState() == BluetoothAdapter.STATE_ON) {
+                // extract paired Bluetooth device list
+                Set<BluetoothDevice> setBtDevices = mBluetoothAdapter.getBondedDevices();
+
+                // find the required Bluetooth device
+                for (BluetoothDevice btDevice : setBtDevices) {
+                    if (btDevice.getName().equals(devName)) {
+                        devAddr = btDevice.getAddress();
+                        break;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return devAddr;
+    }
+
     // connect to the device
     public void connectDevice() {
 
-        Log.d(TAG, "connectDevice: mDevAddr = " + mDeviceAddress);
+        Log.d(TAG, "connectDevice: mDevAddr (before) = " + mDeviceAddress);
+
+        // find device address if not found already
+        if (mDeviceAddress == null) {
+            mDeviceAddress = getDeviceAddress(DEVICE_NAME_BONDED);
+        }
+
+        Log.d(TAG, "connectDevice: mDevAddr (after) = " + mDeviceAddress);
 
         if (mDeviceAddress != null) {
             // device already discovered so connect directly via MAC address
             BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(mDeviceAddress);
-            if(device != null && device.getName().equals("SY")) {
+            if(device != null && device.getName().equals(DEVICE_NAME_BONDED)) {
                 connectGatt(device);
             }
         } else {
@@ -386,7 +426,7 @@ public class SylvacBleService extends Service {
         Log.d(TAG, "connectGatt: Address = " + device.getAddress());
         Log.d(TAG, "connectGatt: String = " + device.toString());
 
-        if (device != null && device.getName().equals("SY")) {
+        if (device != null && device.getName().equals(DEVICE_NAME_BONDED)) {
 
             mConnectionState = ConnectionState.CONNECTING;
             updateNotification();
@@ -496,7 +536,7 @@ public class SylvacBleService extends Service {
     }
     
     // returns whether or not the provided Bluetooth GATT Characteristic has a the specified property
-    public static boolean hasProperty(BluetoothGattCharacteristic characteristic, int property) {
+    private static boolean hasProperty(BluetoothGattCharacteristic characteristic, int property) {
     	int prop = characteristic.getProperties() & property;
     	return prop == property;
     }
@@ -518,7 +558,7 @@ public class SylvacBleService extends Service {
     }
 
     // queue Gatt Descriptor writes
-    public boolean writeGattDescriptor(BluetoothGattDescriptor d){
+    private boolean writeGattDescriptor(BluetoothGattDescriptor d){
         boolean success = false;
 
         // check Bluetooth GATT connected
