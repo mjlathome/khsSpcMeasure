@@ -118,6 +118,10 @@ public class ChartFragment extends Fragment {
             paint.setColor(Color.BLACK);
             plot.getTitleWidget().setLabelPaint(paint);
 
+            paint = plot.getLegendWidget().getTextPaint();
+            paint.setColor(Color.BLACK);
+            plot.getLegendWidget().setTextPaint(paint);
+
             plot.getGraphWidget().getDomainLabelPaint().setColor(Color.BLACK);
             plot.getGraphWidget().getRangeLabelPaint().setColor(Color.BLACK);
 
@@ -279,6 +283,7 @@ public class ChartFragment extends Fragment {
             // label the domain (i.e. x-axis)
             plot.getGraphWidget().getDomainLabelPaint().setColor(Color.BLACK);
             plot.setDomainStepMode(XYStepMode.INCREMENT_BY_VAL);
+            plot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 1);
             plot.setDomainValueFormat(new Format() {
                 @Override
                 public StringBuffer format(Object o, StringBuffer stringBuffer, FieldPosition fieldPosition) {
