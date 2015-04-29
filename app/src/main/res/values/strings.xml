@@ -56,7 +56,7 @@
     <string name="text_piece_close_question">Are you sure you wish to Close this piece?</string>
     <string name="text_piece_feature_measured_none">No Features have been measured.</string>
     <string name="text_piece_feature_measured_all">All Features have been measured.</string>
-    <string name="text_piece_feature_measured_some">%1$s out of %2$s features have been measured.</string>
+    <string name="text_piece_feature_measured_some">Only %1$s out of %2$s features have been measured.</string>
     <string name="text_refresh">Refresh</string>
     <string name="text_warning">Warning</string>
     <string name="text_unknown">Unknown</string>
