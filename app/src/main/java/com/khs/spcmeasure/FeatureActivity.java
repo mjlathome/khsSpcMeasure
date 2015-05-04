@@ -98,10 +98,6 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
             mBleService = binder.getService();
 
             mBound = true;
-
-            // TODO tell measurement fragment too?
-//            MeasurementDetailFragment measDetailFrag = (MeasurementDetailFragment) getFragmentManager().findFragmentById(R.id.measurement_detail_container);
-//            measDetailFrag.setBleService(mBleService);
         }
 
         @Override
@@ -112,10 +108,6 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
             mBleService = null;
             mBound = false;
-
-            // TODO tell measurement fragment too?
-//            MeasurementDetailFragment measDetailFrag = (MeasurementDetailFragment) getFragmentManager().findFragmentById(R.id.measurement_detail_container);
-//            measDetailFrag.setBleService(null);
         }
 
     };

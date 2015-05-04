@@ -1,26 +1,11 @@
 package com.khs.spcmeasure;
 
-import java.util.Date;
-
-import com.khs.spcmeasure.DBAdapter;
-import com.khs.spcmeasure.R;
-import com.khs.spcmeasure.entity.Piece;
-import com.khs.spcmeasure.entity.Product;
-import com.khs.spcmeasure.fragments.MntSetupFragment.OnSetupSelectedListener;
-import com.khs.spcmeasure.library.AlertUtils;
-import com.khs.spcmeasure.library.CollectStatus;
-import com.khs.spcmeasure.library.DateTimeUtils;
-import com.khs.spcmeasure.library.ProgressUtils;
-
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,6 +14,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.khs.spcmeasure.entity.Piece;
+import com.khs.spcmeasure.entity.Product;
+import com.khs.spcmeasure.library.AlertUtils;
+import com.khs.spcmeasure.library.CollectStatus;
+import com.khs.spcmeasure.library.DateTimeUtils;
+import com.khs.spcmeasure.library.ProgressUtils;
+
+import java.util.Date;
 
 
 // captures new piece details and launches measurement activity
