@@ -40,7 +40,7 @@ public class SimpleCodeService extends IntentService {
     public static final String TYPE_ACTION_CAUSE = "actionCause";
 
     // url address
-    private static String url = "http://thor/spc/get_simple_code.php?type=";
+    private static String url = "http://thor.kmx.cosma.com/spc/get_simple_code.php?type=";
 
     // JSON node names
     private static final String TAG_SUCCESS = "success";
