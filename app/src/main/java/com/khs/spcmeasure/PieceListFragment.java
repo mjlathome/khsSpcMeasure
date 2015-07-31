@@ -270,7 +270,7 @@ public class PieceListFragment extends ListFragment implements AdapterView.OnIte
         int id = item.getItemId();
         switch(id) {
             case R.id.mnuOpen:
-                mListener.onFragmentInteraction(id);
+                mListener.onFragmentInteraction(info.id);
                 // selectPiece(info.id);
                 return true;
             case R.id.mnuDelete:

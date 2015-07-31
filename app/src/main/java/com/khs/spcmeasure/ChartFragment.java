@@ -1,6 +1,7 @@
 package com.khs.spcmeasure;
 
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,9 +13,11 @@ import android.view.ViewGroup;
 
 import com.androidplot.xy.LineAndPointFormatter;
 import com.androidplot.xy.PointLabelFormatter;
+import com.androidplot.xy.PointLabeler;
 import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
 import com.androidplot.xy.XYSeries;
+import com.androidplot.xy.XYStepMode;
 import com.khs.spcmeasure.dao.FeatureDao;
 import com.khs.spcmeasure.dao.LimitsDao;
 import com.khs.spcmeasure.dao.MeasurementDao;
@@ -24,9 +27,16 @@ import com.khs.spcmeasure.entity.Limits;
 import com.khs.spcmeasure.entity.Measurement;
 import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.library.AlertUtils;
+import com.khs.spcmeasure.library.DateTimeUtils;
 import com.khs.spcmeasure.library.LimitType;
 
+import java.text.DecimalFormat;
+import java.text.FieldPosition;
+import java.text.Format;
+import java.text.ParsePosition;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,7 +48,7 @@ public class ChartFragment extends Fragment {
 
     // supported chart types
     final static String CHART_TYPE = "CHART_TYPE";
-    final static int CHART_TYPE_INDIVIDUAL = 0;
+    final static int CHART_TYPE_XBAR  = 0;
     final static int CHART_TYPE_RANGE = 1;
 
     // argument members
@@ -52,11 +62,15 @@ public class ChartFragment extends Fragment {
     private String mLabelUpper;
     private String mLabelLower;
     private XYPlot plot;
+    private List<Date>   mCollectDate;
     private List<Number> mSeriesValue;
     private List<Number> mSeriesUpper;
     private List<Number> mSeriesLower;
 
     private RenderChartTask renderTask = new RenderChartTask();
+
+    // format chart values using 3dp
+    private DecimalFormat df = new DecimalFormat("#.000");
 
     public ChartFragment() {
         // Required empty public constructor
@@ -75,9 +89,49 @@ public class ChartFragment extends Fragment {
             }
             // initialize our XYPlot reference:
             plot = (XYPlot) getView().findViewById(R.id.mySimpleXYPlot);
+            plot.clear();
+
             plot.setTitle(mChartTitle);
             plot.setRangeLabel(mLabelValue);
-            plot.clear();
+            plot.setRangeValueFormat(df);   // format range using 3dp
+
+            // TODO remove later
+            // plot.getGraphWidget().getGridBackgroundPaint().setColor(getResources().getColor(R.color.chartBgColour));
+
+            // gets rid of the gray grid
+            plot.getGraphWidget().getGridBackgroundPaint().setColor(Color.TRANSPARENT);
+
+            // gets rid of the black border (up to the graph) there is no black border around the labels
+            plot.getBackgroundPaint().setColor(Color.TRANSPARENT);
+
+            // gets rid of the black behind the graph
+            plot.getGraphWidget().getBackgroundPaint().setColor(Color.TRANSPARENT);
+
+            // TODO remove later
+            // plot.getGraphWidget().getBackgroundPaint().setColor(getResources().getColor(android.R.color.background_light));
+            // plot.getGraphWidget().getGridBackgroundPaint().setColor(getResources().getColor(android.R.color.background_light));
+
+            // with a new release of AndroidPlot you have to also set the border paint
+            plot.getBorderPaint().setColor(Color.TRANSPARENT);
+
+            Paint paint = plot.getTitleWidget().getLabelPaint();
+            paint.setColor(Color.BLACK);
+            plot.getTitleWidget().setLabelPaint(paint);
+
+            paint = plot.getLegendWidget().getTextPaint();
+            paint.setColor(Color.BLACK);
+            plot.getLegendWidget().setTextPaint(paint);
+
+            plot.getGraphWidget().getDomainLabelPaint().setColor(Color.BLACK);
+            plot.getGraphWidget().getRangeLabelPaint().setColor(Color.BLACK);
+
+            plot.getDomainLabelWidget().getLabelPaint().setColor(Color.BLACK);
+            plot.getRangeLabelWidget().getLabelPaint().setColor(Color.BLACK);
+
+            plot.getGraphWidget().getDomainOriginLabelPaint().setColor(Color.BLACK);
+            plot.getGraphWidget().getDomainOriginLinePaint().setColor(Color.BLACK);
+            plot.getGraphWidget().getRangeOriginLinePaint().setColor(Color.BLACK);
+
         }
 
         @Override
@@ -101,7 +155,7 @@ public class ChartFragment extends Fragment {
                 List<Piece> listPieces = pieceDao.getAllPieces(mProdId);
 
                 switch (mChartType) {
-                    case CHART_TYPE_INDIVIDUAL:
+                    case CHART_TYPE_XBAR:
                         limits = limDao.getLimit(mProdId, mFeatId, feat.getLimitRev(), LimitType.CONTROL);
                         break;
                     case CHART_TYPE_RANGE:
@@ -109,7 +163,11 @@ public class ChartFragment extends Fragment {
                         break;
                 }
 
+                // reverse Piece list so it's oldest to newest
+                Collections.reverse(listPieces);
+
                 // initialize series
+                mCollectDate = new ArrayList<Date>();
                 mSeriesValue = new ArrayList<Number>();
                 mSeriesUpper = new ArrayList<Number>();
                 mSeriesLower = new ArrayList<Number>();
@@ -119,12 +177,15 @@ public class ChartFragment extends Fragment {
                     // TODO throw away unwanted pieces based upon CollectStatus?
                     // Log.d(TAG, "Piece = " + piece.getProdId());
 
+                    // add Piece collect date
+                    mCollectDate.add(piece.getCollectDt());
+
                     // add value, if any
                     Measurement meas = measDao.getMeasurement(piece.getId(), piece.getProdId(), feat.getFeatId());
                     if (meas != null) {
                         Log.d(TAG, "renderChart: meas = " + meas.getValue());
                         switch (mChartType) {
-                            case CHART_TYPE_INDIVIDUAL:
+                            case CHART_TYPE_XBAR:
                                 mSeriesValue.add(meas.getValue());
                                 break;
                             case CHART_TYPE_RANGE:
@@ -178,7 +239,15 @@ public class ChartFragment extends Fragment {
             LineAndPointFormatter series1Format = new LineAndPointFormatter();
             series1Format.setPointLabelFormatter(new PointLabelFormatter());
             series1Format.configure(getActivity().getApplicationContext(),
-                    R.xml.line_point_formatter_with_plf1);
+                    R.xml.line_point_formatter_value);
+
+            // format series using 3dp
+            series1Format.setPointLabeler(new PointLabeler() {
+                @Override
+                public String getLabel(XYSeries series, int index) {
+                    return df.format(series.getY(index));
+                }
+            });
 
             // add a new series' to the xyplot:
             plot.addSeries(seriesValue, series1Format);
@@ -187,25 +256,47 @@ public class ChartFragment extends Fragment {
             LineAndPointFormatter series2Format = new LineAndPointFormatter();
             series2Format.setPointLabelFormatter(new PointLabelFormatter());
             series2Format.configure(getActivity().getApplicationContext(),
-                    R.xml.line_point_formatter_limits);
+                    R.xml.line_point_formatter_limit);
             plot.addSeries(seriesUpper, series2Format);
 
             LineAndPointFormatter series3Format = new LineAndPointFormatter();
             series3Format.setPointLabelFormatter(new PointLabelFormatter());
             series3Format.configure(getActivity().getApplicationContext(),
-                    R.xml.line_point_formatter_limits);
+                    R.xml.line_point_formatter_limit);
             plot.addSeries(seriesLower, series3Format);
 
             // reduce the number of range labels
             plot.setTicksPerRangeLabel(3);
             plot.getGraphWidget().setDomainLabelOrientation(-45);
+            plot.getGraphWidget().getDomainLabelPaint().setTextAlign(Paint.Align.CENTER);
+            // plot.getGraphWidget().setPaddingBottom(500);
 
             plot.setUserRangeOrigin(0);
             plot.setDrawRangeOriginEnabled(true);
 
             // TODO use this to set the lowest boundary
             // plot.setRangeLowerBoundary(-2.75, BoundaryMode.FIXED);
-            plot.getGraphWidget().getDomainLabelPaint().setColor(Color.TRANSPARENT);
+
+            // TODO don't display domain labels (i.e. x-axis) - remove later
+            // plot.getGraphWidget().getDomainLabelPaint().setColor(Color.TRANSPARENT);
+
+            // label the domain (i.e. x-axis)
+            plot.getGraphWidget().getDomainLabelPaint().setColor(Color.BLACK);
+            plot.setDomainStepMode(XYStepMode.INCREMENT_BY_VAL);
+            plot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 1);
+            plot.setDomainValueFormat(new Format() {
+                @Override
+                public StringBuffer format(Object o, StringBuffer stringBuffer, FieldPosition fieldPosition) {
+                    int i = ((Number) o).intValue();
+                    Date date = mCollectDate.get(i);
+                    return new StringBuffer(DateTimeUtils.getDateTimeStr(date, DateTimeUtils.CHART_DATETIME_FORMAT));
+                }
+
+                @Override
+                public Object parseObject(String s, ParsePosition parsePosition) {
+                    return null;
+                }
+            });
 
             // draw plot
             plot.redraw();
@@ -246,8 +337,8 @@ public class ChartFragment extends Fragment {
 
         // set title and labels
         switch(mChartType) {
-            case CHART_TYPE_INDIVIDUAL:
-                mChartTitle = ChartFragment.this.getString(R.string.chart_title_individual);
+            case CHART_TYPE_XBAR:
+                mChartTitle = ChartFragment.this.getString(R.string.chart_title_xbar);
                 mLabelValue = ChartFragment.this.getString(R.string.chart_label_individual_value);
                 mLabelUpper = ChartFragment.this.getString(R.string.chart_label_individual_upper);
                 mLabelLower = ChartFragment.this.getString(R.string.chart_label_individual_lower);
@@ -275,7 +366,7 @@ public class ChartFragment extends Fragment {
         // extract piece id
         if (args != null) {
             if (args.containsKey(CHART_TYPE)) {
-                mChartType = args.getInt(CHART_TYPE, CHART_TYPE_INDIVIDUAL);
+                mChartType = args.getInt(CHART_TYPE, CHART_TYPE_XBAR);
             }
             if (args.containsKey(DBAdapter.KEY_PROD_ID)) {
                 mProdId = args.getLong(DBAdapter.KEY_PROD_ID);

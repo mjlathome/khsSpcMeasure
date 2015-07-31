@@ -52,9 +52,12 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
     /// tab constants
     private static final int TAB_POS_MEASUREMENT = 0;
-    private static final int TAB_POS_CHART_INDIVIDUAL = 1;
+    private static final int TAB_POS_CHART_XBAR  = 1;
     private static final int TAB_POS_CHART_RANGE = 2;
     private static final int TAB_POS_INFORMATION = 3;
+
+    // message constants
+    private static final int MESSAGE_MOVE_NEXT = 0;
 
     private Long mPieceId = null;
     private Long mFeatId  = null;
@@ -95,10 +98,6 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
             mBleService = binder.getService();
 
             mBound = true;
-
-            // TODO tell measurement fragment too?
-//            MeasurementDetailFragment measDetailFrag = (MeasurementDetailFragment) getFragmentManager().findFragmentById(R.id.measurement_detail_container);
-//            measDetailFrag.setBleService(mBleService);
         }
 
         @Override
@@ -109,10 +108,6 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
             mBleService = null;
             mBound = false;
-
-            // TODO tell measurement fragment too?
-//            MeasurementDetailFragment measDetailFrag = (MeasurementDetailFragment) getFragmentManager().findFragmentById(R.id.measurement_detail_container);
-//            measDetailFrag.setBleService(null);
         }
 
     };
@@ -180,7 +175,16 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
     //region implement ViewPager OnPageChangeListener interface
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        // extract Feature at the pager position
+        Feature feat = mFeatList.get(position);
 
+        // set feature member variable
+        mFeatId = feat.getId();
+
+        Log.d(TAG, "onPageScrolled: mFeatId = " + mFeatId);
+
+        // cancel pending move next
+        cancelMoveNext();
     }
 
     @Override
@@ -192,6 +196,9 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         mFeatId = feat.getId();
 
         Log.d(TAG, "onPageSelected: mFeatId = " + mFeatId);
+
+        // cancel pending move next
+        cancelMoveNext();
     }
 
     @Override
@@ -233,7 +240,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
                         android.R.id.text1,
                         new String[]{
                                 getString(R.string.tab_title_measurement),
-                                getString(R.string.tab_title_chart_individual),
+                                getString(R.string.tab_title_chart_xbar),
                                 getString(R.string.tab_title_chart_range),
                                 getString(R.string.tab_title_information),
                         }),
@@ -595,17 +602,24 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
                 int delay = Integer.parseInt(delayStr);
                 Log.d(TAG, "moveNext: delay = " + delay);
 
-                // post delayed runnable
+                // create runnable
                 Runnable run = new Runnable() {
                     @Override
                     public void run() {
+                        // clear move next message
+                        mHandler.removeMessages(MESSAGE_MOVE_NEXT);
+
                         // ensure that user has not updated the displayed feature
                         if (mPager.getCurrentItem() == currPos) {
                             setPagerPos(nextPos);
                         }
                     }
                 };
-                mHandler.postDelayed(run, delay);
+
+                // post message and, if successful, delayed runnable
+                if (mHandler.sendEmptyMessage(MESSAGE_MOVE_NEXT)) {
+                    mHandler.postDelayed(run, delay);
+                }
             }
         }
     }
@@ -640,14 +654,20 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 //        }
     }
 
+    // cancel move to the next feature.
+    public void cancelMoveNext() {
+        // remove all runnables and messages
+        mHandler.removeCallbacksAndMessages(null);
+    }
+
     // set measured value
     private void setMeasurement(byte[] value) {
 
         // convert characteristic byte array data to a double
         Double myDouble = Double.parseDouble(new String(value));
 
-        // update Measurement value
-        if (myDouble != null && mTabPos == FeatureActivity.TAB_POS_MEASUREMENT) {
+        // update Measurement value if okay
+        if (myDouble != null && mTabPos == FeatureActivity.TAB_POS_MEASUREMENT && !mHandler.hasMessages(MESSAGE_MOVE_NEXT)) {
             // communicate measurement to fragment
             MeasurementFragment measFrag = (MeasurementFragment) mAdapter.getCurrentFragment();
             measFrag.setValue(myDouble);
@@ -713,12 +733,12 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
                     MeasurementFragment measFrag = new MeasurementFragment();
                     measFrag.setArguments(args);
                     return measFrag;
-                case TAB_POS_CHART_INDIVIDUAL:
+                case TAB_POS_CHART_XBAR:
                 case TAB_POS_CHART_RANGE:
                     // create the chart fragment
                     args = new Bundle();
-                    if (mTabPos == TAB_POS_CHART_INDIVIDUAL) {
-                        args.putInt(ChartFragment.CHART_TYPE, ChartFragment.CHART_TYPE_INDIVIDUAL);
+                    if (mTabPos == TAB_POS_CHART_XBAR) {
+                        args.putInt(ChartFragment.CHART_TYPE, ChartFragment.CHART_TYPE_XBAR);
                     } else {
                         args.putInt(ChartFragment.CHART_TYPE, ChartFragment.CHART_TYPE_RANGE);
                     }

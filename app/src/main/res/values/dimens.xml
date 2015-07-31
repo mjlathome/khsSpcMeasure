@@ -15,6 +15,7 @@
     <dimen name="text_small">14sp</dimen>
     <dimen name="text_medium">18sp</dimen>
     <dimen name="text_large">22sp</dimen>
+    <dimen name="text_huge">26sp</dimen>
 
     <!-- AndroidPlot dimensions as per QuickStart tutorial
     http://androidplot.com/docs/quickstart/
@@ -26,4 +27,8 @@
     <dimen name="range_tick_label_font_size">15dp</dimen>
     <dimen name="domain_tick_label_font_size">15dp</dimen>
     <dimen name="legend_text_font_size">20dp</dimen>
+    <dimen name="graph_margin_top">20dp</dimen>
+    <dimen name="graph_margin_bottom">60dp</dimen>
+    <dimen name="graph_margin_left">30dp</dimen>
+    <dimen name="graph_margin_right">35dp</dimen>
 </resources>

@@ -3,4 +3,5 @@
     <color name="fieldHeader">#D7D7D7</color>
     <color name="measInControl">#ACD372</color>
     <color name="measOutControl">#FFF467</color>
+    <color name="chartBgColour">#FFFFFF</color>
 </resources>

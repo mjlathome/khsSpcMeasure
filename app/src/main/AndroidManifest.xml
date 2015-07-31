@@ -56,10 +56,6 @@
                 android:value=".SetupListActivity" />
         </activity>
         <activity
-            android:name=".MntSetupActivity"
-            android:label="@string/title_activity_mnt_setup" >
-        </activity>
-        <activity
             android:name=".PieceListActivity"
             android:label="@string/title_activity_piece_list"
             android:launchMode="singleTop"

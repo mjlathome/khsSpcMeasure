@@ -486,8 +486,9 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 
     // display Limit layout views
     private void displayLimits() {
-        mTxtLimUpper.setText(Double.toString(mLimitCl.getUpper()));
-        mTxtLimLower.setText(Double.toString(mLimitCl.getLower()));
+        DecimalFormat df = new DecimalFormat("#.000");
+        mTxtLimUpper.setText(df.format(mLimitCl.getUpper()));
+        mTxtLimLower.setText(df.format(mLimitCl.getLower()));
         return;
     }
 
