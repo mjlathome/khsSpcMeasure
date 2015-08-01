@@ -49,7 +49,7 @@ public class SetupService extends IntentService {
     private static List<Long> canceledImportProdId = new ArrayList<Long>();
 
     // url address
-    private static String url = "http://thor/spc/get_setup.php?prodId=";
+    private static String url = "http://thor.kmx.cosma.com/spc/get_setup.php?prodId=";
 
     // JSON node names
     private static final String TAG_SUCCESS = "success";

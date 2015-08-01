@@ -23,7 +23,7 @@ public class ImportSimpleCodeTask extends AsyncTask<String, String, JSONObject>{
 
 	private Context mContext;
 
-    private static String url = "http://thor/spc/get_simple_code.php?type=";
+    private static String url = "http://thor.kmx.cosma.com/spc/get_simple_code.php?type=";
 
 	//JSON Node Names
 	private static final String TAG_SUCCESS = "success";
