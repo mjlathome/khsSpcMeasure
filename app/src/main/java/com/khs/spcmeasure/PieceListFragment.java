@@ -35,7 +35,7 @@ import com.khs.spcmeasure.library.DateTimeUtils;
  * {@link PieceListActivity} on handsets.
  */
 public class PieceListFragment extends ListFragment implements AdapterView.OnItemSelectedListener {
-	
+
 	private static final String TAG = "PieceListFragment";
     private static ListView mListView;
 
