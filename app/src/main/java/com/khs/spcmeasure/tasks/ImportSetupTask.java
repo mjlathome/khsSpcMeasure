@@ -26,8 +26,8 @@ public class ImportSetupTask extends AsyncTask<Long, String, JSONObject>{
 	
 	// private static String url = "http://192.168.0.111/karmax/spc/getSetupByProdId.php?prodId=";
 	// private static String url = "http://thor.kmx.cosma.com/spc/getSetupByProdId.php?prodId=";
-	// private static String url = "http://thor.kmx.cosma.com/spc/get_setup.php?prodId=";
-    private static String url = "http://10.35.33.58/spc/get_setup.php?prodId=";
+	private static String url = "http://thor.kmx.cosma.com/spc/get_setup.php?prodId=";
+    // private static String url = "http://10.35.33.58/spc/get_setup.php?prodId=";
 
 	//JSON Node Names
 	private static final String TAG_SUCCESS = "success";
