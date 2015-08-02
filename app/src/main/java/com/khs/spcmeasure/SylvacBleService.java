@@ -193,6 +193,7 @@ public class SylvacBleService extends Service {
             if (device != null) {
                 // check whether device name is for Sylvac device
                 String name = device.getName();
+                Log.d(TAG, "device name = " + name);
 
                 if (name.equals(DEVICE_NAME_BONDED) || name.equals(DEVICE_NAME_UNBONDED)) {
                     // TODO comment out later on
@@ -398,7 +399,8 @@ public class SylvacBleService extends Service {
 
         // find device address if not found already
         if (mDeviceAddress == null) {
-            mDeviceAddress = getDeviceAddress(DEVICE_NAME_BONDED);
+            // TODO for now always scan - maybe this will fix connection issues
+            // mDeviceAddress = getDeviceAddress(DEVICE_NAME_BONDED);
         }
 
         Log.d(TAG, "connectDevice: mDevAddr (after) = " + mDeviceAddress);
