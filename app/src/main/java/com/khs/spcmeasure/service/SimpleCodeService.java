@@ -14,6 +14,7 @@ import com.khs.spcmeasure.SetupListActivity;
 import com.khs.spcmeasure.entity.SimpleCode;
 import com.khs.spcmeasure.library.ActionStatus;
 import com.khs.spcmeasure.library.JSONParser;
+import com.khs.spcmeasure.library.NetworkUtils;
 import com.khs.spcmeasure.library.NotificationId;
 
 import org.json.JSONArray;
@@ -110,52 +111,57 @@ public class SimpleCodeService extends IntentService {
         ActionStatus actStat = ActionStatus.FAILED;
         String notifyText = codeType;
 
-        try {
-            JSONParser jParser = new JSONParser();
+        if (!NetworkUtils.isWiFi(this)) {
+            actStat = ActionStatus.SKIPPED;
+        } else {
+            try {
+                JSONParser jParser = new JSONParser();
 
-            // get JSON from URL
-            JSONObject json = jParser.getJSONFromUrl(url + codeType);
+                // get JSON from URL
+                JSONObject json = jParser.getJSONFromUrl(url + codeType);
 
-            // verify json was successful
-            if (json == null || json.getBoolean(TAG_SUCCESS) != true) {
-                // notify user - failure
-                actStat = ActionStatus.FAILED;
-            } else {
-                // open the DB
-                DBAdapter db = new DBAdapter(this);
-                db.open();
+                // verify json was successful
+                if (json == null || json.getBoolean(TAG_SUCCESS) != true) {
+                    // notify user - failure
+                    actStat = ActionStatus.FAILED;
+                } else {
+                    // open the DB
+                    DBAdapter db = new DBAdapter(this);
+                    db.open();
 
-                // create SimpleCodes
-                JSONArray jSimpleCodeArr = json.getJSONArray(TAG_SIMPLE_CODE);
-                for (int i = 0; i < jSimpleCodeArr.length(); i++) {
-                    JSONObject jSimpleCode = jSimpleCodeArr.getJSONObject(i);
+                    // create SimpleCodes
+                    JSONArray jSimpleCodeArr = json.getJSONArray(TAG_SIMPLE_CODE);
+                    for (int i = 0; i < jSimpleCodeArr.length(); i++) {
+                        JSONObject jSimpleCode = jSimpleCodeArr.getJSONObject(i);
 
-                    // extract Simple Code fields from json data
-                    long id = Long.valueOf(jSimpleCode.getString(TAG_ID));
-                    String type = jSimpleCode.getString(TAG_TYPE);
-                    String code = jSimpleCode.getString(TAG_CODE);
-                    String desc = jSimpleCode.getString(TAG_DESC);
-                    String intCode = jSimpleCode.getString(TAG_INT_CODE);
-                    boolean active = Boolean.valueOf(jSimpleCode.getString(TAG_ACTIVE));
+                        // extract Simple Code fields from json data
+                        long id = Long.valueOf(jSimpleCode.getString(TAG_ID));
+                        String type = jSimpleCode.getString(TAG_TYPE);
+                        String code = jSimpleCode.getString(TAG_CODE);
+                        String desc = jSimpleCode.getString(TAG_DESC);
+                        String intCode = jSimpleCode.getString(TAG_INT_CODE);
+                        boolean active = Boolean.valueOf(jSimpleCode.getString(TAG_ACTIVE));
 
-                    // create the SimpleCode object
-                    SimpleCode simpleCode = new SimpleCode(id, type, code, desc, intCode, active);
-                    Log.d(TAG, "onPostExecute id = " + id);
+                        // create the SimpleCode object
+                        SimpleCode simpleCode = new SimpleCode(id, type, code, desc, intCode, active);
+                        Log.d(TAG, "onPostExecute id = " + id);
 
-                    // update or insert SimpleCode into the DB
-                    if (db.updateSimpleCode(simpleCode) == false) {
-                        db.createSimpleCode(simpleCode);
-                    }
-                }  // create SimpleCodes
+                        // update or insert SimpleCode into the DB
+                        if (db.updateSimpleCode(simpleCode) == false) {
+                            db.createSimpleCode(simpleCode);
+                        }
+                    }  // create SimpleCodes
 
-                // close the DB
-                db.close();
+                    // close the DB
+                    db.close();
 
-                // notify user - success
-                actStat = ActionStatus.COMPLETE;            }
+                    // notify user - success
+                    actStat = ActionStatus.COMPLETE;
+                }
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         // notify user
