@@ -2,15 +2,11 @@ package com.khs.spcmeasure;
 
 import android.app.AlertDialog;
 import android.app.FragmentManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.app.Activity;
 
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,7 +16,7 @@ import android.widget.Toast;
 
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.CollectStatus;
-import com.khs.spcmeasure.widget.CollectStatusActionProvider;
+import com.khs.spcmeasure.library.SecurityUtils;
 
 /**
  * An activity representing a single Piece detail screen. This activity is only
@@ -107,6 +103,35 @@ public class PieceListActivity extends Activity implements
 		}
 	}
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+//        Log.d(TAG, "OnStart: 1 Lock = " + SecurityUtils.getLockStatus(this) + "; App = " + SecurityUtils.getInAppStatus(this));
+//        if (SecurityUtils.getLockStatus(this)) {
+//            // show lock screen
+//            Intent intentLogin = new Intent(this, LoginActivity.class);
+//            startActivity(intentLogin);
+//        } else {
+//            // not locked
+//            SecurityUtils.setInAppStatus(this, true);
+//        }
+//        Log.d(TAG, "OnStart: 2 Lock = " + SecurityUtils.getLockStatus(this) + "; App = " + SecurityUtils.getInAppStatus(this));
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+//        Log.d(TAG, "OnStop: 1 Lock = " + SecurityUtils.getLockStatus(this) + "; App = " + SecurityUtils.getInAppStatus(this));
+//        if (!SecurityUtils.getInAppStatus(this)) {
+//            SecurityUtils.setLockStatus(this, true);    // lock the app
+//        } else {
+//            SecurityUtils.setLockStatus(this, false);   // not locked
+//        }
+//        Log.d(TAG, "OnStop: 2 Lock = " + SecurityUtils.getLockStatus(this) + "; App = " + SecurityUtils.getInAppStatus(this));
+    }
+
     // inflate Action Bar menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -124,6 +149,17 @@ public class PieceListActivity extends Activity implements
 		int id = item.getItemId();
 
         switch(id) {
+            case R.id.action_login:
+                Log.d(TAG, "Menu: Login");
+                // show login screen
+                Intent intentLogin = new Intent(this, LoginActivity.class);
+                startActivity(intentLogin);
+                return true;
+            case R.id.action_logout:
+                Log.d(TAG, "Menu: Logout");
+                // set locked state
+                SecurityUtils.setLockStatus(this, true);
+                return true;
             case R.id.action_settings:
                 Log.d(TAG, "Menu: Settings");
                 // change preferences

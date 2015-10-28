@@ -1,0 +1,80 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.khs.spcmeasure.widget.LoginActivityFragmentOld">
+
+    <TextView
+        android:id="@+id/txtAppName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:layout_centerHorizontal="true"
+        android:text="@string/app_name"
+        android:textSize="@dimen/text_huge"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/lblUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtAppName"
+        android:layout_marginTop="@dimen/margin_large"
+        android:layout_marginStart="@dimen/margin_large"
+        android:labelFor="@+id/txtUsername"
+        android:text="@string/label_username"
+        android:textSize="@dimen/text_medium"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/txtUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/lblUsername"
+        android:layout_toEndOf="@id/lblUsername"
+        android:layout_marginStart="@dimen/margin_small"
+        android:hint="@string/text_username"
+        android:textSize="@dimen/text_medium" />
+
+    <TextView
+        android:id="@+id/lblPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtUsername"
+        android:layout_marginTop="@dimen/margin_small"
+        android:layout_marginStart="@dimen/margin_large"
+        android:labelFor="@+id/txtPassword"
+        android:text="@string/label_password"
+        android:textSize="@dimen/text_medium"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/txtPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/lblPassword"
+        android:layout_toEndOf="@id/lblPassword"
+        android:layout_marginStart="@dimen/margin_small"
+        android:inputType="textPassword"
+        android:hint="@string/text_password"
+        android:textSize="@dimen/text_medium" />
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_login"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@+id/txtAppName" />
+
+    <Button
+        android:id="@+id/btnCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_cancel"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/txtAppName" />
+
+</RelativeLayout>

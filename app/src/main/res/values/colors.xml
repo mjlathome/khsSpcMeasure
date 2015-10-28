@@ -4,4 +4,5 @@
     <color name="measInControl">#ACD372</color>
     <color name="measOutControl">#FFF467</color>
     <color name="chartBgColour">#FFFFFF</color>
+    <color name="PagerTabStripText">#FFFFFF</color>
 </resources>

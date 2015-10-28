@@ -22,6 +22,8 @@
     <string name="text_limit_type">Limit Type</string>
     <string name="text_limit_upper">Upper</string>
     <string name="text_limit_lower">Lower</string>
+    <string name="text_login">Login</string>
+    <string name="text_logout">Logout</string>
     <string name="text_measurement">Measurement</string>
     <string name="text_range">Range</string>
     <string name="text_cause">Cause</string>
@@ -60,6 +62,8 @@
     <string name="text_refresh">Refresh</string>
     <string name="text_warning">Warning</string>
     <string name="text_unknown">Unknown</string>
+    <string name="text_username">Username</string>
+    <string name="text_password">Password</string>
 
     <!-- BLE strings -->
     <string name="text_ble_not_supported">Bluetooth LE not supported.  Contact administrator</string>
@@ -76,6 +80,8 @@
     <string name="text_ble_get_battery">Get Battery</string>
 
     <!-- label strings -->
+    <string name="label_username">Username</string>
+    <string name="label_password">Password</string>
     <string name="label_ucl">UCL:</string>
     <string name="label_lcl">LCL:</string>
     <string name="label_value">Value:</string>
@@ -126,5 +132,6 @@
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_login_old">Login</string>
 
 </resources>

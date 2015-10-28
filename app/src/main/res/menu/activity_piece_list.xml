@@ -8,7 +8,16 @@
         android:showAsAction="always" 
         android:title="@string/text_new_piece"
         android:enabled="true"/>
-
+    <item
+        android:id="@+id/action_login"
+        android:title="@string/text_login"
+        android:orderInCategory="10"
+        android:showAsAction="never" />
+    <item
+        android:id="@+id/action_logout"
+        android:title="@string/text_logout"
+        android:orderInCategory="20"
+        android:showAsAction="never" />
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

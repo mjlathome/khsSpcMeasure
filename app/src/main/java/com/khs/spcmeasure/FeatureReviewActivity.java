@@ -17,6 +17,7 @@ import com.khs.spcmeasure.dao.PieceDao;
 import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.CollectStatus;
+import com.khs.spcmeasure.library.SecurityUtils;
 import com.khs.spcmeasure.service.MeasurementService;
 
 // TODO handle Action Bar menu Up button - see Stack Overflow
@@ -88,6 +89,17 @@ public class FeatureReviewActivity extends Activity implements
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
                 Log.d(TAG, "Home");
+                return true;
+            case R.id.action_login:
+                Log.d(TAG, "Menu: Login");
+                // show login screen
+                Intent intentLogin = new Intent(this, LoginActivity.class);
+                startActivity(intentLogin);
+                return true;
+            case R.id.action_logout:
+                Log.d(TAG, "Menu: Logout");
+                // set locked state
+                SecurityUtils.setLockStatus(this, true);
                 return true;
             case R.id.action_settings:
                 Log.d(TAG, "Menu: Settings");

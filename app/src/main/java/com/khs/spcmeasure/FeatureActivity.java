@@ -42,6 +42,7 @@ import com.khs.spcmeasure.entity.Feature;
 import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.CollectStatus;
+import com.khs.spcmeasure.library.SecurityUtils;
 
 import java.util.List;
 
@@ -413,6 +414,17 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
         // handle menu item
         switch(id) {
+            case R.id.action_login:
+                Log.d(TAG, "Menu: Login");
+                // show login screen
+                Intent intentLogin = new Intent(this, LoginActivity.class);
+                startActivity(intentLogin);
+                return true;
+            case R.id.action_logout:
+                Log.d(TAG, "Menu: Logout");
+                // set locked state
+                SecurityUtils.setLockStatus(this, true);
+                return true;
             case R.id.action_settings:
                 Log.d(TAG, "Menu: Settings");
                 // change preferences

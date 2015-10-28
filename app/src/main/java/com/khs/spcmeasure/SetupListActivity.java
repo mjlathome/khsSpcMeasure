@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.khs.spcmeasure.library.SecurityUtils;
 import com.khs.spcmeasure.service.PieceService;
 import com.khs.spcmeasure.service.SetupService;
 import com.khs.spcmeasure.service.SimpleCodeService;
@@ -54,6 +55,44 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
             // new ImportSimpleCodeTask(this).execute(ImportSimpleCodeTask.TYPE_ACTION_CAUSE);
             SimpleCodeService.startActionImport(this, SimpleCodeService.TYPE_ACTION_CAUSE);
         }
+
+        // set locked state
+        SecurityUtils.setLockStatus(this, true);
+
+        // show login screen
+        Intent intentLogin = new Intent(this, LoginActivity.class);
+        startActivity(intentLogin);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+//        Log.d(TAG, "OnStart: 1 Lock = " + SecurityUtils.getLockStatus(this) + "; App = " + SecurityUtils.getInAppStatus(this));
+//        if (SecurityUtils.getLockStatus(this)) {
+//            // show lock screen
+//            Intent intentLogin = new Intent(this, LoginActivity.class);
+//            startActivity(intentLogin);
+//        } else {
+//            // not locked
+//            SecurityUtils.setInAppStatus(this, true);
+//        }
+//        Log.d(TAG, "OnStart: 2 Lock = " + SecurityUtils.getLockStatus(this) + "; App = " + SecurityUtils.getInAppStatus(this));
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+//        Log.d(TAG, "OnStop: 1 Lock = " + SecurityUtils.getLockStatus(this) + "; App = " + SecurityUtils.getInAppStatus(this));
+//        if (!SecurityUtils.getInAppStatus(this)) {
+//            // lock the app
+//            SecurityUtils.setLockStatus(this, true);
+//        } else {
+//            // not locked
+//            SecurityUtils.setLockStatus(this, false);
+//        }
+//        Log.d(TAG, "OnStop: 2 Lock = " + SecurityUtils.getLockStatus(this) + "; App = " + SecurityUtils.getInAppStatus(this));
     }
 
     @Override
@@ -101,6 +140,17 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
                 Intent intent = new Intent(this, SetupImportActivity.class);
                 startActivityForResult(intent, RESULT_IMPORT);
                 return true;
+            case R.id.action_login:
+                Log.d(TAG, "Menu: Login");
+                // show login screen
+                Intent intentLogin = new Intent(this, LoginActivity.class);
+                startActivity(intentLogin);
+                return true;
+            case R.id.action_logout:
+                Log.d(TAG, "Menu: Logout");
+                // set locked state
+                SecurityUtils.setLockStatus(this, true);
+                return true;
             case R.id.action_settings:
                 Log.d(TAG, "Menu: Settings");
                 // change preferences
@@ -124,6 +174,7 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
         // launch Piece List Activity for Product
         Intent intent = new Intent(this, PieceListActivity.class);
         intent.putExtra(DBAdapter.KEY_PROD_ID, prodId);
+        SecurityUtils.setInAppStatus(this, true);   // application not left
         startActivity(intent);
     }
 

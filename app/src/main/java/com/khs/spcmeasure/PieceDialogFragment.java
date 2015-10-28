@@ -21,6 +21,7 @@ import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.CollectStatus;
 import com.khs.spcmeasure.library.DateTimeUtils;
 import com.khs.spcmeasure.library.ProgressUtils;
+import com.khs.spcmeasure.library.SecurityUtils;
 
 import java.util.Date;
 
@@ -104,7 +105,10 @@ public class PieceDialogFragment extends DialogFragment implements OnClickListen
 		mCollectDtStr = DateTimeUtils.getDateTimeStr(mCollectDate);
 		TextView txtCollectDt = (TextView) v.findViewById(R.id.txtCollectDt);
 		txtCollectDt.setText(mCollectDtStr);
-						
+
+		// populate Operator
+		edtOperator.setText(SecurityUtils.getUsername(getActivity()));
+
 		// set button listeners
 		btnOkay.setOnClickListener(this);
 		btnCancel.setOnClickListener(this);		

@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.Window;
 
 import com.khs.spcmeasure.library.ActionStatus;
+import com.khs.spcmeasure.library.SecurityUtils;
 import com.khs.spcmeasure.service.SetupService;
 
 public class SetupImportActivity extends Activity {
@@ -133,6 +134,17 @@ public class SetupImportActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// handle action bar menu items
 		switch (item.getItemId()) {
+            case R.id.action_login:
+                Log.d(TAG, "Menu: Login");
+                // show login screen
+                Intent intentLogin = new Intent(this, LoginActivity.class);
+                startActivity(intentLogin);
+                return true;
+            case R.id.action_logout:
+                Log.d(TAG, "Menu: Logout");
+                // set locked state
+                SecurityUtils.setLockStatus(this, true);
+                return true;
             case R.id.action_settings:
                 Log.d(TAG, "Menu: Settings");
                 // change preferences

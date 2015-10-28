@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="18"
-        android:targetSdkVersion="22" />
+        android:targetSdkVersion="21" />
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -27,6 +27,13 @@
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
+
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
 
     <application
         android:allowBackup="true"
@@ -83,7 +90,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.khs.spcmeasure.FeatureReviewActivity" />
         </activity>
-
         <activity android:name=".SettingsActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -110,6 +116,20 @@
             android:enabled="true"
             android:exported="false" >
         </service>
+
+        <activity
+            android:name=".widget.LoginActivityOld"
+            android:label="@string/title_activity_login"
+            android:parentActivityName=".SetupListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.khs.spcmeasure.SetupListActivity" />
+        </activity>
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login"
+            android:windowSoftInputMode="adjustResize|stateVisible" >
+        </activity>
     </application>
 
 </manifest>
