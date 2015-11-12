@@ -128,7 +128,7 @@ public class SylvacBleService extends Service {
         
         return;
 	}
-	
+
 	@Override
 	public IBinder onBind(Intent intent) {
 		// binder has getService method to obtain reference to this Service
@@ -138,17 +138,24 @@ public class SylvacBleService extends Service {
     // perform clean-uo prior to exit
 	@Override
 	public void onDestroy() {
-		super.onDestroy();
-
-        Log.d(TAG, "onDestroy: mConnGatt = " + mConnectedGatt);
-
-		// ensure Ble resources are released
-        disconnectDevice();
+        // ensure Ble resources are released
+        mConnectedGatt = disconnectGatt(mConnectedGatt);
 
         // TODO do this first?
-	    removeNotification();
-	    
-	    return;
+        removeNotification();
+
+		super.onDestroy();
+
+        // TODO remove later
+//        Log.d(TAG, "onDestroy: mConnGatt = " + mConnectedGatt);
+//
+//		// ensure Ble resources are released
+//        disconnectDevice();
+//
+//        // TODO do this first?
+//	    removeNotification();
+//
+//	    return;
 	}
 
 	public class MyLocalBinder extends Binder {
@@ -165,6 +172,7 @@ public class SylvacBleService extends Service {
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    Log.i(TAG, "stopLeScan - delayed");
                     mScanning = false;
                     mBluetoothAdapter.stopLeScan(mLeScanCallback);
                 }
@@ -181,6 +189,7 @@ public class SylvacBleService extends Service {
             // does not work correctly
             // mBluetoothAdapter.startLeScan(uuidService, mLeScanCallback);
         } else {
+            Log.i(TAG, "stopLeScan - immediate");
             mScanning = false;
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
         }
@@ -197,36 +206,33 @@ public class SylvacBleService extends Service {
 
                 if (name.equals(DEVICE_NAME_BONDED) || name.equals(DEVICE_NAME_UNBONDED)) {
                     // TODO comment out later on
-                    Log.d(TAG, "fetch = " + device.fetchUuidsWithSdp());
-                    Log.d(TAG, "UUID = " + device.getUuids());
-                    Log.d(TAG, "Name = " + device.getName());
-                    Log.d(TAG, "Type = " + device.getType());
-                    Log.d(TAG, "BT Class = " + device.getBluetoothClass());
-                    Log.d(TAG, "Address = " + device.getAddress());
-                    Log.d(TAG, "String = " + device.toString());
+//                    Log.d(TAG, "fetch = " + device.fetchUuidsWithSdp());
+//                    Log.d(TAG, "UUID = " + device.getUuids());
+//                    Log.d(TAG, "Name = " + device.getName());
+//                    Log.d(TAG, "Type = " + device.getType());
+//                    Log.d(TAG, "BT Class = " + device.getBluetoothClass());
+//                    Log.d(TAG, "Address = " + device.getAddress());
+//                    Log.d(TAG, "String = " + device.toString());
 
-                    new Thread(new Runnable() {
+                    // store device address
+                    mDeviceAddress = device.getAddress();
+
+                    mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            // immediately stop the BLE scan
-                            scanLeDevice(false);
+                            Log.i(TAG, "onLeScan - runnable - connectGatt:" + mDeviceAddress);
+//                            // immediately stop the BLE scan
+//                            scanLeDevice(false);
 
                             // TODO remove later if not required
                             //	                    	mConnectionState = ConnectionState.CONNECTING;
                             //	                    	updateNotification();
 
-                            // store device address
-                            mDeviceAddress = device.getAddress();
-                            // TODO remove later - now calls scanLeDevice(false) above
-                            // mBluetoothAdapter.stopLeScan(mLeScanCallback);
-
-                            // TODO remove later - now calls connectGatt
-                            //	                        mConnectedGatt = device.connectGatt(SylvacBleService.this, false, mGattCallback);
 
                             // connect to the device
                             connectGatt(device);
                         }
-                    }).start();
+                    });
                 }
             }
         }
@@ -239,18 +245,37 @@ public class SylvacBleService extends Service {
      */
     private BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
         @Override
-        public void onConnectionStateChange(BluetoothGatt gatt, int status,
-                                            int newState) {
-            if (newState == BluetoothProfile.STATE_CONNECTED) {
-            	mConnectionState = ConnectionState.CONNECTED;
-                Log.i(TAG, "Connected to GATT server.");
-                Log.i(TAG, "Attempting to start service discovery:" +
-                        mConnectedGatt.discoverServices());
+        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
 
-            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-            	mConnectionState = ConnectionState.DISCONNECTED;
-                Log.i(TAG, "Disconnected from GATT server.");
+            Log.d(TAG, "onConnectionStateChange - newState = " + newState);
+
+            switch(newState) {
+                case BluetoothProfile.STATE_CONNECTED:
+                    Log.i(TAG, "gattCallback - STATE_CONNECTED");
+                    mConnectionState = ConnectionState.CONNECTED;
+                    gatt.discoverServices();
+                    break;
+                case BluetoothProfile.STATE_DISCONNECTED:
+                    Log.e(TAG, "gattCallback - STATE_DISCONNECTED");
+                    mConnectionState = ConnectionState.DISCONNECTED;
+                    mConnectedGatt = disconnectGatt(gatt);
+                    break;
+                default:
+                    Log.e(TAG, "gattCallback - STATE_OTHER");
             }
+
+            // TODO old code remove later
+//            if (newState == BluetoothProfile.STATE_CONNECTED) {
+//            	mConnectionState = ConnectionState.CONNECTED;
+//                Log.i(TAG, "Connected to GATT server.");
+//                Log.i(TAG, "Attempting to start service discovery:" +
+//                        mConnectedGatt.discoverServices());
+//
+//            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+//            	mConnectionState = ConnectionState.DISCONNECTED;
+//                Log.i(TAG, "Disconnected from GATT server.");
+//            }
+
             updateNotification();
         }
 
@@ -260,7 +285,7 @@ public class SylvacBleService extends Service {
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 Log.i(TAG, "onServicesDiscovered GATT_SUCCESS: " + status);
                 Log.d(TAG, "onServicesDiscovered Services = " + gatt.getServices());
-                displayGattServices(mConnectedGatt.getServices());    
+                displayGattServices(gatt.getServices());
                 writeCharacteristic(COMMAND_GET_BATTERY_STATUS);
             } else {
                 Log.w(TAG, "onServicesDiscovered received: " + status);
@@ -420,13 +445,13 @@ public class SylvacBleService extends Service {
     // connect to the gatt
     private void connectGatt(final BluetoothDevice device) {
         // TODO comment out later on
-        Log.d(TAG, "connectGatt: fetch = " + device.fetchUuidsWithSdp());
-        Log.d(TAG, "connectGatt: UUID = " + device.getUuids());
-        Log.d(TAG, "connectGatt: Name = " + device.getName());
-        Log.d(TAG, "connectGatt: Type = " + device.getType());
-        Log.d(TAG, "connectGatt: BT Class = " + device.getBluetoothClass());
-        Log.d(TAG, "connectGatt: Address = " + device.getAddress());
-        Log.d(TAG, "connectGatt: String = " + device.toString());
+//        Log.d(TAG, "connectGatt: fetch = " + device.fetchUuidsWithSdp());
+//        Log.d(TAG, "connectGatt: UUID = " + device.getUuids());
+//        Log.d(TAG, "connectGatt: Name = " + device.getName());
+//        Log.d(TAG, "connectGatt: Type = " + device.getType());
+//        Log.d(TAG, "connectGatt: BT Class = " + device.getBluetoothClass());
+//        Log.d(TAG, "connectGatt: Address = " + device.getAddress());
+//        Log.d(TAG, "connectGatt: String = " + device.toString());
 
         if (device != null && device.getName().equals(DEVICE_NAME_BONDED)) {
 
@@ -434,18 +459,38 @@ public class SylvacBleService extends Service {
             updateNotification();
 
             mConnectedGatt = device.connectGatt(SylvacBleService.this, false, mGattCallback);
+
+            // stop the BLE scan
+            scanLeDevice(false);
         }
+    }
+
+    // disconnect from gatt
+    public BluetoothGatt disconnectGatt(BluetoothGatt gatt) {
+        if (gatt != null) {
+            Log.d(TAG, "gattCallback - before close mConnectedGatt");
+            gatt.close();
+            gatt = null;
+            Log.d(TAG, "gattCallback - after close mConnectedGatt");
+        }
+
+        return gatt;
     }
 
     // disconnect device
     public void disconnectDevice() {
         // ensure Ble resources are released
-        if (mConnectedGatt != null) {
-            // close gatt connection
-            mConnectedGatt.disconnect();
-            mConnectedGatt.close();
-            mConnectedGatt = null;
-        }
+
+        // ensure Ble resources are released
+        mConnectedGatt = disconnectGatt(mConnectedGatt);
+
+        // TODO old code remove later
+//        if (mConnectedGatt != null) {
+//            // close gatt connection
+//            mConnectedGatt.disconnect();
+//            mConnectedGatt.close();
+//            mConnectedGatt = null;
+//        }
     }
 
     // Demonstrates how to iterate through the supported GATT

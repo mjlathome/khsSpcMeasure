@@ -8,7 +8,7 @@ android {
         useLibrary 'org.apache.http.legacy'
         applicationId "com.khs.spcmeasure"
         minSdkVersion 19
-        targetSdkVersion 21
+        targetSdkVersion 23
     }
     buildTypes {
         release {
