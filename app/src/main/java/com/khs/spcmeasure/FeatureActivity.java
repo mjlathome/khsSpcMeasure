@@ -361,14 +361,13 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
     @Override
     protected void onStop() {
-        super.onStop();
-
         Log.d(TAG, "onStop");
 
         // TODO should this be in onPause instead?
 
         // unbind from Ble service
         unbindBleService();
+        super.onStop();
     }
 
     @Override

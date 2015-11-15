@@ -469,6 +469,7 @@ public class SylvacBleService extends Service {
     public BluetoothGatt disconnectGatt(BluetoothGatt gatt) {
         if (gatt != null) {
             Log.d(TAG, "gattCallback - before close mConnectedGatt");
+            gatt.disconnect();
             gatt.close();
             gatt = null;
             Log.d(TAG, "gattCallback - after close mConnectedGatt");
@@ -551,11 +552,15 @@ public class SylvacBleService extends Service {
 
                         BluetoothGattDescriptor descriptor = characteristic.getDescriptor(
                                 UUID.fromString(SylvacGattAttributes.CLIENT_CHARACTERISTIC_CONFIG));
-                        descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
+                        if (descriptor != null) {
+                            descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
 
-                        // TODO before queue - remove later
-                        // mConnectedGatt.writeDescriptor(descriptor);
-                        writeGattDescriptor(descriptor);
+                            // TODO before queue - remove later
+                            // mConnectedGatt.writeDescriptor(descriptor);
+                            writeGattDescriptor(descriptor);
+                        } else {
+                            Log.e(TAG, "displayGattServices: descriptor is null - Data Received");
+                        }
                     }
                 }
 
@@ -570,12 +575,16 @@ public class SylvacBleService extends Service {
 
                         BluetoothGattDescriptor descriptor = characteristic.getDescriptor(
                                 UUID.fromString(SylvacGattAttributes.CLIENT_CHARACTERISTIC_CONFIG));
-                        descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                        // descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
+                        if (descriptor != null) {
+                            descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                            // descriptor.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
 
-                        // TODO before queue - remove later
-                        // mConnectedGatt.writeDescriptor(descriptor);
-                        writeGattDescriptor(descriptor);
+                            // TODO before queue - remove later
+                            // mConnectedGatt.writeDescriptor(descriptor);
+                            writeGattDescriptor(descriptor);
+                        } else {
+                            Log.e(TAG, "displayGattServices: descriptor is null - Answer To Request or Command");
+                        }
                     }
                 }
             }

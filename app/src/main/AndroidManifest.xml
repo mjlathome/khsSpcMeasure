@@ -10,6 +10,11 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- TOTO remove if does not work - declare location permissions
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    -->
+
     <!-- declare Bluetooth permissions -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
