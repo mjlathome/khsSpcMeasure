@@ -354,8 +354,16 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         // bind to BLE service
         // for Open Pieces only to save battery power
         if (mPiece.getStatus() == CollectStatus.OPEN) {
-            // bind to Ble service
-            bindBleService();
+            // ensure user is logged in
+            if (!SecurityUtils.getIsLoggedIn(this)) {
+                AlertUtils.errorDialogShow(this, getString(R.string.sec_not_logged_in));
+            } else if (!SecurityUtils.getCanMeasure(this)) {
+                // ensure user has access rights
+                AlertUtils.errorDialogShow(this, getString(R.string.sec_cannot_measure));
+            } else {
+                // bind to Ble service
+                bindBleService();
+            }
         }
     }
 
@@ -421,8 +429,8 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
                 return true;
             case R.id.action_logout:
                 Log.d(TAG, "Menu: Logout");
-                // set locked state
-                SecurityUtils.setLockStatus(this, true);
+                // set logged out
+                SecurityUtils.setIsLoggedIn(this, false);
                 return true;
             case R.id.action_settings:
                 Log.d(TAG, "Menu: Settings");

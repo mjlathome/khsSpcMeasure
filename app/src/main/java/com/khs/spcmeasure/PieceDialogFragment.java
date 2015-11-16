@@ -50,14 +50,26 @@ public class PieceDialogFragment extends DialogFragment implements OnClickListen
 		try {
 			mListener = (OnNewPieceListener) activity;
 		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString() + " must implement OnNewPieceListener");
+			throw new ClassCastException(activity.toString() + getString(R.string.text_must_implement_onnewpiecelistener));
 		}		
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {		
 		super.onCreate(savedInstanceState);
-		
+
+		// ensure user is logged in
+		if (!SecurityUtils.getIsLoggedIn(getActivity())) {
+			AlertUtils.errorDialogShow(getActivity(), getString(R.string.sec_not_logged_in));
+			dismiss();
+		}
+
+		// ensure user has access rights
+		if (!SecurityUtils.getCanMeasure(getActivity())) {
+			AlertUtils.errorDialogShow(getActivity(), getString(R.string.sec_cannot_measure));
+			dismiss();
+		}
+
 		// unpack arguments	
 		Bundle args = getArguments();
 		if (args.containsKey(DBAdapter.KEY_PROD_ID)) {
@@ -66,7 +78,7 @@ public class PieceDialogFragment extends DialogFragment implements OnClickListen
 		
 		// verify arguments and exit upon error
 		if (mProdId == null) {
-			AlertUtils.errorDialogShow(getActivity(), "Product Id is unknown.  Please try again.");						
+			AlertUtils.errorDialogShow(getActivity(), getString(R.string.text_mess_prod_id_invalid));
 			dismiss();
 		}
 	}
@@ -86,7 +98,7 @@ public class PieceDialogFragment extends DialogFragment implements OnClickListen
 		
 		// TODO is this required to make it look more like a dialog?
 		Dialog myDialog = getDialog();
-		myDialog.setTitle("New Piece");
+		myDialog.setTitle(getString(R.string.title_new_piece));
 		
 		// extract Product
 		// TODO need to handle situation when Prod Id is null.
@@ -126,7 +138,7 @@ public class PieceDialogFragment extends DialogFragment implements OnClickListen
 			}
 			
 			// create progress dialog
-			ProgressDialog progDiag = ProgressUtils.progressDialogCreate(getActivity(), "Creating Piece...");
+			ProgressDialog progDiag = ProgressUtils.progressDialogCreate(getActivity(), getString(R.string.text_creating_piece));
 			
 			// TODO use try catch
 			try {
@@ -150,7 +162,7 @@ public class PieceDialogFragment extends DialogFragment implements OnClickListen
 				dismiss();
 				
 				if (pieceId < 0) {
-					AlertUtils.errorDialogShow(getActivity(), "New Piece create failed.  Contact administrator.");
+					AlertUtils.errorDialogShow(getActivity(), getString(R.string.text_piece_create_failed));
 				} else {
 					// inform the Activity of the new Setup
 					mListener.onNewPieceCreated(pieceId);
@@ -162,11 +174,11 @@ public class PieceDialogFragment extends DialogFragment implements OnClickListen
 				progDiag.dismiss();
 			}
 				
-			Toast.makeText(getActivity(), "OKAY", Toast.LENGTH_LONG).show();
+			// Toast.makeText(getActivity(), "OKAY", Toast.LENGTH_LONG).show();
 			break;
 		case R.id.btnPieceCancel:
 			dismiss();
-			Toast.makeText(getActivity(), "New Piece cancelled", Toast.LENGTH_LONG).show();
+			Toast.makeText(getActivity(), getString(R.string.text_piece_create_cancelled), Toast.LENGTH_LONG).show();
 			break;			
 		}
 	}
@@ -176,14 +188,14 @@ public class PieceDialogFragment extends DialogFragment implements OnClickListen
 		
 		// validate operator
 		if (edtOperator.getText().length() == 0) {
-			AlertUtils.errorDialogShow(getActivity(), "Operator not specified.  Please try again.");
+			AlertUtils.errorDialogShow(getActivity(), getString(R.string.text_not_set_operator));
 			edtOperator.requestFocus();
 			return false;
 		}
 					
 		// validate lot
 		if (edtLot.getText().length() != 6) {
-			AlertUtils.errorDialogShow(getActivity(), "Lot Number is invalid.  Please try again.");				
+			AlertUtils.errorDialogShow(getActivity(), getString(R.string.text_not_set_lot));
 			edtLot.requestFocus();
 			return false;
 		}			

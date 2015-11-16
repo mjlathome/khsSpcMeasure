@@ -56,8 +56,8 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
             SimpleCodeService.startActionImport(this, SimpleCodeService.TYPE_ACTION_CAUSE);
         }
 
-        // set locked state
-        SecurityUtils.setLockStatus(this, true);
+        // initialize as logged out
+        SecurityUtils.setIsLoggedIn(this, false);
 
         // show login screen
         Intent intentLogin = new Intent(this, LoginActivity.class);
@@ -148,8 +148,8 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
                 return true;
             case R.id.action_logout:
                 Log.d(TAG, "Menu: Logout");
-                // set locked state
-                SecurityUtils.setLockStatus(this, true);
+                // set logged out
+                SecurityUtils.setIsLoggedIn(this, false);
                 return true;
             case R.id.action_settings:
                 Log.d(TAG, "Menu: Settings");
@@ -174,7 +174,6 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
         // launch Piece List Activity for Product
         Intent intent = new Intent(this, PieceListActivity.class);
         intent.putExtra(DBAdapter.KEY_PROD_ID, prodId);
-        SecurityUtils.setInAppStatus(this, true);   // application not left
         startActivity(intent);
     }
 

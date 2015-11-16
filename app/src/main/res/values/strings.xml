@@ -52,6 +52,8 @@
     <string name="text_simple_code_import">Simple Code Import (%s)</string>
     <string name="text_setup_import">Setup Import (%s)</string>
     <string name="text_meas_export">Measurement Export (%s)</string>
+    <string name="text_piece_create_failed">New Piece create failed.  Contact administrator.</string>
+    <string name="text_piece_create_cancelled">New Piece cancelled</string>
     <string name="text_piece_export_title">Piece Export (%s)</string>
     <string name="text_piece_export_text">CLOSED pieces processed (%1$s of %2$s)</string>
     <string name="text_piece_close_failed">Piece Close failed.  An unknown error occurred.  Contact Administrator.</string>
@@ -64,6 +66,10 @@
     <string name="text_unknown">Unknown</string>
     <string name="text_username">Username</string>
     <string name="text_password">Password</string>
+    <string name="text_must_implement_onnewpiecelistener"> must implement OnNewPieceListener</string>
+    <string name="text_creating_piece">Creating Piece</string>
+    <string name="text_not_set_operator">Operator not specified.  Please try again.</string>
+    <string name="text_not_set_lot">Lot Number is invalid.  Please try again.</string>
 
     <!-- BLE strings -->
     <string name="text_ble_not_supported">Bluetooth LE not supported.  Contact administrator</string>
@@ -103,6 +109,7 @@
     <string name="title_activity_setup_list">Setup List</string>
     <string name="title_activity_feature_review">Feature Review</string>
     <string name="title_activity_feature">Feature</string>
+    <string name="title_new_piece">"New Piece"</string>
 
     <!-- Feature Activity - Tab titles -->
     <string name="tab_title_measurement">Measurement</string>
@@ -133,5 +140,9 @@
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_login_old">Login</string>
+
+    <!-- Security strings -->
+    <string name="sec_not_logged_in">You are not logged in.  Please Login and try again.</string>
+    <string name="sec_cannot_measure">You cannot measure.  Please contact administrator.</string>
 
 </resources>

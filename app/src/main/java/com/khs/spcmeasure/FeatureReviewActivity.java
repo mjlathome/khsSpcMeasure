@@ -98,8 +98,8 @@ public class FeatureReviewActivity extends Activity implements
                 return true;
             case R.id.action_logout:
                 Log.d(TAG, "Menu: Logout");
-                // set locked state
-                SecurityUtils.setLockStatus(this, true);
+                // set logged out
+                SecurityUtils.setIsLoggedIn(this, false);
                 return true;
             case R.id.action_settings:
                 Log.d(TAG, "Menu: Settings");

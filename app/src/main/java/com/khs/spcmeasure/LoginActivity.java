@@ -338,10 +338,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
             Log.d(TAG, "OnPostExecute: ldapAuth = " + ldapAuth);
 
-            Log.d(TAG, "OnPostExecute: 1 Lock = " + SecurityUtils.getLockStatus(LoginActivity.this) + "; App = " + SecurityUtils.getInAppStatus(LoginActivity.this));
+            Log.d(TAG, "OnPostExecute: 1 Lock = " + SecurityUtils.getIsLoggedIn(LoginActivity.this) + "; App = " + SecurityUtils.getIsLoggedIn(LoginActivity.this));
             SecurityUtils.setUsername(LoginActivity.this, mUsername);   // store username
-            SecurityUtils.setLockStatus(LoginActivity.this, !ldapAuth);  // store lock state
-            Log.d(TAG, "OnPostExecute: 2 Lock = " + SecurityUtils.getLockStatus(LoginActivity.this) + "; App = " + SecurityUtils.getInAppStatus(LoginActivity.this));
+            SecurityUtils.setIsLoggedIn(LoginActivity.this, ldapAuth);  // store logged in state
+            SecurityUtils.setCanMeasure(LoginActivity.this, canAccess); // store can measure
+            Log.d(TAG, "OnPostExecute: 2 Lock = " + SecurityUtils.getIsLoggedIn(LoginActivity.this) + "; App = " + SecurityUtils.getIsLoggedIn(LoginActivity.this));
 
             if (ldapAuth) {
                 finish();

@@ -12,24 +12,24 @@ public class SecurityUtils {
     private static final String TAG = "SecurityUtils";
 
     static final String SECURITY = "security";
-    static final String LOCK = "lock";
-    static final String IN_APP = "in_app";
+    static final String IS_LOGGED_IN = "is_logged_in";
+    static final String CAN_MEASURE = "can_meassure";
     static final String USERNAME = "username";
 
-    public static void setLockStatus(Context context, boolean status) {
-        context.getApplicationContext().getSharedPreferences(SECURITY, Context.MODE_PRIVATE).edit().putBoolean(LOCK, status).commit();
+    public static void setIsLoggedIn(Context context, boolean status) {
+        context.getApplicationContext().getSharedPreferences(SECURITY, Context.MODE_PRIVATE).edit().putBoolean(IS_LOGGED_IN, status).commit();
     }
 
-    public static boolean getLockStatus(Context context) {
-        return context.getApplicationContext().getSharedPreferences(SECURITY, Context.MODE_PRIVATE).getBoolean(LOCK, true);
+    public static boolean getIsLoggedIn(Context context) {
+        return context.getApplicationContext().getSharedPreferences(SECURITY, Context.MODE_PRIVATE).getBoolean(IS_LOGGED_IN, true);
     }
 
-    public static void setInAppStatus(Context context, boolean status) {
-        context.getApplicationContext().getSharedPreferences(SECURITY, Context.MODE_PRIVATE).edit().putBoolean(IN_APP, status).commit();
+    public static void setCanMeasure(Context context, boolean status) {
+        context.getApplicationContext().getSharedPreferences(SECURITY, Context.MODE_PRIVATE).edit().putBoolean(CAN_MEASURE, status).commit();
     }
 
-    public static boolean getInAppStatus(Context context) {
-        return context.getApplicationContext().getSharedPreferences(SECURITY, Context.MODE_PRIVATE).getBoolean(IN_APP, false);
+    public static boolean getCanMeasure(Context context) {
+        return context.getApplicationContext().getSharedPreferences(SECURITY, Context.MODE_PRIVATE).getBoolean(CAN_MEASURE, false);
     }
 
     public static void setUsername(Context context, String username) {
