@@ -2,6 +2,8 @@ package com.khs.spcmeasure.library;
 
 import android.content.Context;
 
+import com.khs.spcmeasure.R;
+
 /**
  * Created by Mark on 08/10/2015.
  * see:
@@ -38,5 +40,26 @@ public class SecurityUtils {
 
     public static String getUsername(Context context) {
         return context.getApplicationContext().getSharedPreferences(SECURITY, Context.MODE_PRIVATE).getString(USERNAME, "");
+    }
+
+    // checks whether security is okay
+    public static boolean checkSecurity(Context context, boolean showMess) {
+        boolean securityOkay = true;
+
+        if (!SecurityUtils.getIsLoggedIn(context)) {
+            // ensure user is logged in
+            if (showMess) {
+                AlertUtils.errorDialogShow(context, context.getString(R.string.sec_not_logged_in));
+            }
+            securityOkay = false;
+        } else if (!SecurityUtils.getCanMeasure(context)) {
+            // ensure user has access rights
+            if (showMess) {
+                AlertUtils.errorDialogShow(context, context.getString(R.string.sec_cannot_measure));
+            }
+            securityOkay = false;
+        }
+
+        return securityOkay;
     }
 }

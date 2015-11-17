@@ -23,6 +23,7 @@ import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.CollectStatus;
 import com.khs.spcmeasure.library.DateTimeUtils;
+import com.khs.spcmeasure.library.SecurityUtils;
 import com.khs.spcmeasure.service.MeasurementService;
 
 /**
@@ -399,9 +400,12 @@ public class FeatureReviewFragment extends ListFragment {
     // close the Piece
     private void closePiece() {
 
-        // handle Close Piece confirmation
-        mClosePieceConfirmTask = new ClosePieceConfirmTask();
-        mClosePieceConfirmTask.execute();
+        // check security
+        if (SecurityUtils.checkSecurity(getActivity(), true)) {
+            // handle Close Piece confirmation
+            mClosePieceConfirmTask = new ClosePieceConfirmTask();
+            mClosePieceConfirmTask.execute();
+        }
     }
 
 }

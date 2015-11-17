@@ -54,7 +54,7 @@ public class PieceListActivity extends Activity implements
             }
 
             // launch feature measurement screen
-            Intent featIntent = new Intent(this, FeatureActivity.class);
+            Intent featIntent = new Intent(this, FeatureReviewActivity.class);    /* was: FeatureActivity.class */
             featIntent.putExtra(DBAdapter.KEY_PIECE_ID, pieceId);
             startActivity(featIntent);
         }

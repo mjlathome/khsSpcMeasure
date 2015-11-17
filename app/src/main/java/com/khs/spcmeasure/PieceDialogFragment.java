@@ -23,6 +23,7 @@ import com.khs.spcmeasure.library.DateTimeUtils;
 import com.khs.spcmeasure.library.ProgressUtils;
 import com.khs.spcmeasure.library.SecurityUtils;
 
+import java.security.Security;
 import java.util.Date;
 
 
@@ -58,15 +59,8 @@ public class PieceDialogFragment extends DialogFragment implements OnClickListen
 	public void onCreate(Bundle savedInstanceState) {		
 		super.onCreate(savedInstanceState);
 
-		// ensure user is logged in
-		if (!SecurityUtils.getIsLoggedIn(getActivity())) {
-			AlertUtils.errorDialogShow(getActivity(), getString(R.string.sec_not_logged_in));
-			dismiss();
-		}
-
-		// ensure user has access rights
-		if (!SecurityUtils.getCanMeasure(getActivity())) {
-			AlertUtils.errorDialogShow(getActivity(), getString(R.string.sec_cannot_measure));
+		// check security
+		if (!SecurityUtils.checkSecurity(getActivity(), true)) {
 			dismiss();
 		}
 

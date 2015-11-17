@@ -50,6 +50,7 @@ import java.util.List;
 public class FeatureActivity extends FragmentActivity implements ActionBar.OnNavigationListener, ViewPager.OnPageChangeListener {
 
     final static String TAG = "FeatureActivity";
+    final static String KEY_ALLOW_MEASUREMENT = "KEY_ALLOW_MEASUREMENT";
 
     /// tab constants
     private static final int TAB_POS_MEASUREMENT = 0;
@@ -60,6 +61,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
     // message constants
     private static final int MESSAGE_MOVE_NEXT = 0;
 
+    private boolean mAllowMeasurement = false;
     private Long mPieceId = null;
     private Long mFeatId  = null;
     private PieceDao mPieceDao = new PieceDao(this);
@@ -251,6 +253,11 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         mPiece = mPieceDao.getPiece(mPieceId);
         mFeatList = mFeatDao.getAllFeatures(mPiece.getProdId());
 
+        if (mPiece.getStatus() == CollectStatus.OPEN) {
+            // check security
+            mAllowMeasurement = SecurityUtils.checkSecurity(this, true);
+        }
+
         // display views
         displayView();
 
@@ -353,17 +360,9 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         // TODO should this be in onResume instead?
         // bind to BLE service
         // for Open Pieces only to save battery power
-        if (mPiece.getStatus() == CollectStatus.OPEN) {
-            // ensure user is logged in
-            if (!SecurityUtils.getIsLoggedIn(this)) {
-                AlertUtils.errorDialogShow(this, getString(R.string.sec_not_logged_in));
-            } else if (!SecurityUtils.getCanMeasure(this)) {
-                // ensure user has access rights
-                AlertUtils.errorDialogShow(this, getString(R.string.sec_cannot_measure));
-            } else {
-                // bind to Ble service
-                bindBleService();
-            }
+        if (mAllowMeasurement) {
+            // bind to Ble service
+            bindBleService();
         }
     }
 
@@ -749,6 +748,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
                     args = new Bundle();
                     args.putLong(DBAdapter.KEY_PIECE_ID, mPieceId);
                     args.putLong(DBAdapter.KEY_FEAT_ID, feat.getFeatId());
+                    args.putBoolean(KEY_ALLOW_MEASUREMENT, mAllowMeasurement);
                     MeasurementFragment measFrag = new MeasurementFragment();
                     measFrag.setArguments(args);
                     return measFrag;

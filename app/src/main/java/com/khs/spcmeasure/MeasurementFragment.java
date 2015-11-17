@@ -42,9 +42,7 @@ import com.khs.spcmeasure.tasks.MeasurementTask;
 import java.text.DecimalFormat;
 
 /**
- * A fragment representing a single Measurement detail screen. This fragment is
- * either contained in a {@link com.khs.spcmeasure.MeasurementListActivity} in two-pane mode (on
- * tablets) or a {@link com.khs.spcmeasure.MeasurementDetailActivity} on handsets.
+ * A fragment representing a single Measurement detail screen.
  */
 public class MeasurementFragment extends Fragment implements AdapterView.OnItemSelectedListener{
 
@@ -62,6 +60,7 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
     private MeasurementDao mMeasDao;
 
 	// data
+    private boolean mAllowMeasurement = false;
 	private Product mProduct;
 	private Piece mPiece;
 	private Feature mFeature;
@@ -231,6 +230,7 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 			// to load content from a content provider.
 			mPieceId = args.getLong(DBAdapter.KEY_PIECE_ID);
 			mFeatId = args.getLong(DBAdapter.KEY_FEAT_ID);
+            mAllowMeasurement = args.getBoolean(FeatureActivity.KEY_ALLOW_MEASUREMENT);
 		} else {
 			Toast.makeText(getActivity(), errPrefix + "no Arguments" + errSuffix, Toast.LENGTH_LONG).show();
 			getActivity().finish();			
@@ -463,7 +463,8 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 	// display Piece layout views 
 	private void displayPiece() {
         // disable/hide/show views based upon Piece collect status
-        if (mPiece.getStatus() == CollectStatus.OPEN) {
+        // TODO was: if (mPiece.getStatus() == CollectStatus.OPEN) {
+        if (mAllowMeasurement) {
             mSpnMeasCause.setEnabled(true);
             mBtnGetValue.setVisibility(View.VISIBLE);
             mBtnClearValue.setVisibility(View.VISIBLE);

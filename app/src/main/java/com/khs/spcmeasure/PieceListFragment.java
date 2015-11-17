@@ -28,6 +28,7 @@ import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.CollectStatus;
 import com.khs.spcmeasure.library.DateTimeUtils;
+import com.khs.spcmeasure.library.SecurityUtils;
 
 /**
  * A fragment representing a single Piece detail screen. This fragment is either
@@ -338,6 +339,11 @@ public class PieceListFragment extends ListFragment implements AdapterView.OnIte
         Cursor c = (Cursor) mListView.getItemAtPosition(pos);
         final Piece p = new DBAdapter(getActivity()).cursorToPiece(c);
         String message;
+
+        // check security
+        if (!SecurityUtils.checkSecurity(getActivity(), true)) {
+            return;
+        }
 
         // TODO block delete or context menu option when Piece is not OPEN
         if (!p.getStatus().equals(CollectStatus.OPEN)) {

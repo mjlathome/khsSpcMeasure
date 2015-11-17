@@ -204,6 +204,11 @@ public class SylvacBleService extends Service {
                 String name = device.getName();
                 Log.d(TAG, "device name = " + name);
 
+                // ignore null
+                if (name == null) {
+                    return;
+                }
+
                 if (name.equals(DEVICE_NAME_BONDED) || name.equals(DEVICE_NAME_UNBONDED)) {
                     // TODO comment out later on
 //                    Log.d(TAG, "fetch = " + device.fetchUuidsWithSdp());
