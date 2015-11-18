@@ -37,6 +37,7 @@ import com.khs.spcmeasure.library.CollectStatus;
 import com.khs.spcmeasure.library.CursorAdapterUtils;
 import com.khs.spcmeasure.library.DateTimeUtils;
 import com.khs.spcmeasure.library.LimitType;
+import com.khs.spcmeasure.library.SecurityUtils;
 import com.khs.spcmeasure.tasks.MeasurementTask;
 
 import java.text.DecimalFormat;
@@ -60,7 +61,6 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
     private MeasurementDao mMeasDao;
 
 	// data
-    private boolean mAllowMeasurement = false;
 	private Product mProduct;
 	private Piece mPiece;
 	private Feature mFeature;
@@ -230,7 +230,6 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 			// to load content from a content provider.
 			mPieceId = args.getLong(DBAdapter.KEY_PIECE_ID);
 			mFeatId = args.getLong(DBAdapter.KEY_FEAT_ID);
-            mAllowMeasurement = args.getBoolean(FeatureActivity.KEY_ALLOW_MEASUREMENT);
 		} else {
 			Toast.makeText(getActivity(), errPrefix + "no Arguments" + errSuffix, Toast.LENGTH_LONG).show();
 			getActivity().finish();			
@@ -442,7 +441,7 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 	}
 
 	// display all layout views
-	private void displayAll() {		
+	public void displayAll() {
 		Log.d(TAG, "displayAll");
 		displayProduct();
 		displayPiece();
@@ -463,8 +462,9 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 	// display Piece layout views 
 	private void displayPiece() {
         // disable/hide/show views based upon Piece collect status
-        // TODO was: if (mPiece.getStatus() == CollectStatus.OPEN) {
-        if (mAllowMeasurement) {
+        // check security too
+        // TODO needs to be called upon login/logout
+        if (mPiece.getStatus() == CollectStatus.OPEN && SecurityUtils.checkSecurity(getActivity(), false)) {
             mSpnMeasCause.setEnabled(true);
             mBtnGetValue.setVisibility(View.VISIBLE);
             mBtnClearValue.setVisibility(View.VISIBLE);

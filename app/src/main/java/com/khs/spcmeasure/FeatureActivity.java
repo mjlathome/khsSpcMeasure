@@ -50,7 +50,9 @@ import java.util.List;
 public class FeatureActivity extends FragmentActivity implements ActionBar.OnNavigationListener, ViewPager.OnPageChangeListener {
 
     final static String TAG = "FeatureActivity";
-    final static String KEY_ALLOW_MEASUREMENT = "KEY_ALLOW_MEASUREMENT";
+
+    // activity result codes
+    private static int RESULT_LOGIN = 1;
 
     /// tab constants
     private static final int TAB_POS_MEASUREMENT = 0;
@@ -61,7 +63,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
     // message constants
     private static final int MESSAGE_MOVE_NEXT = 0;
 
-    private boolean mAllowMeasurement = false;
+    private boolean mShowSecMess = true;
     private Long mPieceId = null;
     private Long mFeatId  = null;
     private PieceDao mPieceDao = new PieceDao(this);
@@ -253,11 +255,6 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         mPiece = mPieceDao.getPiece(mPieceId);
         mFeatList = mFeatDao.getAllFeatures(mPiece.getProdId());
 
-        if (mPiece.getStatus() == CollectStatus.OPEN) {
-            // check security
-            mAllowMeasurement = SecurityUtils.checkSecurity(this, true);
-        }
-
         // display views
         displayView();
 
@@ -358,12 +355,8 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         Log.d(TAG, "onStart");
 
         // TODO should this be in onResume instead?
-        // bind to BLE service
-        // for Open Pieces only to save battery power
-        if (mAllowMeasurement) {
-            // bind to Ble service
-            bindBleService();
-        }
+        // set bound state
+        enableMeasurement();
     }
 
     @Override
@@ -402,6 +395,18 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
                 getActionBar().getSelectedNavigationIndex());
     }
 
+    // handle activity result intent callback
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // super.onActivityResult(requestCode, resultCode, data);
+
+        Log.d(TAG, "onActivityResult: requestCode = " + requestCode + "; resultCode = " + resultCode);
+
+        // handle activity results
+        if (requestCode == RESULT_LOGIN) {
+            enableMeasurement();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -422,14 +427,17 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         switch(id) {
             case R.id.action_login:
                 Log.d(TAG, "Menu: Login");
+                mShowSecMess = true;
                 // show login screen
                 Intent intentLogin = new Intent(this, LoginActivity.class);
-                startActivity(intentLogin);
+                startActivityForResult(intentLogin, RESULT_LOGIN);
                 return true;
             case R.id.action_logout:
                 Log.d(TAG, "Menu: Logout");
+                mShowSecMess = true;
                 // set logged out
                 SecurityUtils.setIsLoggedIn(this, false);
+                enableMeasurement();
                 return true;
             case R.id.action_settings:
                 Log.d(TAG, "Menu: Settings");
@@ -440,16 +448,24 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
             case R.id.mnuScanBle:
                 // TODO remove later - now calls connectDevice
                 // mBleService.scanLeDevice(true);
-                mBleService.connectDevice();
+                if (mBound) {
+                    mBleService.connectDevice();
+                }
                 return true;
             case R.id.mnuSetUomMm:
-                mBleService.writeCharacteristic(SylvacBleService.COMMAND_SET_MEASUREMENT_UOM_MM);
+                if (mBound) {
+                    mBleService.writeCharacteristic(SylvacBleService.COMMAND_SET_MEASUREMENT_UOM_MM);
+                }
                 return true;
             case R.id.mnuSetZero:
-                mBleService.writeCharacteristic(SylvacBleService.COMMAND_SET_ZERO_RESET);
+                if (mBound) {
+                    mBleService.writeCharacteristic(SylvacBleService.COMMAND_SET_ZERO_RESET);
+                }
                 return true;
             case R.id.mnuGetBattery:
-                mBleService.writeCharacteristic(SylvacBleService.COMMAND_GET_BATTERY_STATUS);
+                if (mBound) {
+                    mBleService.writeCharacteristic(SylvacBleService.COMMAND_GET_BATTERY_STATUS);
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -505,16 +521,35 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         return (mPieceId != null);
     }
 
+    // set bind state
+    private void enableMeasurement() {
+        // for Open Pieces only to save battery power
+        // check security too
+        if (mPiece.getStatus() == CollectStatus.OPEN) {
+            if (SecurityUtils.checkSecurity(this, mShowSecMess)) {
+                bindBleService();
+            } else {
+                mShowSecMess = false;
+                unbindBleService();
+            }
+        } else {
+            unbindBleService();
+        }
+
+        // update Measurement tab fields
+        if (mTabPos == FeatureActivity.TAB_POS_MEASUREMENT) {
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
     // bind to Ble service
     private void bindBleService() {
         Intent intent = new Intent(this, SylvacBleService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-        return;
     }
 
     // unbind from Ble service
     private void unbindBleService() {
-
         if (mBound == true && mConnection != null) {
 
             // disconnect device
@@ -525,7 +560,6 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
             unbindService(mConnection);
             mBound = false;
         }
-        return;
     }
 
     // getter for Ble service
@@ -748,7 +782,6 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
                     args = new Bundle();
                     args.putLong(DBAdapter.KEY_PIECE_ID, mPieceId);
                     args.putLong(DBAdapter.KEY_FEAT_ID, feat.getFeatId());
-                    args.putBoolean(KEY_ALLOW_MEASUREMENT, mAllowMeasurement);
                     MeasurementFragment measFrag = new MeasurementFragment();
                     measFrag.setArguments(args);
                     return measFrag;

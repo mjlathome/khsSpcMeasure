@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -102,6 +103,16 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+    }
+
+    // handle back out
+    @Override
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed");
+
+        returnResult(false);
+
+        super.onBackPressed();
     }
 
     private void populateAutoComplete() {
@@ -345,7 +356,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             Log.d(TAG, "OnPostExecute: 2 Lock = " + SecurityUtils.getIsLoggedIn(LoginActivity.this) + "; App = " + SecurityUtils.getIsLoggedIn(LoginActivity.this));
 
             if (ldapAuth) {
-                finish();
+                returnResult(true);
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
@@ -357,6 +368,19 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             mAuthTask = null;
             showProgress(false);
         }
+    }
+
+    // return result to calling activity
+    private void returnResult(boolean ok) {
+        Log.d(TAG, "returnResult: ok = " + ok);
+
+        Intent returnIntent = new Intent();
+        if (ok) {
+            LoginActivity.this.setResult(RESULT_OK, returnIntent);
+        } else {
+            LoginActivity.this.setResult(RESULT_CANCELED, returnIntent);
+        }
+        finish();
     }
 }
 

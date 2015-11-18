@@ -20,6 +20,7 @@ import android.widget.SimpleCursorAdapter;
 import com.khs.spcmeasure.entity.Product;
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.CursorAdapterUtils;
+import com.khs.spcmeasure.library.SecurityUtils;
 import com.khs.spcmeasure.tasks.DeleteSetupTask;
 
 /**
@@ -183,6 +184,11 @@ public class SetupListFragment extends ListFragment {
 
     // handle Setup delete
     public void deleteSetup(int pos) {
+
+        // check security
+        if (!SecurityUtils.checkSecurity(getActivity(), true)) {
+            return;
+        }
 
         Cursor c = (Cursor) mListView.getItemAtPosition(pos);
         final Product p = new DBAdapter(getActivity()).cursorToProduct(c);

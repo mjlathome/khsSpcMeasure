@@ -336,14 +336,14 @@ public class PieceListFragment extends ListFragment implements AdapterView.OnIte
 
 	// handles piece deletion
 	private void deletePiece(int pos) {
-        Cursor c = (Cursor) mListView.getItemAtPosition(pos);
-        final Piece p = new DBAdapter(getActivity()).cursorToPiece(c);
-        String message;
-
         // check security
         if (!SecurityUtils.checkSecurity(getActivity(), true)) {
             return;
         }
+
+        Cursor c = (Cursor) mListView.getItemAtPosition(pos);
+        final Piece p = new DBAdapter(getActivity()).cursorToPiece(c);
+        String message;
 
         // TODO block delete or context menu option when Piece is not OPEN
         if (!p.getStatus().equals(CollectStatus.OPEN)) {
