@@ -20,7 +20,7 @@ public class NetworkUtils {
         NetworkInfo current = connManager.getActiveNetworkInfo();
 
         // verify wifi connection
-        if (current.isConnected() && current.getType() == ConnectivityManager.TYPE_WIFI) {
+        if (current != null && current.isConnected() && current.getType() == ConnectivityManager.TYPE_WIFI) {
             return true;
         } else {
             return false;
