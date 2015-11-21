@@ -22,7 +22,7 @@ import java.util.TimerTask;
 public class PieceService extends Service {
     private static final String TAG = "PieceService";
 
-    private static final int MIN_5_MILLI_SEC = 5 * 60 * 60 * 1000;
+    private static final int MIN_TIMER_MILLI_SEC = 5 * 60 * 1000;
 
     // timer members - uses its own thread
     private Timer mTimer = new Timer();
@@ -86,7 +86,7 @@ public class PieceService extends Service {
                 exportClosedPiece();
                 return;
             }
-        }, 0, MIN_5_MILLI_SEC);
+        }, 0, MIN_TIMER_MILLI_SEC);
     }
 
     // export CLOSED Pieces to the server

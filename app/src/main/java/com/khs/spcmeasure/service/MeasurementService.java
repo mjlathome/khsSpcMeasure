@@ -231,6 +231,11 @@ public class MeasurementService extends IntentService {
                         JSONObject jMeas = new JSONObject();
                         jMeas.put(DBAdapter.KEY_FEAT_ID, cMeas.getLong(cMeas.getColumnIndex(DBAdapter.KEY_FEAT_ID)));
                         jMeas.put(DBAdapter.KEY_VALUE, cMeas.getDouble(cMeas.getColumnIndex(DBAdapter.KEY_VALUE)));
+
+                        // TODO handle null cause if not out-of-control
+                        Long cause = cMeas.getLong(cMeas.getColumnIndex(DBAdapter.KEY_CAUSE));
+                        jMeas.put(DBAdapter.KEY_CAUSE, cause);
+
                         jMeas.put(DBAdapter.KEY_LIMIT_REV, cMeas.getLong(cMeas.getColumnIndex(DBAdapter.KEY_LIMIT_REV)));
                         jMeas.put(DBAdapter.KEY_IN_CONTROL, DBAdapter.intToBool(cMeas.getInt(cMeas.getColumnIndex(DBAdapter.KEY_IN_CONTROL))));
                         jMeas.put(DBAdapter.KEY_IN_ENG_LIM, DBAdapter.intToBool(cMeas.getInt(cMeas.getColumnIndex(DBAdapter.KEY_IN_ENG_LIM))));
