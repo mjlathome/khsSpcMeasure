@@ -201,6 +201,16 @@ public class DBAdapter {
     	DBHelper.close();
     }
 
+	// check cursor is empty
+	// see: http://stackoverflow.com/questions/15010761/how-to-check-if-a-cursor-is-empty
+	public boolean isCursorEmpty(Cursor cursor) {
+		if(!cursor.moveToFirst() || cursor.getCount() == 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
     //region Product
     // create new Product
 	public long createProduct(Product product) {

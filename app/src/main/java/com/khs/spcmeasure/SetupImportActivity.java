@@ -15,6 +15,7 @@ import android.view.Window;
 
 import com.khs.spcmeasure.library.ActionStatus;
 import com.khs.spcmeasure.library.SecurityUtils;
+import com.khs.spcmeasure.service.HistoryService;
 import com.khs.spcmeasure.service.SetupService;
 
 public class SetupImportActivity extends Activity {
@@ -60,6 +61,13 @@ public class SetupImportActivity extends Activity {
 //                                finish();
 //                            }
 //                        });
+                        break;
+                    case COMPLETE:
+                        setProgressBarIndeterminateVisibility(false);
+
+                        // TODO check measurement history - remove later if not required
+                        // HistoryService.startActionMeasHist(getApplicationContext(), prodId);
+
                         break;
                     default:
                         setProgressBarIndeterminateVisibility(false);

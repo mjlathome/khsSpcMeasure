@@ -42,6 +42,7 @@ public class MeasurementService extends IntentService {
 
     // supported actions
     public static final String ACTION_EXPORT = "com.khs.spcmeasure.service.action.EXPORT";
+    public static final String ACTION_IMPORT = "com.khs.spcmeasure.service.action.IMPORT";
 
     // supported parameters
     public static final String EXTRA_STATUS = "com.khs.spcmeasure.service.extra.STATUS";
@@ -52,6 +53,10 @@ public class MeasurementService extends IntentService {
 
     // url address
     private static String url = "http://thor.kmx.cosma.com/spc/save_measurements.php";
+    private static String urlImport = "http://thor.kmx.cosma.com/spc/get_measurements.php?";
+    private static String querySep = "&";
+    private static String queryProdId = "prodId=";
+    private static String queryMaxSg = "sgId=";
 
     // JSON node names
     private static final String TAG_SUCCESS = "success";
@@ -231,6 +236,9 @@ public class MeasurementService extends IntentService {
                         JSONObject jMeas = new JSONObject();
                         jMeas.put(DBAdapter.KEY_FEAT_ID, cMeas.getLong(cMeas.getColumnIndex(DBAdapter.KEY_FEAT_ID)));
                         jMeas.put(DBAdapter.KEY_VALUE, cMeas.getDouble(cMeas.getColumnIndex(DBAdapter.KEY_VALUE)));
+
+                        // TODO export range too... don't have to use it, but it's then consistent with the Measurement Import logic
+                        jMeas.put(DBAdapter.KEY_RANGE, cMeas.getDouble(cMeas.getColumnIndex(DBAdapter.KEY_RANGE)));
 
                         // TODO handle null cause if not out-of-control
                         Long cause = cMeas.getLong(cMeas.getColumnIndex(DBAdapter.KEY_CAUSE));

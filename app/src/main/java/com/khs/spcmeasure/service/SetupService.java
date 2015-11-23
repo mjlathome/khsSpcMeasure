@@ -27,6 +27,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -241,6 +242,9 @@ public class SetupService extends IntentService {
 
                 // notify user - success
                 actStat = ActionStatus.COMPLETE;
+
+                // TODO want to do history import now
+                HistoryService.startActionMeasHist(this, prodId);
             }
 
         } catch (JSONException e) {

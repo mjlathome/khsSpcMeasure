@@ -15,6 +15,7 @@ import com.khs.spcmeasure.entity.Measurement;
 import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.entity.SimpleCode;
 import com.khs.spcmeasure.library.LimitType;
+import com.khs.spcmeasure.library.SecurityUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -71,7 +72,7 @@ public class MeasurementTask {
 
             meas = new Measurement(piece.getId(), feature.getProdId(), feature.getFeatId(),
                     new Date(), // TODO is this required? was: mPiece.getCollectDt()
-                    piece.getOperator(),	// TODO needs to be current user, not the one who created the piece?
+                    SecurityUtils.getUsername(mContext), // was: piece.getOperator() TODO needs to be current user, not the one who created the piece?
                     value,
                     calcRange(feature.getProdId(), feature.getFeatId(), piece.getCollectDt(), value),
                     cause,
