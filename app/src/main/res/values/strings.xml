@@ -52,6 +52,7 @@
     <string name="text_simple_code_import">Simple Code Import (%s)</string>
     <string name="text_setup_import">Setup Import (%s)</string>
     <string name="text_meas_export">Measurement Export (%s)</string>
+    <string name="text_meas_import">Measurement Import (%s)</string>
     <string name="text_meas_hist_title">Measurement History (%s)</string>
     <string name="text_meas_hist_text">HISTORY pieces imported (%1$s of %2$s)</string>"
     <string name="text_piece_create_failed">New Piece create failed.  Contact administrator.</string>

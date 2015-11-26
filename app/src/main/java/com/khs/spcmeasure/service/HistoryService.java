@@ -222,7 +222,7 @@ public class HistoryService extends IntentService {
                     // TODO need to check last modified date in the future
                     if (db.isCursorEmpty(cPiece)) {
                         numImport++;
-                        MeasurementService.startActionImport(this, prodId, sgId);
+                        MeasurementService.startActionImport(this, prodId, sgId, collDt);
                     }
                 }
 

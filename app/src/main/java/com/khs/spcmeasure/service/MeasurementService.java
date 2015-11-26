@@ -15,6 +15,7 @@ import com.khs.spcmeasure.FeatureReviewActivity;
 import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.dao.PieceDao;
 import com.khs.spcmeasure.dao.ProductDao;
+import com.khs.spcmeasure.entity.Measurement;
 import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.entity.Product;
 import com.khs.spcmeasure.library.ActionStatus;
@@ -71,6 +72,7 @@ public class MeasurementService extends IntentService {
     private static final String TAG_SG_ID = "sgId";
     private static final String TAG_COLLECT_DT = "collectDt";
     private static final String TAG_OPERATOR = "operator";
+    private static final String TAG_LOT = "lot";
     private static final String TAG_FEAT_ID = "featId";
     private static final String TAG_VALUE = "value";
     private static final String TAG_RANGE = "range";
@@ -118,11 +120,12 @@ public class MeasurementService extends IntentService {
      * @see android.app.IntentService
      */
     // generate intent and start import of history data from the server to device
-    public static void startActionImport(Context context, Long prodId, Long sgId) {
+    public static void startActionImport(Context context, Long prodId, Long sgId, String collDt) {
         Intent intent = new Intent(context, MeasurementService.class);
         intent.setAction(ACTION_IMPORT);
         intent.putExtra(DBAdapter.KEY_PROD_ID, prodId);
         intent.putExtra(DBAdapter.KEY_SUB_GRP_ID, sgId);
+        intent.putExtra(DBAdapter.KEY_COLLECT_DATETIME, collDt);
         context.startService(intent);
     }
 
@@ -168,9 +171,10 @@ public class MeasurementService extends IntentService {
                 // handle import action
                 final Long prodId = intent.getLongExtra(DBAdapter.KEY_PROD_ID, -1);
                 final Long sgId = intent.getLongExtra(DBAdapter.KEY_SUB_GRP_ID, -1);
+                final String collDt = intent.getStringExtra(DBAdapter.KEY_COLLECT_DATETIME);
 
                 // import piece
-                handleActionImport(prodId, sgId);
+                handleActionImport(prodId, sgId, collDt);
             }
         }
     }
@@ -382,7 +386,7 @@ public class MeasurementService extends IntentService {
      * parameters.
      */
     // import historic piece data from server to device
-    private void handleActionImport(Long prodId, Long sgId) {
+    private void handleActionImport(Long prodId, Long sgId, String collDt) {
 
         // assume failure
         ActionStatus actStat = ActionStatus.FAILED;
@@ -392,7 +396,7 @@ public class MeasurementService extends IntentService {
             // extract data
             Product product = mProductDao.getProduct(prodId);
             // TODO work out better notify text - maybe use CollectDate as Piece is not on device yet
-            notifyText = product.getName(); // + " - " + DateTimeUtils.getDateTimeStr(piece.getCollectDt());
+            notifyText = product.getName() + " - " + collDt; // + " - " + DateTimeUtils.getDateTimeStr(piece.getCollectDt());
 
             // build url
             String url = urlImport + queryProdId + prodId.toString() + querySep + querySgId + sgId.toString();
@@ -506,6 +510,8 @@ public class MeasurementService extends IntentService {
     // process json response for history import
     private boolean processResponseImport(JSONObject json, Long prodId, Long sgId) {
         boolean success = false;
+        DBAdapter db = new DBAdapter(this);
+        long pieceNum = 1;  // TODO FUTURE allow multiple measurements per sub-group
 
         Log.d(TAG, "processResponseImport: json = " + json.toString());
 
@@ -554,6 +560,9 @@ public class MeasurementService extends IntentService {
 
 
         try {
+            // open the DB
+            db.open();
+
             // unpack success flag
             success = Boolean.valueOf(json.getBoolean(TAG_SUCCESS));
 
@@ -581,30 +590,58 @@ public class MeasurementService extends IntentService {
                         throw new JSONException("sgId does not match: " + sgId);
                     }
 
-                    // extract collect date/time
+                    // extract Piece fields from json data
                     Date collDt = DateTimeUtils.getDate(jSubGrp.getString(TAG_COLLECT_DT));
-
-                    // extract operator
                     String operator = jSubGrp.getString(TAG_OPERATOR);
+                    String lot = jSubGrp.getString(TAG_LOT);
+
+                    // create Piece object
+                    Piece piece = new Piece(prodId, sgId, pieceNum, collDt, operator, lot, CollectStatus.HISTORY);
+
+                    // start transaction
+                    db.beginTransaction();
+
+
+                    // update or insert Piece into the DB
+                    Long rowIdPiece = piece.getId();
+                    if (db.updatePiece(piece) == false) {
+                        rowIdPiece = db.createPiece(piece);
+                    } else {
+                        // TODO investigate how Piece can be updated, but handle situation.  Without db cursor rowIdPiece is null
+                        Log.d(TAG, "Update successful: prodId = " + piece.getProdId() + "; sgId = " + piece.getSgId() + "; pieceNum = " + piece.getPieceNum() );
+                        Cursor cPiece = db.getPiece(prodId, sgId, pieceNum);
+                        if (cPiece.moveToFirst()) {
+                            rowIdPiece = cPiece.getLong(cPiece.getColumnIndex(db.KEY_PIECE_ID));
+                        }
+                    }
 
                     // get JSON measurement array
-                    JSONArray jMeasArr = json.getJSONArray(TAG_MEAS);
+                    JSONArray jMeasArr = jSubGrp.getJSONArray(TAG_MEAS);
 
                     // loop measurements
                     for (int j = 0; j < jMeasArr.length(); j++) {
                         JSONObject jMeas = jMeasArr.getJSONObject(j);
 
-                        // extract measurement data
+                        // extract Measurement field from json data
                         Long featId = jMeas.getLong(TAG_FEAT_ID);
                         Double value = jMeas.getDouble(TAG_VALUE);
                         Double range = jMeas.getDouble(TAG_VALUE);
                         Long cause = jMeas.getLong(TAG_CAUSE);
                         Long limitRev = jMeas.getLong(TAG_LIMIT_REV);
-                        Boolean inControl = jMeas.getBoolean(TAG_IN_CONTROL);
-                        Boolean inEngLim = jMeas.getBoolean(TAG_IN_ENG_LIM);
+                        Boolean inControl = db.intToBool(jMeas.getInt(TAG_IN_CONTROL));
+                        Boolean inEngLim = db.intToBool(jMeas.getInt(TAG_IN_ENG_LIM));
 
-                        Log.d(TAG, "Measurement: featId = " + featId + "; value = " + value);
+                        Log.d(TAG, "Measurement: featId = " + featId + "; value = " + value + "; rowIdPiece = " + rowIdPiece + "; piece.getProdId() = " + piece.getProdId());
 
+                        // create Measurement object
+                        // TODO use independent collect date and operator as will differ from piece
+                        Measurement meas = new Measurement(rowIdPiece, piece.getProdId(), featId,
+                                piece.getCollectDt(), piece.getOperator(), value, range, cause, limitRev, inControl, inEngLim);
+
+                        // update or insert Measurement into the DB
+                        if (db.updateMeasurement(meas) == false) {
+                            db.createMeasurement(meas);
+                        }
                     }
 
                 }
@@ -636,6 +673,11 @@ public class MeasurementService extends IntentService {
                 // close the DB
                 db.close();
 */
+                if (db.inTransaction()) {
+                    // set transaction successful
+                    db.setTransactionSuccessful();
+                }
+
                 Log.d(TAG, "processResponse: success");
 
             } else {
@@ -647,6 +689,14 @@ public class MeasurementService extends IntentService {
         } catch (JSONException e) {
             e.printStackTrace();
             success = false;
+        } finally {
+            if (db.inTransaction()) {
+                // commit
+                db.endTransaction();
+            }
+
+            // close the DB
+            db.close();
         }
 
         return success;
@@ -680,6 +730,8 @@ public class MeasurementService extends IntentService {
         String title = this.getString(R.string.text_unknown);
         if (action.equals(ACTION_EXPORT)) {
             title = this.getString(R.string.text_meas_export, actStat);
+        } else if (action.equals(ACTION_IMPORT)) {
+            title = this.getString(R.string.text_meas_import, actStat);
         }
 
         mNotificationManager.notify(NotificationId.getId(), getNotification(title, text, pieceId));

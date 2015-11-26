@@ -201,6 +201,26 @@ public class DBAdapter {
     	DBHelper.close();
     }
 
+	// begin transaction
+	public void beginTransaction() {
+		db.beginTransaction();
+	}
+
+	// in a transaction
+	public boolean inTransaction() {
+		return db.inTransaction();
+	}
+
+	// set transaction successful
+	public void setTransactionSuccessful() {
+		db.setTransactionSuccessful();
+	}
+
+	// end transaction
+	public void endTransaction() {
+		db.endTransaction();
+	}
+
 	// check cursor is empty
 	// see: http://stackoverflow.com/questions/15010761/how-to-check-if-a-cursor-is-empty
 	public boolean isCursorEmpty(Cursor cursor) {
@@ -638,15 +658,23 @@ public class DBAdapter {
     };
 
 	// update single piece
-	public boolean updatePiece(Piece piece) {	
+	public boolean updatePiece(Piece piece) {
 		Log.d(TAG, "updatePiece: prodId; sgId; pieceNum; collDT = " +
 				String.valueOf(piece.getProdId()) 	+ "; " + 
 				String.valueOf(piece.getSgId()) 		+ "; " +
 				String.valueOf(piece.getPieceNum())	+ "; " +
 				String.valueOf(piece.getCollectDt()));
-		
-		return db.update(TABLE_PIECE, pieceToValues(piece), 
-				KEY_ROWID + "=" + piece.getId(), null) > 0; 
+
+		// build where clause
+		String where;
+		if (piece.getId() != null) {
+			where = KEY_ROWID + "=" + piece.getId();
+		} else {
+			where = KEY_PROD_ID + "=" + piece.getProdId() + " AND " + KEY_SUB_GRP_ID + "=" + piece.getSgId() + " AND " + KEY_PIECE_NUM + "=" + piece.getPieceNum();
+		}
+
+		// perform db update
+		return db.update(TABLE_PIECE, pieceToValues(piece), where, null) > 0;
 	};	
 	
 	// delete single piece
@@ -758,8 +786,24 @@ public class DBAdapter {
                 "; inCtrl = " + meas.isInControl() +
                 "; cause = " + meas.getCause());
 
-		return db.update(TABLE_MEASUREMENT, measurementToValues(meas), 
-				KEY_ROWID + "=" + meas.getId(), null) > 0; 
+		// build where clause
+		String where;
+		if (meas.getId() != null) {
+			where = KEY_ROWID + "=" + meas.getId();
+		} else {
+			where =  KEY_PIECE_ID + "=" + meas.getPieceId() + " AND " + KEY_PROD_ID + "=" + meas.getProdId() + " AND " + KEY_FEAT_ID + "=" + meas.getFeatId();
+		}
+
+		Log.d(TAG, "updateMeas pieceId = " + meas.getPieceId() +
+				"; featId = " + meas.getFeatId() +
+				"; value = " + meas.getValue() +
+				"; range = " + meas.getRange() +
+				"; inCtrl = " + meas.isInControl() +
+				"; cause = " + meas.getCause() +
+				"; where = " + where);
+
+		// perform db update
+		return db.update(TABLE_MEASUREMENT, measurementToValues(meas), where, null) > 0;
 	};	
 	
 	// delete single measurement
