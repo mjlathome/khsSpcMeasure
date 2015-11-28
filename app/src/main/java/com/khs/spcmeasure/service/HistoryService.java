@@ -15,8 +15,10 @@ import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.SetupListActivity;
 import com.khs.spcmeasure.entity.Feature;
 import com.khs.spcmeasure.entity.Limits;
+import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.entity.Product;
 import com.khs.spcmeasure.library.ActionStatus;
+import com.khs.spcmeasure.library.CollectStatus;
 import com.khs.spcmeasure.library.JSONParser;
 import com.khs.spcmeasure.library.LimitType;
 import com.khs.spcmeasure.library.NotificationId;
@@ -40,6 +42,7 @@ public class HistoryService extends IntentService {
 
     // supported actions
     public static final String ACTION_MEAS_HIST = "com.khs.spcmeasure.service.action.MEAS_HIST";
+    public static final String ACTION_DELETE = "com.khs.spcmeasure.service.action.DELETE";
 
     // supported parameters
     public static final String EXTRA_PROD_ID = "com.khs.spcmeasure.service.extra.PROD_ID";
@@ -101,7 +104,23 @@ public class HistoryService extends IntentService {
         Intent intent = new Intent(context, HistoryService.class);
         intent.setAction(ACTION_MEAS_HIST);
         intent.putExtra(EXTRA_PROD_ID, prodId);
-        intent.putExtra(EXTRA_MAX_SG, 30);  // TODO max 30 sg of history - make an app constant
+        // for app constants info see:
+        // http://stackoverflow.com/questions/9761386/android-best-way-to-provide-app-specific-constants-in-a-library-project
+        intent.putExtra(EXTRA_MAX_SG, context.getResources().getInteger(R.integer.maxSg));
+        context.startService(intent);
+    }
+
+    /**
+     * Starts this service to perform action for history delete with the given parameters. If
+     * the service is already performing a task this action will be queued.
+     *
+     * @see IntentService
+     */
+    public static void startActionDelete(Context context, Long prodId) {
+        Intent intent = new Intent(context, HistoryService.class);
+        intent.setAction(ACTION_DELETE);
+        intent.putExtra(EXTRA_PROD_ID, prodId);
+        intent.putExtra(EXTRA_MAX_SG, context.getResources().getInteger(R.integer.maxSg));
         context.startService(intent);
     }
 
@@ -127,7 +146,7 @@ public class HistoryService extends IntentService {
             final String action = intent.getAction();
             if (ACTION_MEAS_HIST.equals(action)) {
                 final Long prodId = intent.getLongExtra(EXTRA_PROD_ID, -1);
-                final Integer maxSg = intent.getIntExtra(EXTRA_MAX_SG, 30);    // TODO max 30 sg of history - make an app constant
+                final Integer maxSg = intent.getIntExtra(EXTRA_MAX_SG, getResources().getInteger(R.integer.maxSg));
 
                 if(canceledMeasHistProdId.contains(prodId)) {
                     // remove cancellation to ensure it's re-tried in the future
@@ -136,6 +155,12 @@ public class HistoryService extends IntentService {
                     // import measurement history
                     handleActionMeasHist(prodId, maxSg);
                 }
+            } else if (ACTION_DELETE.equals(action)) {
+                final Long prodId = intent.getLongExtra(EXTRA_PROD_ID, -1);
+                final Integer maxSg = intent.getIntExtra(EXTRA_MAX_SG, getResources().getInteger(R.integer.maxSg));
+
+                // delete measurement history
+                handleActionDelete(prodId, maxSg);
             }
         }
     }
@@ -231,6 +256,9 @@ public class HistoryService extends IntentService {
 
                 // notify user - success
                 actStat = ActionStatus.COMPLETE;
+
+                // TODO want to do history delete now
+                HistoryService.startActionDelete(this, prodId);
             }
 
         } catch (JSONException e) {
@@ -246,6 +274,80 @@ public class HistoryService extends IntentService {
         // notify user
         String notifyText = this.getString(R.string.text_meas_hist_text, numImport, numFound);
         updateNotification(ACTION_MEAS_HIST, actStat, notifyText, prodId);
+    }
+
+    /**
+     * Handle action history delete in the provided background thread with the provided
+     * parameters.
+     */
+    private void handleActionDelete(Long prodId, int maxSg) {
+        Log.d(TAG, "handleActionDelete");
+
+        DBAdapter db = new DBAdapter(this);
+
+        // assume failure
+        ActionStatus actStat = ActionStatus.FAILED;
+
+        // initialize counts
+        int numFound = 0;
+        int numDelete = 0;
+
+        try {
+            // open the DB
+            db.open();
+
+            // get cursor to all history pieces for product on device
+            Cursor cPiece = db.getAllPieces(prodId, CollectStatus.HISTORY);
+
+            // TODO need to check last modified date in the future
+            if (!db.isCursorEmpty(cPiece)) {
+                numFound = cPiece.getCount();
+
+                if (numFound > maxSg) {
+                    // start transaction
+                    db.beginTransaction();
+
+                    // iterate the results
+                    if (cPiece.moveToFirst()) {
+                        int numCount = 0;
+                        do {
+                            numCount++;
+                            // check if max sub-group limit met
+                            if (numCount > maxSg) {
+                                numDelete++;
+                                // delete the Piece
+                                db.deletePiece(cPiece.getInt(cPiece.getColumnIndex(db.KEY_ROWID)));
+                            }
+                        } while(cPiece.moveToNext());
+                    }
+
+                    if (db.inTransaction()) {
+                        // set transaction successful
+                        db.setTransactionSuccessful();
+                    }
+                }
+            }
+
+            // notify user - success
+            actStat = ActionStatus.COMPLETE;
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            // notify user - failure
+            actStat = ActionStatus.FAILED;
+        } finally {
+            if (db.inTransaction()) {
+                // commit
+                db.endTransaction();
+            }
+
+            // close the DB
+            db.close();
+        }
+
+        // notify user
+        String notifyText = this.getString(R.string.text_history_delete_text, numDelete, numFound);
+        updateNotification(ACTION_DELETE, actStat, notifyText, prodId);
     }
 
     // allows measurement history cancel for provided Product Id
@@ -274,6 +376,8 @@ public class HistoryService extends IntentService {
         String title = this.getString(R.string.text_unknown);
         if (action.equals(ACTION_MEAS_HIST)) {
             title = this.getString(R.string.text_meas_hist_title, actStat);
+        } else if (action.equals(ACTION_DELETE)) {
+            title = this.getString(R.string.text_history_delete_title, actStat);
         }
 
         mNotificationManager.notify(NotificationId.getId(), getNotification(title, text, prodId));

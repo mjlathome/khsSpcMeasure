@@ -217,6 +217,9 @@ public class MeasurementService extends IntentService {
                     if (processResponseExport(json) == true) {
                         // notify user - success
                         actStat = ActionStatus.COMPLETE;
+
+                        // TODO want to do history delete now
+                        HistoryService.startActionDelete(this, piece.getProdId());
                     } else {
                         // notify user - failure
                         actStat = ActionStatus.FAILED;

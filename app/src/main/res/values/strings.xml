@@ -55,6 +55,8 @@
     <string name="text_meas_import">Measurement Import (%s)</string>
     <string name="text_meas_hist_title">Measurement History (%s)</string>
     <string name="text_meas_hist_text">HISTORY pieces imported (%1$s of %2$s)</string>"
+    <string name="text_history_delete_title">History Deleted(%s)</string>
+    <string name="text_history_delete_text">HISTORY pieces deleted (%1$s of %2$s)</string>"
     <string name="text_piece_create_failed">New Piece create failed.  Contact administrator.</string>
     <string name="text_piece_create_cancelled">New Piece cancelled</string>
     <string name="text_piece_export_title">Piece Export (%s)</string>
