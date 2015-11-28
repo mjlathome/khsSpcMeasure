@@ -429,135 +429,14 @@ public class MeasurementService extends IntentService {
         updateNotification(ACTION_IMPORT, actStat, notifyText, prodId);
     }
 
-    // builds JSON piece/measurement data for the given piece Id
-    private JSONObject getJsonResultsImport(Long rowId) {
-        JSONObject jResults = null;
-
-        try {
-            // open the DB
-            DBAdapter db = new DBAdapter(this);
-            db.open();
-
-            // extract Piece
-            Cursor cPiece = db.getPiece(rowId);
-            Log.d(TAG, "cPiece count = " + cPiece.getCount());
-
-            // verify Piece is available and CLOSED
-            if (cPiece.moveToFirst() && CollectStatus.fromValue(cPiece.getString(cPiece.getColumnIndex(DBAdapter.KEY_COLLECT_STATUS))) == CollectStatus.CLOSED) {
-                // initialize json results
-                jResults = new JSONObject();
-
-                // build json for the Piece
-                JSONObject jPiece = new JSONObject();
-                jPiece.put(DBAdapter.KEY_ROWID, cPiece.getLong(cPiece.getColumnIndex(DBAdapter.KEY_ROWID)));
-                jPiece.put(DBAdapter.KEY_PROD_ID, cPiece.getLong(cPiece.getColumnIndex(DBAdapter.KEY_PROD_ID)));
-                jPiece.put(DBAdapter.KEY_SUB_GRP_ID, cPiece.getLong(cPiece.getColumnIndex(DBAdapter.KEY_SUB_GRP_ID)));
-                jPiece.put(DBAdapter.KEY_PIECE_NUM, cPiece.getLong(cPiece.getColumnIndex(DBAdapter.KEY_PIECE_NUM)));
-                jPiece.put(DBAdapter.KEY_COLLECT_DATETIME, cPiece.getString(cPiece.getColumnIndex(DBAdapter.KEY_COLLECT_DATETIME)));
-                jPiece.put(DBAdapter.KEY_OPERATOR, cPiece.getString(cPiece.getColumnIndex(DBAdapter.KEY_OPERATOR)));
-                jPiece.put(DBAdapter.KEY_LOT, cPiece.getString(cPiece.getColumnIndex(DBAdapter.KEY_LOT)));
-
-                // build Measurement json array
-                JSONArray jMeasArr = new JSONArray();
-
-                // extract Measurements
-                Cursor cMeas = db.getAllMeasurements(rowId);
-                Log.d(TAG, "cMeas count = " + cMeas.getCount());
-                if (cMeas.moveToFirst()) {
-                    do {
-                        // build json for the Measurement
-                        JSONObject jMeas = new JSONObject();
-                        jMeas.put(DBAdapter.KEY_FEAT_ID, cMeas.getLong(cMeas.getColumnIndex(DBAdapter.KEY_FEAT_ID)));
-                        jMeas.put(DBAdapter.KEY_VALUE, cMeas.getDouble(cMeas.getColumnIndex(DBAdapter.KEY_VALUE)));
-
-                        // TODO export range too... don't have to use it, but it's then consistent with the Measurement Import logic
-                        jMeas.put(DBAdapter.KEY_RANGE, cMeas.getDouble(cMeas.getColumnIndex(DBAdapter.KEY_RANGE)));
-
-                        // TODO handle null cause if not out-of-control
-                        Long cause = cMeas.getLong(cMeas.getColumnIndex(DBAdapter.KEY_CAUSE));
-                        jMeas.put(DBAdapter.KEY_CAUSE, cause);
-
-                        jMeas.put(DBAdapter.KEY_LIMIT_REV, cMeas.getLong(cMeas.getColumnIndex(DBAdapter.KEY_LIMIT_REV)));
-                        jMeas.put(DBAdapter.KEY_IN_CONTROL, DBAdapter.intToBool(cMeas.getInt(cMeas.getColumnIndex(DBAdapter.KEY_IN_CONTROL))));
-                        jMeas.put(DBAdapter.KEY_IN_ENG_LIM, DBAdapter.intToBool(cMeas.getInt(cMeas.getColumnIndex(DBAdapter.KEY_IN_ENG_LIM))));
-
-                        // add json Measurement data to json array
-                        jMeasArr.put(jMeas);
-
-                    } while(cMeas.moveToNext());
-                }
-                cMeas.close();
-
-                // add json Measurement array to json Piece object
-                jPiece.put(DBAdapter.TABLE_MEASUREMENT, jMeasArr);
-
-                // build json results
-                jResults.put(TAG_SUCCESS, true);
-                jResults.put(DBAdapter.TABLE_PIECE, jPiece);
-            }
-
-            // close the DB
-            cPiece.close();
-            db.close();
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return jResults;
-    }
-
     // process json response for history import
     private boolean processResponseImport(JSONObject json, Long prodId, Long sgId) {
         boolean success = false;
         DBAdapter db = new DBAdapter(this);
+        PieceDao pieceDao = new PieceDao(this);
         long pieceNum = 1;  // TODO FUTURE allow multiple measurements per sub-group
 
         Log.d(TAG, "processResponseImport: json = " + json.toString());
-
-        /*
-                    // verify json was successful
-            if (json == null || json.getBoolean(TAG_SUCCESS) != true || json.getLong(TAG_PROD_ID) != prodId) {
-                // notify user - failure
-                actStat = ActionStatus.FAILED;
-            } else {
-                // open the DB
-                DBAdapter db = new DBAdapter(this);
-                db.open();
-
-                // get JSON sub-group array
-                JSONArray jSgArr = json.getJSONArray(TAG_SUB_GROUP);
-                numFound = jSgArr.length();
-
-                // loop sub-groups
-                for (int i = 0; i < jSgArr.length(); i++) {
-                    JSONObject jSubGrp = jSgArr.getJSONObject(i);
-
-                    long sgId = Long.valueOf(jSubGrp.getString(TAG_SG_ID));
-                    String collDt = jSubGrp.getString(TAG_COLLECT_DT);
-                    String operator = jSubGrp.getString(TAG_OPERATOR);
-
-                    // extract Piece
-                    Cursor cPiece = db.getPiece(prodId, sgId, 1);
-                    Log.d(TAG, "sgId = " + sgId + "; collDt = " + collDt + "; operator = " + operator + "; cPiece = " + db.isCursorEmpty(cPiece));
-
-                    // import Piece if not found on device
-                    // TODO need to check last modified date in the future
-                    if (db.isCursorEmpty(cPiece)) {
-                        numImport++;
-                    }
-                }
-
-                // close the DB
-                db.close();
-
-                // notify user - success
-                actStat = ActionStatus.COMPLETE;
-            }
-
-
-         */
-
 
         try {
             // open the DB
@@ -595,12 +474,24 @@ public class MeasurementService extends IntentService {
                     String operator = jSubGrp.getString(TAG_OPERATOR);
                     String lot = jSubGrp.getString(TAG_LOT);
 
-                    // create Piece object
-                    Piece piece = new Piece(prodId, sgId, pieceNum, collDt, operator, lot, CollectStatus.HISTORY);
+                    // attempt to find Piece on device
+                    // TODO investigate how Piece can be updated, but handle situation.  Without db cursor rowIdPiece is null
+                    // TODO problem caused after Setup is imported where the user quickly clicks on the Product and the History is pulled again.
+                    // TODO cause duplicate IntentService requests which lead to the same sg being created and subsequently updated.
+                    Piece piece = pieceDao.getPiece(prodId, sgId, pieceNum);
+                    if (piece != null) {
+                        // update Piece
+                        piece.setCollectDt(collDt);
+                        piece.setOperator(operator);
+                        piece.setLot(lot);
+                        piece.setStatus(CollectStatus.HISTORY);
+                    } else {
+                        // create Piece
+                        piece = new Piece(prodId, sgId, pieceNum, collDt, operator, lot, CollectStatus.HISTORY);
+                    }
 
                     // start transaction
                     db.beginTransaction();
-
 
                     // update or insert Piece into the DB
                     Long rowIdPiece = piece.getId();
@@ -608,11 +499,7 @@ public class MeasurementService extends IntentService {
                         rowIdPiece = db.createPiece(piece);
                     } else {
                         // TODO investigate how Piece can be updated, but handle situation.  Without db cursor rowIdPiece is null
-                        Log.d(TAG, "Update successful: prodId = " + piece.getProdId() + "; sgId = " + piece.getSgId() + "; pieceNum = " + piece.getPieceNum() );
-                        Cursor cPiece = db.getPiece(prodId, sgId, pieceNum);
-                        if (cPiece.moveToFirst()) {
-                            rowIdPiece = cPiece.getLong(cPiece.getColumnIndex(db.KEY_PIECE_ID));
-                        }
+                        Log.d(TAG, "Update successful: id = " + piece.getId() + "; prodId = " + piece.getProdId() + "; sgId = " + piece.getSgId() + "; pieceNum = " + piece.getPieceNum() );
                     }
 
                     // get JSON measurement array
@@ -625,7 +512,7 @@ public class MeasurementService extends IntentService {
                         // extract Measurement field from json data
                         Long featId = jMeas.getLong(TAG_FEAT_ID);
                         Double value = jMeas.getDouble(TAG_VALUE);
-                        Double range = jMeas.getDouble(TAG_VALUE);
+                        Double range = jMeas.getDouble(TAG_RANGE);
                         Long cause = jMeas.getLong(TAG_CAUSE);
                         Long limitRev = jMeas.getLong(TAG_LIMIT_REV);
                         Boolean inControl = db.intToBool(jMeas.getInt(TAG_IN_CONTROL));
@@ -646,33 +533,6 @@ public class MeasurementService extends IntentService {
 
                 }
 
-/*
-                // unpack Piece data from json response
-                JSONObject jPiece = json.getJSONObject(DBAdapter.TABLE_PIECE);
-                long rowId = Long.valueOf(jPiece.getLong(DBAdapter.KEY_ROWID));
-                long sgId = Long.valueOf(jPiece.getLong(DBAdapter.KEY_SUB_GRP_ID));
-
-                Log.d(TAG, "processResponse: rowId = " + rowId + " ; sgId = " + sgId);
-
-                // open the DB
-                DBAdapter db = new DBAdapter(this);
-                db.open();
-
-                // extract Piece
-                Cursor cPiece = db.getPiece(rowId);
-                Piece piece = db.cursorToPiece(cPiece);
-                cPiece.close();
-
-                // update Piece
-                piece.setSgId(sgId);
-                piece.setStatus(CollectStatus.HISTORY);
-
-                // save Piece
-                db.updatePiece(piece);
-
-                // close the DB
-                db.close();
-*/
                 if (db.inTransaction()) {
                     // set transaction successful
                     db.setTransactionSuccessful();
@@ -700,11 +560,6 @@ public class MeasurementService extends IntentService {
         }
 
         return success;
-    }
-
-    // allows export cancel for provided Piece Id
-    public static void cancelImport(Long pieceId) {
-        canceledExport.add(pieceId);
     }
 
     // create service notification

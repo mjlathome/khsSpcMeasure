@@ -55,6 +55,32 @@ public class PieceDao {
         return piece;
 	}
 
+    // find Piece by product id, sub-group id and piece number
+    public Piece getPiece(long prodId, long sgId, long pieceNum) {
+        Piece piece = null;
+        Cursor cPiece = null;
+
+        try {
+            db.open();
+
+            // get Piece
+            cPiece = db.getPiece(prodId, sgId, pieceNum);
+            if(!db.isCursorEmpty(cPiece)) {
+                piece = db.cursorToPiece(cPiece);
+            }
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cPiece != null) {
+                cPiece.close();
+            }
+            db.close();
+        }
+
+        return piece;
+    }
+
     // list All Pieces for provided Product
     public List<Piece> getAllPieces(long prodId) {
         List pieceList = new ArrayList();
