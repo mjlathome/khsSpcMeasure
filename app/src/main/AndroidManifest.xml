@@ -26,6 +26,9 @@
         android:name="android:.hardware.bluetooth_le"
         android:required="true" />
 
+    // barcode scanning
+    <uses-feature android:name="android.hardware.camera" />
+
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />

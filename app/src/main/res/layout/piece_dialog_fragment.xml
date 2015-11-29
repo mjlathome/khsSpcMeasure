@@ -71,7 +71,7 @@
         android:id="@+id/edtLot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
+        android:ems="6"
         android:inputType="textCapCharacters|textNoSuggestions"
         android:maxEms="6"
         android:maxLength="6"
@@ -89,6 +89,14 @@
         android:layout_alignBottom="@+id/edtLot"
         android:layout_alignEnd="@+id/lblOperator" />
 
+    <Button android:id="@+id/btnScan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_toRightOf="@+id/edtLot"
+        android:layout_alignTop="@+id/edtLot"
+        android:text="@string/text_scan" />
+
     <Button
         android:id="@+id/btnPieceOk"
         android:layout_width="wrap_content"
@@ -102,7 +110,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/text_cancel"
-        android:layout_below="@+id/edtLot"
-        android:layout_alignEnd="@+id/edtLot" />
+        android:layout_below="@+id/btnScan"
+        android:layout_alignEnd="@+id/btnScan" />
 
 </RelativeLayout>

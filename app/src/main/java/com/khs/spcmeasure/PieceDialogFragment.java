@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,6 +27,8 @@ import com.khs.spcmeasure.library.SecurityUtils;
 import java.security.Security;
 import java.util.Date;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 // captures new piece details and launches measurement activity
 public class PieceDialogFragment extends DialogFragment implements OnClickListener{
@@ -35,7 +38,7 @@ public class PieceDialogFragment extends DialogFragment implements OnClickListen
 	private String mCollectDtStr;
 	private OnNewPieceListener mListener;
 	
-	Button btnOkay, btnCancel;
+	Button btnScan, btnOkay, btnCancel;
 	EditText edtLot, edtOperator;
 
 	// container activity must implement this interface
@@ -87,6 +90,7 @@ public class PieceDialogFragment extends DialogFragment implements OnClickListen
 		// extract widgets
 		edtLot = (EditText) v.findViewById(R.id.edtLot);
 		edtOperator = (EditText) v.findViewById(R.id.edtOperator);
+        btnScan = (Button) v.findViewById(R.id.btnScan);
 		btnOkay = (Button) v.findViewById(R.id.btnPieceOk);
 		btnCancel = (Button) v.findViewById(R.id.btnPieceCancel);		
 		
@@ -116,68 +120,107 @@ public class PieceDialogFragment extends DialogFragment implements OnClickListen
 		edtOperator.setText(SecurityUtils.getUsername(getActivity()));
 
 		// set button listeners
+        btnScan.setOnClickListener(this);
 		btnOkay.setOnClickListener(this);
 		btnCancel.setOnClickListener(this);		
 		
 		return v;
 	}
 
+	// respond to clicks
 	@Override
 	public void onClick(View v) {
+
 		switch (v.getId()) {
-		case R.id.btnPieceOk:
-			// validate fields
-			if (validateFields() == false) {
-				return;
-			}
-			
-			// create progress dialog
-			ProgressDialog progDiag = ProgressUtils.progressDialogCreate(getActivity(), getString(R.string.text_creating_piece));
-			
-			// TODO use try catch
-			try {
-				// show progress dialog
-				progDiag.show();
-				
-				// open the DB
-				DBAdapter db = new DBAdapter(getActivity());
-				db.open();
-				
-				// create Piece
-				long pieceNum = 1;
-				Piece piece =  new Piece(mProdId, pieceNum, mCollectDate, edtOperator.getText().toString(), edtLot.getText().toString(), CollectStatus.OPEN);
-				
-				// insert Piece into the DB
-				long pieceId = db.createPiece(piece);
-								
-				// close the DB			
-				db.close();			
-							
+			case R.id.btnScan:
+                // scan
+                IntentIntegrator scanIntegrator = new IntentIntegrator(this);
+                scanIntegrator.addExtra("PROMPT_MESSAGE", "Scan Serial Number");
+                scanIntegrator.addExtra("SCAN_FORMATS", "CODE_39,CODE_128");    // code 3 of 9 and code 128 only
+                scanIntegrator.initiateScan();
+                break;
+            case R.id.btnPieceOk:
+				// validate fields
+				if (validateFields() == false) {
+					return;
+				}
+
+				// create progress dialog
+				ProgressDialog progDiag = ProgressUtils.progressDialogCreate(getActivity(), getString(R.string.text_creating_piece));
+
+				// TODO use try catch
+				try {
+					// show progress dialog
+					progDiag.show();
+
+					// open the DB
+					DBAdapter db = new DBAdapter(getActivity());
+					db.open();
+
+					// create Piece
+					long pieceNum = 1;
+					Piece piece =  new Piece(mProdId, pieceNum, mCollectDate, edtOperator.getText().toString(), edtLot.getText().toString(), CollectStatus.OPEN);
+
+					// insert Piece into the DB
+					long pieceId = db.createPiece(piece);
+
+					// close the DB
+					db.close();
+
+					dismiss();
+
+					if (pieceId < 0) {
+						AlertUtils.errorDialogShow(getActivity(), getString(R.string.text_piece_create_failed));
+					} else {
+						// inform the Activity of the new Setup
+						mListener.onNewPieceCreated(pieceId);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					// close progress dialog
+					progDiag.dismiss();
+				}
+
+				// Toast.makeText(getActivity(), "OKAY", Toast.LENGTH_LONG).show();
+				break;
+			case R.id.btnPieceCancel:
 				dismiss();
-				
-				if (pieceId < 0) {
-					AlertUtils.errorDialogShow(getActivity(), getString(R.string.text_piece_create_failed));
-				} else {
-					// inform the Activity of the new Setup
-					mListener.onNewPieceCreated(pieceId);
-				}				
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				// close progress dialog
-				progDiag.dismiss();
-			}
-				
-			// Toast.makeText(getActivity(), "OKAY", Toast.LENGTH_LONG).show();
-			break;
-		case R.id.btnPieceCancel:
-			dismiss();
-			Toast.makeText(getActivity(), getString(R.string.text_piece_create_cancelled), Toast.LENGTH_LONG).show();
-			break;			
+				Toast.makeText(getActivity(), getString(R.string.text_piece_create_cancelled), Toast.LENGTH_LONG).show();
+				break;
 		}
 	}
 
-	// returns true if all on-screen fields are valid, otherwise false
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // retrieve scan result
+        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
+        if (scanningResult != null) {
+            // we have a result
+            String scanContent = scanningResult.getContents();
+            String scanFormat = scanningResult.getFormatName();
+
+            // formatTxt.setText("FORMAT: " + scanFormat);
+
+            if (scanContent.startsWith("&1S") || scanContent.startsWith("&2S")) {
+                edtLot.setText(scanContent.substring(3));
+            } else {
+                Toast toast = Toast.makeText(getActivity(),
+                        "Not a Serial: " + scanContent, Toast.LENGTH_LONG);
+                toast.show();
+            }
+        } else {
+            Toast toast = Toast.makeText(getActivity(),
+                    "No scan data received!", Toast.LENGTH_LONG);
+            toast.show();
+        }
+
+    }
+
+    // returns true if all on-screen fields are valid, otherwise false
 	private boolean validateFields() {
 		
 		// validate operator

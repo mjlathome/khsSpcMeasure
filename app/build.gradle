@@ -27,4 +27,6 @@ dependencies {
     compile 'com.android.support:support-v13:23.1.0'
     compile 'com.android.support:support-annotations:23.1.0'
     compile 'com.android.support:appcompat-v7:23.1.0'
+    compile 'com.google.zxing:core:3.2.1'
+    compile 'com.google.zxing:android-integration:3.2.1'
 }
