@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.entity.Product;
 import com.khs.spcmeasure.library.AlertUtils;
+import com.khs.spcmeasure.library.BarCodeUtils;
 import com.khs.spcmeasure.library.CollectStatus;
 import com.khs.spcmeasure.library.DateTimeUtils;
 import com.khs.spcmeasure.library.ProgressUtils;
@@ -205,22 +206,27 @@ public class PieceDialogFragment extends DialogFragment implements OnClickListen
 
             // formatTxt.setText("FORMAT: " + scanFormat);
 
-            if (scanContent.startsWith("&1S") || scanContent.startsWith("&2S")) {
-                edtLot.setText(scanContent.substring(3));
+			// extract serial number
+			String serial = BarCodeUtils.getSerialNumber(scanContent);
+
+			if (serial != null) {
+				edtLot.setText(serial.substring(0, BarCodeUtils.LOT_NUMBER_LENGTH - 1));
             } else {
-                Toast toast = Toast.makeText(getActivity(),
-                        "Not a Serial: " + scanContent, Toast.LENGTH_LONG);
-                toast.show();
+				AlertUtils.errorDialogShow(getActivity(), "Not a Serial: " + scanContent);
+				// TODO remove later as not required
+                // Toast toast = Toast.makeText(getActivity(), "Not a Serial: " + scanContent, Toast.LENGTH_LONG);
+                // toast.show();
             }
         } else {
-            Toast toast = Toast.makeText(getActivity(),
-                    "No scan data received!", Toast.LENGTH_LONG);
-            toast.show();
+			AlertUtils.errorDialogShow(getActivity(), "No scan data received!");
+			// TODO remove later as not required
+            // Toast toast = Toast.makeText(getActivity(), "No scan data received!", Toast.LENGTH_LONG);
+            // toast.show();
         }
 
     }
 
-    // returns true if all on-screen fields are valid, otherwise false
+	// returns true if all on-screen fields are valid, otherwise false
 	private boolean validateFields() {
 		
 		// validate operator
@@ -239,5 +245,6 @@ public class PieceDialogFragment extends DialogFragment implements OnClickListen
 				
 		return true;
 	}
-	
+
+
 }
