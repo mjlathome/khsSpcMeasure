@@ -135,7 +135,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String username = mUsernameView.getText().toString();
+        String username = mUsernameView.getText().toString().trim();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;

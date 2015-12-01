@@ -119,6 +119,7 @@ public class PieceDialogFragment extends DialogFragment implements OnClickListen
 
 		// populate Operator
 		edtOperator.setText(SecurityUtils.getUsername(getActivity()));
+		edtOperator.setSelection(edtOperator.getText().length());	// move to end of field
 
 		// set button listeners
         btnScan.setOnClickListener(this);
@@ -192,6 +193,7 @@ public class PieceDialogFragment extends DialogFragment implements OnClickListen
 		}
 	}
 
+	// handle intent results
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -210,15 +212,17 @@ public class PieceDialogFragment extends DialogFragment implements OnClickListen
 			String serial = BarCodeUtils.getSerialNumber(scanContent);
 
 			if (serial != null) {
-				edtLot.setText(serial.substring(0, BarCodeUtils.LOT_NUMBER_LENGTH - 1));
+				edtLot.setText(serial.substring(0, BarCodeUtils.LOT_NUMBER_LENGTH));
+				edtLot.setSelection(edtLot.getText().length());	// move to end of field
+				edtLot.requestFocus();  // set focus to field
             } else {
-				AlertUtils.errorDialogShow(getActivity(), "Not a Serial: " + scanContent);
+				AlertUtils.errorDialogShow(getActivity(), scanContent + " is not a Serial.  Try again.");
 				// TODO remove later as not required
                 // Toast toast = Toast.makeText(getActivity(), "Not a Serial: " + scanContent, Toast.LENGTH_LONG);
                 // toast.show();
             }
         } else {
-			AlertUtils.errorDialogShow(getActivity(), "No scan data received!");
+			AlertUtils.errorDialogShow(getActivity(), "No scan data received.");
 			// TODO remove later as not required
             // Toast toast = Toast.makeText(getActivity(), "No scan data received!", Toast.LENGTH_LONG);
             // toast.show();
