@@ -513,6 +513,7 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 		displayPiece();
         displayLimits();
 		displayMeasurement();
+        enableFields();
 		return;
 	}	
 
@@ -526,43 +527,6 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 	
 	// display Piece layout views 
 	private void displayPiece() {
-        // disable/hide/show views based upon Piece collect status
-        // check security too
-        // TODO needs to be called upon login/logout
-        if (mPiece.getStatus() == CollectStatus.OPEN && SecurityUtils.checkSecurity(getActivity(), false)) {
-            // TODO Gap test
-            Log.d(TAG, "Gap Test - Feature: " + mTxtFeatName.getText().toString());
-            if (isGapCheck()) {
-                mEdtMeasValue.setEnabled(true);
-                mEdtMeasValue.setFocusable(true);
-                mEdtMeasValue.setFocusableInTouchMode(true);
-                mEdtMeasValue.setKeyListener(DigitsKeyListener.getInstance("01234567890."));
-                mEdtMeasValue.setBackgroundResource(android.R.drawable.edit_text);
-                mEdtMeasValue.setHint(R.string.prompt_gap_value);
-                mBtnGetValue.setVisibility(View.INVISIBLE);
-                Log.d(TAG, "Gap Test - Enabled");
-            } else {
-                mEdtMeasValue.setEnabled(false);
-                mEdtMeasValue.setFocusable(false);
-                mEdtMeasValue.setFocusableInTouchMode(false);
-                mEdtMeasValue.setKeyListener(DigitsKeyListener.getInstance("01234567890.-"));
-                mEdtMeasValue.setBackgroundResource(android.R.color.transparent);
-                mEdtMeasValue.setHint("");
-                mEdtMeasValue.setTextColor(getResources().getColor(android.R.color.black));
-                mBtnGetValue.setVisibility(View.VISIBLE);
-                Log.d(TAG, "Gap Test - Disabled");
-            }
-
-            mSpnMeasCause.setEnabled(true);
-            // mBtnGetValue.setVisibility(View.VISIBLE);
-            mBtnClearValue.setVisibility(View.VISIBLE);
-        } else {
-            mEdtMeasValue.setEnabled(false);
-            mSpnMeasCause.setEnabled(false);
-            mBtnGetValue.setVisibility(View.INVISIBLE);
-            mBtnClearValue.setVisibility(View.INVISIBLE);
-        }
-
         mTxtCollDt.setText(DateTimeUtils.getDateTimeStr(mPiece.getCollectDt()));
 		mTxtCollSt.setText(mPiece.getStatus().name());
 		return;
@@ -625,6 +589,56 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 
 		return;
 	}	
+
+    // enable or disable on-screen fields
+    public void enableFields() {
+        // disable/hide/show views based upon Piece collect status
+        // check security too
+        // TODO needs to be called upon login/logout
+        if (mPiece.getStatus() == CollectStatus.OPEN && SecurityUtils.checkSecurity(getActivity(), false)) {
+            // TODO Gap test
+            Log.d(TAG, "Gap Test - Feature: " + mTxtFeatName.getText().toString());
+            if (isGapCheck()) {
+                enableValue();
+                mBtnGetValue.setVisibility(View.INVISIBLE);
+                Log.d(TAG, "Gap Test - Enabled");
+            } else {
+                disableValue();
+                mBtnGetValue.setVisibility(View.VISIBLE);
+                Log.d(TAG, "Gap Test - Disabled");
+            }
+
+            mSpnMeasCause.setEnabled(true);
+            // mBtnGetValue.setVisibility(View.VISIBLE);
+            mBtnClearValue.setVisibility(View.VISIBLE);
+        } else {
+            disableValue();
+            mSpnMeasCause.setEnabled(false);
+            mBtnGetValue.setVisibility(View.INVISIBLE);
+            mBtnClearValue.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    // enable measurement value field
+    private void enableValue() {
+        mEdtMeasValue.setEnabled(true);
+        mEdtMeasValue.setFocusable(true);
+        mEdtMeasValue.setFocusableInTouchMode(true);
+        mEdtMeasValue.setKeyListener(DigitsKeyListener.getInstance("01234567890."));
+        mEdtMeasValue.setBackgroundResource(android.R.drawable.edit_text);
+        mEdtMeasValue.setHint(R.string.prompt_gap_value);
+    }
+
+    // disable measurement value field
+    private void disableValue() {
+        mEdtMeasValue.setEnabled(false);
+        mEdtMeasValue.setFocusable(false);
+        mEdtMeasValue.setFocusableInTouchMode(false);
+        mEdtMeasValue.setKeyListener(DigitsKeyListener.getInstance("01234567890.-"));
+        mEdtMeasValue.setBackgroundResource(android.R.color.transparent);
+        mEdtMeasValue.setHint("");
+        mEdtMeasValue.setTextColor(getResources().getColor(android.R.color.black));
+    }
 
     // returns whether feature is a gap check
     public Boolean isGapCheck() {
