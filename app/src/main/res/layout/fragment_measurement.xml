@@ -106,28 +106,40 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/lblLimUpper"
             android:layout_alignEnd="@id/lblLimUpper"
-            android:layout_marginTop="@dimen/margin_small"
-            android:labelFor="@+id/txtMeasValue"
+            android:layout_marginTop="@dimen/margin_label"
+            android:labelFor="@+id/edtMeasValue"
             android:text="@string/label_value"
             android:textSize="@dimen/text_huge"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/txtMeasValue"
+        <EditText
+            android:id="@+id/edtMeasValue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/lblMeasValue"
             android:layout_toEndOf="@id/lblMeasValue"
             android:layout_marginStart="@dimen/margin_small"
             android:text="@string/text_measurement"
-            android:textSize="@dimen/text_huge" />
+            android:inputType="numberDecimal"
+            android:maxLines="1"
+            android:ems="5"
+            android:textSize="@dimen/text_huge">
+            <!-- android:focusable="true"
+            android:background="@android:color/transparent"
+            android:digits="0123456789.-"
+            android:hint="@string/label_value"
+            android:cursorVisible="true"
+            android:focusableInTouchMode="true" -->
+
+            <!-- <requestFocus /> -->
+        </EditText>
 
         <ImageView
             android:id="@+id/imgInControl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@id/txtMeasValue"
-            android:layout_toEndOf="@id/txtMeasValue"
+            android:layout_alignTop="@id/edtMeasValue"
+            android:layout_toEndOf="@id/edtMeasValue"
             android:layout_marginStart="@dimen/margin_small"
             android:contentDescription="@string/text_in_control"
             android:src="@drawable/ic_meas_unknown" />
@@ -136,7 +148,7 @@
             android:id="@+id/lblMeasRange"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/imgInControl"
+            android:layout_below="@id/edtMeasValue"
             android:layout_alignEnd="@id/lblMeasValue"
             android:layout_marginTop="@dimen/margin_small"
             android:labelFor="@+id/txtMeasRange"

@@ -151,4 +151,5 @@
     <string name="sec_not_logged_in">You are not logged in.  Please Login and try again.</string>
     <string name="sec_cannot_measure">You cannot measure.  Please contact administrator.</string>
 
+    <string name="prompt_gap_value">Enter Gap</string>
 </resources>

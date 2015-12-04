@@ -208,7 +208,14 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
     @Override
     public void onPageScrollStateChanged(int state) {
+        Log.d(TAG, "onPageScrollStateChanged");
 
+        // hide keyboard entry
+        if (mTabPos == FeatureActivity.TAB_POS_MEASUREMENT) {
+            // communicate measurement to fragment
+            MeasurementFragment measFrag = (MeasurementFragment) mAdapter.getCurrentFragment();
+            measFrag.hideInput();
+        }
     }
     //endregion
 
@@ -475,6 +482,13 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
     @Override
     public boolean onNavigationItemSelected(int position, long id) {
 
+        // hide keyboard entry
+        if (mTabPos == FeatureActivity.TAB_POS_MEASUREMENT) {
+            // communicate measurement to fragment
+            MeasurementFragment measFrag = (MeasurementFragment) mAdapter.getCurrentFragment();
+            measFrag.hideInput();
+        }
+
         // handle tab change
         Log.d(TAG, "pos = " + position + "; id = " + id);
         mTabPos = position;
@@ -722,7 +736,11 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         if (myDouble != null && mTabPos == FeatureActivity.TAB_POS_MEASUREMENT && !mHandler.hasMessages(MESSAGE_MOVE_NEXT)) {
             // communicate measurement to fragment
             MeasurementFragment measFrag = (MeasurementFragment) mAdapter.getCurrentFragment();
-            measFrag.setValue(myDouble);
+
+            // ensure not feature is not a gap check
+            if (!measFrag.isGapCheck()) {
+                measFrag.setValue(myDouble);
+            }
         } else {
             // ignore as not on the Measurement fragment
             return;

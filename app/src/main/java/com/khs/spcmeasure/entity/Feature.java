@@ -4,6 +4,9 @@ public class Feature {
 
     private static final String TAG = "Feature";
 
+	// constants
+	private static final String FEATURE_GAP_PREFIX = "GAP";
+
 	// private member variables
 	private Long id;		// Object to allow for null
 	private long prodId;
@@ -32,6 +35,12 @@ public class Feature {
 	
 	public Feature(long prodId, long featId, String name, boolean active, long limitRev, Double cp, Double cpk) {
 		this(null, prodId, featId, name, active, limitRev, cp, cpk);
+	}
+
+	// returns whether feature is for a gap check
+	public boolean isGapCheck()
+	{
+		return name.startsWith(FEATURE_GAP_PREFIX);
 	}
 
 	// getter & setter methods	

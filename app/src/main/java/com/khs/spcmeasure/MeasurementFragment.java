@@ -5,22 +5,31 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.text.method.DialerKeyListener;
+import android.text.method.DigitsKeyListener;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.AndroidAppUri;
 import com.khs.spcmeasure.dao.FeatureDao;
 import com.khs.spcmeasure.dao.LimitsDao;
 import com.khs.spcmeasure.dao.MeasurementDao;
@@ -75,7 +84,7 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 	private TextView mTxtCollSt;
     private TextView mTxtLimUpper;
     private TextView mTxtLimLower;
-	private TextView mTxtMeasValue;
+	private TextView mEdtMeasValue;
     private TextView mTxtMeasRange;
     private Spinner mSpnMeasCause;
     private ImageView mImgInControl;
@@ -324,7 +333,7 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 		mTxtCollSt = (TextView) rootView.findViewById(R.id.txtCollSt);
         mTxtLimUpper = (TextView) rootView.findViewById(R.id.txtLimUpper);
         mTxtLimLower = (TextView) rootView.findViewById(R.id.txtLimLower);
-		mTxtMeasValue = (TextView) rootView.findViewById(R.id.txtMeasValue);
+		mEdtMeasValue = (TextView) rootView.findViewById(R.id.edtMeasValue);
         mTxtMeasRange = (TextView) rootView.findViewById(R.id.txtMeasRange);
         mSpnMeasCause = (Spinner) rootView.findViewById(R.id.spnMeasCause);
 		mImgInControl = (ImageView) rootView.findViewById(R.id.imgInControl);
@@ -346,6 +355,62 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
             mLimitCl  = mLimDao.getLimit(mFeature.getProdId(), mFeature.getFeatId(), mFeature.getLimitRev(), LimitType.CONTROL);
             mLimitEng = mLimDao.getLimit(mFeature.getProdId(), mFeature.getFeatId(), mFeature.getLimitRev(), LimitType.ENGINEERING);
             mMeasurement = mMeasDao.getMeasurement(mPieceId, mPiece.getProdId(), mFeatId);
+
+            // TODO set value format
+            DecimalFormat threeZeros = new DecimalFormat("#0.000");
+
+            // for gap checks, setup a listener for Done on the value field
+            mEdtMeasValue.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        Log.d(TAG, "Meas Value: DONE");
+
+                        // get double and set value if not null
+                        Double value = null;
+                        try {
+                            value = Double.parseDouble(mEdtMeasValue.getText().toString());
+                        } catch (final NumberFormatException e) {
+                            value = null;
+                        }
+                        setValue(value);
+                    }
+                    return false;
+                }
+            });
+
+            // TODO remove later
+            /*
+            if (isGapCheck()) {
+                mEdtMeasValue.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                    }
+
+                    // handle text changed
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        Double value = null;
+                        // get double and set value if not null
+                        if (s.length() > 0) {
+                            try {
+                                value = Double.parseDouble(mEdtMeasValue.getText().toString());
+                            } catch (final NumberFormatException e) {
+                                value = null;
+                            }
+                        }
+
+                        setValue(value);
+                    }
+                });
+            }
+            */
 
             // show the Action Cause list in the Spinner
             DBAdapter db = new DBAdapter(getActivity());
@@ -410,7 +475,7 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 	public void setValue(Double value) {
 		Log.d(TAG, "setValue: " + value);
 				
-		if (value != null) {
+		if (!isGapCheck() && value != null) {
             // ignore new measurement if there is already one set
             if (mMeasurement != null) {
                 AlertUtils.alertDialogShow(getActivity(), getString(R.string.text_information), getString(R.string.text_meas_not_cleared));
@@ -430,8 +495,8 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 		Double d = null;
 		
 		try {
-			if (mTxtMeasValue.getText().length() != 0) {
-				d = Double.parseDouble(mTxtMeasValue.getText().toString());
+			if (mEdtMeasValue.getText().length() != 0) {
+				d = Double.parseDouble(mEdtMeasValue.getText().toString());
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -444,8 +509,8 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 	public void displayAll() {
 		Log.d(TAG, "displayAll");
 		displayProduct();
+        displayFeature();
 		displayPiece();
-		displayFeature();
         displayLimits();
 		displayMeasurement();
 		return;
@@ -465,10 +530,34 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
         // check security too
         // TODO needs to be called upon login/logout
         if (mPiece.getStatus() == CollectStatus.OPEN && SecurityUtils.checkSecurity(getActivity(), false)) {
+            // TODO Gap test
+            Log.d(TAG, "Gap Test - Feature: " + mTxtFeatName.getText().toString());
+            if (isGapCheck()) {
+                mEdtMeasValue.setEnabled(true);
+                mEdtMeasValue.setFocusable(true);
+                mEdtMeasValue.setFocusableInTouchMode(true);
+                mEdtMeasValue.setKeyListener(DigitsKeyListener.getInstance("01234567890."));
+                mEdtMeasValue.setBackgroundResource(android.R.drawable.edit_text);
+                mEdtMeasValue.setHint(R.string.prompt_gap_value);
+                mBtnGetValue.setVisibility(View.INVISIBLE);
+                Log.d(TAG, "Gap Test - Enabled");
+            } else {
+                mEdtMeasValue.setEnabled(false);
+                mEdtMeasValue.setFocusable(false);
+                mEdtMeasValue.setFocusableInTouchMode(false);
+                mEdtMeasValue.setKeyListener(DigitsKeyListener.getInstance("01234567890.-"));
+                mEdtMeasValue.setBackgroundResource(android.R.color.transparent);
+                mEdtMeasValue.setHint("");
+                mEdtMeasValue.setTextColor(getResources().getColor(android.R.color.black));
+                mBtnGetValue.setVisibility(View.VISIBLE);
+                Log.d(TAG, "Gap Test - Disabled");
+            }
+
             mSpnMeasCause.setEnabled(true);
-            mBtnGetValue.setVisibility(View.VISIBLE);
+            // mBtnGetValue.setVisibility(View.VISIBLE);
             mBtnClearValue.setVisibility(View.VISIBLE);
         } else {
+            mEdtMeasValue.setEnabled(false);
             mSpnMeasCause.setEnabled(false);
             mBtnGetValue.setVisibility(View.INVISIBLE);
             mBtnClearValue.setVisibility(View.INVISIBLE);
@@ -503,7 +592,7 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 			
             getView().setBackgroundColor(getResources().getColor(mMeasurement.isInControl()? R.color.measInControl : R.color.measOutControl));
 
-            mTxtMeasValue.setText(df.format(mMeasurement.getValue()));
+            mEdtMeasValue.setText(df.format(mMeasurement.getValue()));
             mTxtMeasRange.setText(df.format(mMeasurement.getRange()));
 			mImgInControl.setImageResource(mMeasurement.isInControl() ? R.drawable.ic_meas_in_control : R.drawable.ic_meas_out_control);
 
@@ -527,7 +616,7 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 
 		} else {
             getView().setBackgroundColor(getResources().getColor(android.R.color.background_light));
-			mTxtMeasValue.setText("");
+			mEdtMeasValue.setText("");
             mTxtMeasRange.setText("");
             mImgInControl.setImageResource(R.drawable.ic_meas_unknown);
             mSpnMeasCause.setSelection(0);
@@ -537,4 +626,19 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
 		return;
 	}	
 
+    // returns whether feature is a gap check
+    public Boolean isGapCheck() {
+        if (mFeature != null) {
+            return (mFeature.isGapCheck());
+        } else {
+            return null;
+        }
+    }
+
+    // hide keyboard input
+    // see: http://stackoverflow.com/questions/24335223/edittext-swipes-out-of-visible-view-but-keyboard-remains
+    public void hideInput() {
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mEdtMeasValue.getWindowToken(), 0);
+    }
 }
