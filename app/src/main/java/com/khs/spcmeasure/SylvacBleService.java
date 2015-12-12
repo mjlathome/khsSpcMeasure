@@ -122,18 +122,34 @@ public class SylvacBleService extends Service {
                 // TODO remove later - now calls connectDevice
 //	        	// initiate Ble scan
 //	        	scanLeDevice(true);
-                connectDevice();
+
+                // No longer immediately to the device, this will be established when necessary
+                // connectDevice();
 	        }	        
         }
         
         return;
 	}
 
-	@Override
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "ServiceStarted");
+
+        // let it continue running until it is stopped.
+        return START_STICKY;
+    }
+
+    @Override
 	public IBinder onBind(Intent intent) {
 		// binder has getService method to obtain reference to this Service
 		return myBinder;
-	}	
+	}
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.d(TAG, "onUnbind: " + this.getClass().getName());
+        return super.onUnbind(intent);
+    }
 
     // perform clean-uo prior to exit
 	@Override
@@ -261,9 +277,14 @@ public class SylvacBleService extends Service {
                     gatt.discoverServices();
                     break;
                 case BluetoothProfile.STATE_DISCONNECTED:
-                    Log.e(TAG, "gattCallback - STATE_DISCONNECTED");
+                    Log.i(TAG, "gattCallback - STATE_DISCONNECTED");
                     mConnectionState = ConnectionState.DISCONNECTED;
-                    mConnectedGatt = disconnectGatt(gatt);
+                    // disconnect gatt called earlier
+                    // mConnectedGatt = disconnectGatt(gatt);
+
+                    // TODO see Google bug:
+                    // http://stackoverflow.com/questions/29758890/bluetooth-gatt-callback-not-working-with-new-api-for-lollipop
+                    gatt.close();
                     break;
                 default:
                     Log.e(TAG, "gattCallback - STATE_OTHER");
@@ -475,7 +496,8 @@ public class SylvacBleService extends Service {
         if (gatt != null) {
             Log.d(TAG, "gattCallback - before close mConnectedGatt");
             gatt.disconnect();
-            gatt.close();
+            // TODO remove later see Google bug
+            // gatt.close();
             gatt = null;
             Log.d(TAG, "gattCallback - after close mConnectedGatt");
         }
@@ -485,7 +507,7 @@ public class SylvacBleService extends Service {
 
     // disconnect device
     public void disconnectDevice() {
-        // ensure Ble resources are released
+        Log.d(TAG, "disconnectDevice: " + mConnectedGatt);
 
         // ensure Ble resources are released
         mConnectedGatt = disconnectGatt(mConnectedGatt);
@@ -505,6 +527,8 @@ public class SylvacBleService extends Service {
     // ExpandableListView on the UI.
     // FUTURE rename this method as is registering for services too!
     private void displayGattServices(List<BluetoothGattService> gattServices) {
+        Log.d(TAG, "displayGattServices - START");
+
         if (gattServices == null) return;
 
         // clear BLE command queues

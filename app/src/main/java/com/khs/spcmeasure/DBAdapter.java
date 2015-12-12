@@ -427,7 +427,7 @@ public class DBAdapter {
 		
 		// don't output id if not known 
 		if(feature.getId() != null) {
-			Log.d(TAG, "featToVal: id = " + String.valueOf(feature.getId()));
+			// Log.d(TAG, "featToVal: id = " + String.valueOf(feature.getId()));
 			values.put(KEY_ROWID, feature.getId());	
 		}	
 
@@ -440,13 +440,13 @@ public class DBAdapter {
 
         // don't output cp if not known
         if(feature.getCp() != null) {
-            Log.d(TAG, "featToVal: cp = " + String.valueOf(feature.getCp()));
+            // Log.d(TAG, "featToVal: cp = " + String.valueOf(feature.getCp()));
             values.put(KEY_CP, feature.getCp());
         }
 
         // don't output cpk if not known
         if(feature.getCpk() != null) {
-            Log.d(TAG, "featToVal: cpk = " + String.valueOf(feature.getCpk()));
+            // Log.d(TAG, "featToVal: cpk = " + String.valueOf(feature.getCpk()));
             values.put(KEY_CPK, feature.getCpk());
         }
 
@@ -457,11 +457,11 @@ public class DBAdapter {
     //region Limit
     // create new limit
 	public long createLimit(Limits limit) {
-		Log.d(TAG, "createLimit: p; f; r; t = " +
-				String.valueOf(limit.getProdId()) 	+ "; " + 
-				String.valueOf(limit.getFeatId()) 		+ "; " +
-				String.valueOf(limit.getLimitRev()	+ "; " +
-				limit.getLimitType().getValue()) );
+//		Log.d(TAG, "createLimit: p; f; r; t = " +
+//				String.valueOf(limit.getProdId()) 	+ "; " +
+//				String.valueOf(limit.getFeatId()) 		+ "; " +
+//				String.valueOf(limit.getLimitRev()	+ "; " +
+//				limit.getLimitType().getValue()) );
 		// insert row
 		return db.insert(TABLE_LIMITS, null, limitToValues(limit));
 	};
@@ -506,16 +506,16 @@ public class DBAdapter {
 	
 	// update single Limit
 	public boolean updateLimit(Limits limit) {	
-		Log.d(TAG, "updateLimit: prodId; featId; rev; type = " +
-				String.valueOf(limit.getProdId()) 	+ "; " + 
-				String.valueOf(limit.getFeatId()) 		+ "; " +
-				String.valueOf(limit.getLimitRev()	+ "; " +
-				limit.getLimitType().getValue()) );		
-
-		Log.d(TAG, "updateLimit: SQL = " + KEY_PROD_ID + "=" + limit.getProdId() + " AND " +
-				KEY_FEAT_ID + "=" + limit.getFeatId() + " AND " +
-				KEY_LIMIT_REV + "=" + limit.getLimitRev() + " AND " +
-				KEY_LIMIT_TYPE + "='" + limit.getLimitType().getValue() + "'");
+//		Log.d(TAG, "updateLimit: prodId; featId; rev; type = " +
+//				String.valueOf(limit.getProdId()) 	+ "; " +
+//				String.valueOf(limit.getFeatId()) 		+ "; " +
+//				String.valueOf(limit.getLimitRev()	+ "; " +
+//				limit.getLimitType().getValue()) );
+//
+//		Log.d(TAG, "updateLimit: SQL = " + KEY_PROD_ID + "=" + limit.getProdId() + " AND " +
+//				KEY_FEAT_ID + "=" + limit.getFeatId() + " AND " +
+//				KEY_LIMIT_REV + "=" + limit.getLimitRev() + " AND " +
+//				KEY_LIMIT_TYPE + "='" + limit.getLimitType().getValue() + "'");
 		
 		return db.update(TABLE_LIMITS, limitToValues(limit), 
 				KEY_PROD_ID + "=" + limit.getProdId() + " AND " +
@@ -547,12 +547,12 @@ public class DBAdapter {
 	private ContentValues limitToValues(Limits limit) {
 		ContentValues values = new ContentValues();
 
-		Log.d(TAG, "limitToValues: Limit Id, prodId; featId; rev; type = " +
-				String.valueOf(limit.getId()) + "; " +
-				String.valueOf(limit.getProdId()) 	+ "; " + 
-				String.valueOf(limit.getFeatId()) 		+ "; " +
-				String.valueOf(limit.getLimitRev()	+ "; " +
-		        limit.getLimitType().getValue()) );		
+//		Log.d(TAG, "limitToValues: Limit Id, prodId; featId; rev; type = " +
+//				String.valueOf(limit.getId()) + "; " +
+//				String.valueOf(limit.getProdId()) 	+ "; " +
+//				String.valueOf(limit.getFeatId()) 		+ "; " +
+//				String.valueOf(limit.getLimitRev()	+ "; " +
+//		        limit.getLimitType().getValue()) );
 		
 		// don't output id if not known 
 		if(limit.getId() != null) {
@@ -573,11 +573,11 @@ public class DBAdapter {
     //region Piece
     // create new piece
 	public long createPiece(Piece piece) {
-		Log.d(TAG, "createPiece: prodId; sgId; pieceNum; collDT = " +
-				String.valueOf(piece.getProdId()) 	+ "; " + 
-				String.valueOf(piece.getSgId()) 		+ "; " +
-				String.valueOf(piece.getPieceNum())	+ "; " +
-				String.valueOf(piece.getCollectDt()));
+//		Log.d(TAG, "createPiece: prodId; sgId; pieceNum; collDT = " +
+//				String.valueOf(piece.getProdId()) 	+ "; " +
+//				String.valueOf(piece.getSgId()) 		+ "; " +
+//				String.valueOf(piece.getPieceNum())	+ "; " +
+//				String.valueOf(piece.getCollectDt()));
 				
 		// insert row
 		return db.insert(TABLE_PIECE, null, pieceToValues(piece));
@@ -705,8 +705,8 @@ public class DBAdapter {
 				c.getString(c.getColumnIndex(KEY_LOT)),
 				CollectStatus.fromValue(c.getString(c.getColumnIndex(KEY_COLLECT_STATUS))));							
 		
-		Log.d(TAG, "cursorToPiece, piece id = " + piece.getId());
-		Log.d(TAG, "cursorToPiece, piece st = " + piece.getStatus());
+		// Log.d(TAG, "cursorToPiece, piece id = " + piece.getId());
+		// Log.d(TAG, "cursorToPiece, piece st = " + piece.getStatus());
 		
 		return piece;			
 	}		
@@ -912,7 +912,7 @@ public class DBAdapter {
 
     // update single Simple Code
     public boolean updateSimpleCode(SimpleCode code) {
-        Log.d(TAG, "updateSimpleCode: Id = " + String.valueOf(code.getId()));
+        // Log.d(TAG, "updateSimpleCode: Id = " + String.valueOf(code.getId()));
         return db.update(TABLE_SIMPLE_CODE, simpleCodeToValues(code), KEY_ROWID + "=" + code.getId(), null) > 0;
     };
 

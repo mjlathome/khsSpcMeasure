@@ -241,7 +241,7 @@ public class HistoryService extends IntentService {
 
                     // extract Piece
                     Cursor cPiece = db.getPiece(prodId, sgId, 1);
-                    Log.d(TAG, "sgId = " + sgId + "; collDt = " + collDt + "; operator = " + operator + "; cPiece = " + db.isCursorEmpty(cPiece));
+                    // Log.d(TAG, "sgId = " + sgId + "; collDt = " + collDt + "; operator = " + operator + "; cPiece = " + db.isCursorEmpty(cPiece));
 
                     // import Piece if not found on device
                     // TODO need to check last modified date in the future

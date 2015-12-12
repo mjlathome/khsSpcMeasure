@@ -64,11 +64,11 @@ public class FeatureReviewAdapter extends CursorAdapter {
 
         // populate ListView image and set row colour according to Measurement in-control state
         if (meas != null) {
-            Log.d(TAG, "meas - isInCtrl = " + meas.isInControl());
+            // Log.d(TAG, "meas - isInCtrl = " + meas.isInControl());
             ivInControl.setImageResource(meas.isInControl()? R.drawable.ic_meas_in_control : R.drawable.ic_meas_out_control);
             view.setBackgroundColor(mContext.getResources().getColor(meas.isInControl()? R.color.measInControl : R.color.measOutControl));
         } else {
-            Log.d(TAG, "meas - null");
+            // Log.d(TAG, "meas - null");
             ivInControl.setImageResource(R.drawable.ic_meas_unknown);
             view.setBackgroundColor(mContext.getResources().getColor(android.R.color.background_light));
         }

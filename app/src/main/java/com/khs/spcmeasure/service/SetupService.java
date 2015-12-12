@@ -177,7 +177,7 @@ public class SetupService extends IntentService {
                 String customer = jProduct.getString(TAG_CUSTOMER);
                 String program = jProduct.getString(TAG_PROGRAM);
 
-                Log.d(TAG, "id = " + Long.toString(prodId));
+                // Log.d(TAG, "id = " + Long.toString(prodId));
 
                 // create Product
                 Product product = new Product(prodId, name, active, customer, program);
@@ -203,7 +203,7 @@ public class SetupService extends IntentService {
 
                     // create the Feature object
                     Feature feature = new Feature(product.getId(), featId, name, active, limitRev, cp, cpk);
-                    Log.d(TAG, "feat id;name = " + Long.toString(featId) + "; " + name);
+                    // Log.d(TAG, "feat id;name = " + Long.toString(featId) + "; " + name);
 
                     // update or insert Feature into the DB
                     if (db.updateFeature(feature) == false) {
@@ -221,12 +221,12 @@ public class SetupService extends IntentService {
                         double upper 	 = jLimit.getDouble(TAG_UPPER);
                         double lower     = jLimit.getDouble(TAG_LOWER);
 
-                        Log.d(TAG, "DEBUG limit type; upper; lower; LimitType = " +
-                                limitType + "; " + upper + "; " + lower + "; " + LimitType.fromValue(limitType).getValue() );
+                        // Log.d(TAG, "DEBUG limit type; upper; lower; LimitType = " +
+                        //        limitType + "; " + upper + "; " + lower + "; " + LimitType.fromValue(limitType).getValue() );
 
                         // create the Limit object
                         Limits limit = new Limits(product.getId(), feature.getFeatId(), limitRev, LimitType.fromValue(limitType), upper, lower);
-                        Log.d(TAG, "DEBUG limit type; upper; lower = " + limitType + "; " + upper + "; " + lower);
+                        // Log.d(TAG, "DEBUG limit type; upper; lower = " + limitType + "; " + upper + "; " + lower);
 
                         // update or insert Limit into the DB
                         if (db.updateLimit(limit) == false) {
@@ -302,7 +302,7 @@ public class SetupService extends IntentService {
 
     // broadcast action
     private void broadcastUpdate(final String action, final long prodId, final ActionStatus actStat) {
-        Log.d(TAG, "broadcastUpdate: action = " + action + "; prodId = " + prodId + "; actStat = " + actStat);
+        // Log.d(TAG, "broadcastUpdate: action = " + action + "; prodId = " + prodId + "; actStat = " + actStat);
 
         Intent intent = new Intent(action);
         // intent.addCategory(Intent.CATEGORY_DEFAULT);

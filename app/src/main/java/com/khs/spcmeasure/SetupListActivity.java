@@ -19,6 +19,9 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
 
     private static final String TAG = "SetupListActivity";
 
+    // BLE member variables
+    private SylvacBleService mSylvacBleSrvc = null;
+
     // Activity result codes
     private static int RESULT_IMPORT = 1;
 
@@ -30,10 +33,14 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
 
         // initialize shared preference to the default values - executed once only
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+
+        // start the BLE service
+        startBleService();
 
         setContentView(R.layout.activity_setup_list);
         if (savedInstanceState == null) {
@@ -93,6 +100,13 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
 //            SecurityUtils.setLockStatus(this, false);
 //        }
 //        Log.d(TAG, "OnStop: 2 Lock = " + SecurityUtils.getLockStatus(this) + "; App = " + SecurityUtils.getInAppStatus(this));
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
+        stopBleService();
+        super.onDestroy();
     }
 
     @Override
@@ -183,5 +197,19 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
         if (mSetupListFrag != null) {
             mSetupListFrag.refreshList();
         }
+    }
+
+    // method to start the BLE service
+    // see:
+    // http://www.tutorialspoint.com/android/android_services.htm
+    public void startBleService() {
+        Log.d(TAG, "startBleService");
+        startService(new Intent(getBaseContext(), SylvacBleService.class));
+    }
+
+    // method to stop the BLE service
+    public void stopBleService() {
+        Log.d(TAG, "stopBleService");
+        stopService(new Intent(getBaseContext(), SylvacBleService.class));
     }
 }

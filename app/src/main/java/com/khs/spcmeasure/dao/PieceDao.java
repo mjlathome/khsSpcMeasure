@@ -29,7 +29,7 @@ public class PieceDao {
 
 	// find Piece from id
 	public Piece getPiece(long pieceId) {
-		Log.d(TAG, "getPiece id = " + pieceId);
+		// Log.d(TAG, "getPiece id = " + pieceId);
 
         Piece piece = null;
         Cursor cPiece = null;
@@ -50,7 +50,7 @@ public class PieceDao {
             db.close();
         }
 
-        Log.d(TAG, "getPiece: " + piece);
+        // Log.d(TAG, "getPiece: " + piece);
 
         return piece;
 	}

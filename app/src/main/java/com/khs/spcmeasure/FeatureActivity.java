@@ -77,7 +77,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
     ViewPager mPager;
 
     // BLE member variables
-    private SylvacBleService mBleService = null;
+    private SylvacBleService mSylvacBleSrvc = null;
     boolean mBound = false;
 
     // tab member variables
@@ -93,16 +93,19 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
     private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
 
     // handle BLE service connection status change
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private ServiceConnection mBleSrvcConn = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.d(TAG, "onServiceConnected");
 
             SylvacBleService.MyLocalBinder binder = (SylvacBleService.MyLocalBinder) service;
-            mBleService = binder.getService();
+            mSylvacBleSrvc = binder.getService();
 
             mBound = true;
+
+            // connect ble device, if necessary
+            enableMeasurement();
         }
 
         @Override
@@ -111,7 +114,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
             // TODO Auto-generated method stub
 
-            mBleService = null;
+            mSylvacBleSrvc = null;
             mBound = false;
         }
 
@@ -221,6 +224,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feature);
 
@@ -235,6 +239,9 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
             AlertUtils.errorDialogShow(this, getString(R.string.text_mess_arguments_invalid));
             finish();
         }
+
+        // bind to BLE service
+        bindBleService();
 
         // Set up the action bar to show a dropdown list.
         final ActionBar actionBar = getActionBar();
@@ -363,7 +370,6 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
         // TODO should this be in onResume instead?
         // set bound state
-        enableMeasurement();
     }
 
     @Override
@@ -372,9 +378,15 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
         // TODO should this be in onPause instead?
 
+        // TODO remove later
         // unbind from Ble service
-        unbindBleService();
+        // unbindBleService();
+
+        // disconnect ble device
+        disconnectBleDevice();
+
         super.onStop();
+
     }
 
     @Override
@@ -454,24 +466,24 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
                 return true;                        
             case R.id.mnuScanBle:
                 // TODO remove later - now calls connectDevice
-                // mBleService.scanLeDevice(true);
+                // mSylvacBleSrvc.scanLeDevice(true);
                 if (mBound) {
-                    mBleService.connectDevice();
+                    mSylvacBleSrvc.connectDevice();
                 }
                 return true;
             case R.id.mnuSetUomMm:
                 if (mBound) {
-                    mBleService.writeCharacteristic(SylvacBleService.COMMAND_SET_MEASUREMENT_UOM_MM);
+                    mSylvacBleSrvc.writeCharacteristic(SylvacBleService.COMMAND_SET_MEASUREMENT_UOM_MM);
                 }
                 return true;
             case R.id.mnuSetZero:
                 if (mBound) {
-                    mBleService.writeCharacteristic(SylvacBleService.COMMAND_SET_ZERO_RESET);
+                    mSylvacBleSrvc.writeCharacteristic(SylvacBleService.COMMAND_SET_ZERO_RESET);
                 }
                 return true;
             case R.id.mnuGetBattery:
                 if (mBound) {
-                    mBleService.writeCharacteristic(SylvacBleService.COMMAND_GET_BATTERY_STATUS);
+                    mSylvacBleSrvc.writeCharacteristic(SylvacBleService.COMMAND_GET_BATTERY_STATUS);
                 }
                 return true;
             default:
@@ -500,12 +512,17 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
     // handle Activity destroy
     @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
         super.onDestroy();
 
         // TODO may need to close down the GATT etc here first, if already connected
-        // close down services
-        Intent intent = new Intent(this, SylvacBleService.class);
-        stopService(intent);
+        // close down BLE service, if finishing
+        if (isFinishing()) {
+            unbindBleService();
+        }
+
+        // Intent intent = new Intent(this, SylvacBleService.class);
+        // stopService(intent);
     }
 
     // extracts arguments from provided Bundle
@@ -537,17 +554,19 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
     // set bind state
     private void enableMeasurement() {
+        Log.d(TAG, "enableMeasurement");
+
         // for Open Pieces only to save battery power
         // check security too
         if (mPiece.getStatus() == CollectStatus.OPEN) {
             if (SecurityUtils.checkSecurity(this, mShowSecMess)) {
-                bindBleService();
+                connectBleDevice();
             } else {
                 mShowSecMess = false;
-                unbindBleService();
+                disconnectBleDevice();
             }
         } else {
-            unbindBleService();
+            disconnectBleDevice();
         }
 
         // update Measurement tab fields
@@ -559,42 +578,60 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
     // bind to Ble service
     private void bindBleService() {
         Intent intent = new Intent(this, SylvacBleService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        bindService(intent, mBleSrvcConn, Context.BIND_AUTO_CREATE);
     }
 
     // unbind from Ble service
     private void unbindBleService() {
-        if (mBound == true && mConnection != null) {
+        if (mBound == true && mBleSrvcConn != null) {
 
             // disconnect device
-            if (mBleService != null) {
-                mBleService.disconnectDevice();
-            }
+            disconnectBleDevice();
 
-            unbindService(mConnection);
+            unbindService(mBleSrvcConn);
             mBound = false;
+        }
+    }
+
+    // connect Ble device
+    private void connectBleDevice() {
+        Log.d(TAG, "connectBleDevice: " + mSylvacBleSrvc);
+        if (mSylvacBleSrvc != null) {
+            mSylvacBleSrvc.connectDevice();
+        }
+    }
+
+    // disconnect Ble device
+    private void disconnectBleDevice() {
+        Log.d(TAG, "disconnectBleDevice: " + mSylvacBleSrvc);
+        if (mSylvacBleSrvc != null) {
+            mSylvacBleSrvc.disconnectDevice();
         }
     }
 
     // getter for Ble service
     public SylvacBleService getBleService() {
-        return mBleService;
+        return mSylvacBleSrvc;
     }
 
     // extracts Feature pager position for the feature Id provided
     // returns 0 if feature Id is unknown
     public int getFeaturePos(Long featId) {
+        Log.d(TAG, "getFeaturePos: featId = " + featId);
         int pos = 0;
 
         if (featId != null) {
             // start off at required feature
             for (Feature f : mFeatList) {
-                if (f.getId() == mFeatId) {
+                Log.d(TAG, "getFeaturePos: featId = " + featId + "; f.id = " + f.getId());
+                if (f.getId().equals(mFeatId)) {
                     pos = mFeatList.indexOf(f);
                     break;
                 }
             }
         }
+
+        Log.d(TAG, "getFeaturePos: featId = " + featId + " ; pos = " + pos);
 
         return pos;
     }
@@ -859,7 +896,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
     public void onClickBtnGetValue(View view) {
         Log.d(TAG, "onClickBtnGetValue");
 
-        mBleService.writeCharacteristic(SylvacBleService.COMMAND_GET_CURRENT_VALUE);
+        mSylvacBleSrvc.writeCharacteristic(SylvacBleService.COMMAND_GET_CURRENT_VALUE);
         return;
     }
 

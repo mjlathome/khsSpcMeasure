@@ -144,7 +144,7 @@ public class SimpleCodeService extends IntentService {
 
                         // create the SimpleCode object
                         SimpleCode simpleCode = new SimpleCode(id, type, code, desc, intCode, active);
-                        Log.d(TAG, "onPostExecute id = " + id);
+                        // Log.d(TAG, "onPostExecute id = " + id);
 
                         // update or insert SimpleCode into the DB
                         if (db.updateSimpleCode(simpleCode) == false) {
