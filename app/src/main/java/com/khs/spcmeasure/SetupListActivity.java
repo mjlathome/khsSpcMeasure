@@ -73,6 +73,7 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
 
     @Override
     protected void onStart() {
+        Log.d(TAG, "onStart");
         super.onStart();
 
 //        Log.d(TAG, "OnStart: 1 Lock = " + SecurityUtils.getLockStatus(this) + "; App = " + SecurityUtils.getInAppStatus(this));
@@ -89,6 +90,7 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
 
     @Override
     protected void onStop() {
+        Log.d(TAG, "onStop");
         super.onStop();
 
 //        Log.d(TAG, "OnStop: 1 Lock = " + SecurityUtils.getLockStatus(this) + "; App = " + SecurityUtils.getInAppStatus(this));

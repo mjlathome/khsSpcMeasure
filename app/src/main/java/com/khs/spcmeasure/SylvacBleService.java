@@ -28,6 +28,8 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.khs.spcmeasure.library.NotificationId;
+
 // handle all Bluetooth Low Energy (BLE) communication
 // queues are now used for the write/read requests.  see:
 // http://stackoverflow.com/questions/17910322/android-ble-api-gatt-notification-not-received
@@ -61,7 +63,7 @@ public class SylvacBleService extends Service {
     private String mLastWrite = "";
     private boolean mCanWrite = true;
 
-    private int mNotifyId = 1;
+    private int mNotifyId = NotificationId.getId();
     
     // local broadcast intent actions
     // public final static String ACTION_PREFIX = "com.example.localbound_";
@@ -93,7 +95,8 @@ public class SylvacBleService extends Service {
     private ConnectionState mConnectionState = ConnectionState.DISCONNECTED;    
     
 	@Override
-	public void onCreate() {		
+	public void onCreate() {
+        Log.d(TAG, "onCreate");
 		super.onCreate();
 					
 		// create new handler for queuing runnables i.e. stopLeScan
@@ -154,6 +157,8 @@ public class SylvacBleService extends Service {
     // perform clean-uo prior to exit
 	@Override
 	public void onDestroy() {
+        Log.d(TAG, "onDestroy");
+
         // ensure Ble resources are released
         mConnectedGatt = disconnectGatt(mConnectedGatt);
 
@@ -854,12 +859,14 @@ public class SylvacBleService extends Service {
 	
 	// update service notification - uses text string provided
 	private void updateNotification(String text) {
+        Log.d(TAG, "updateNotification: text = " + text);
 		mNotificationManager.notify(mNotifyId, getNotification(text));
 		return;
 	}	
 	
 	// remove service notification
 	private void removeNotification() {
+        Log.d(TAG, "removeNotification");
 		mNotificationManager.cancel(mNotifyId);
 		return;
 	}
