@@ -238,9 +238,6 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
             finish();
         }
 
-        // bind to BLE service
-        bindBleService();
-
         // Set up the action bar to show a dropdown list.
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayShowTitleEnabled(false);
@@ -307,10 +304,30 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         mPager.setCurrentItem(getFeaturePos(mFeatId));
     }
 
+    // handle Activity destroy
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
+        super.onDestroy();
+
+        // TODO may need to close down the GATT etc here first, if already connected
+        // close down BLE service, if finishing
+        // if (isFinishing()) {
+        // unbindBleService();
+        // }
+
+        // Intent intent = new Intent(this, SylvacBleService.class);
+        // stopService(intent);
+    }
+
     @Override
     protected void onResume() {
         Log.d(TAG, "onResume");
+
         super.onResume();
+
+        // bind to BLE service
+        bindBleService();
 
         // FUTURE move all Ble checking to the service.  Can this be done due to UI interaction.
         // TODO at minimum move into private method
@@ -353,9 +370,12 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
     @Override
     protected void onPause() {
+        Log.d(TAG, "onPause");
+
         super.onPause();
 
-        Log.d(TAG, "onPause");
+        // close down BLE service
+        unbindBleService();
 
         // unregister local broadcast receiver
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
@@ -506,22 +526,6 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         mAdapter.notifyDataSetChanged();
 
         return true;
-    }
-
-    // handle Activity destroy
-    @Override
-    protected void onDestroy() {
-        Log.d(TAG, "onDestroy");
-        super.onDestroy();
-
-        // TODO may need to close down the GATT etc here first, if already connected
-        // close down BLE service, if finishing
-        // if (isFinishing()) {
-            unbindBleService();
-        // }
-
-        // Intent intent = new Intent(this, SylvacBleService.class);
-        // stopService(intent);
     }
 
     // extracts arguments from provided Bundle
