@@ -15,7 +15,6 @@ import android.view.Window;
 
 import com.khs.spcmeasure.library.ActionStatus;
 import com.khs.spcmeasure.library.SecurityUtils;
-import com.khs.spcmeasure.service.HistoryService;
 import com.khs.spcmeasure.service.SetupService;
 
 public class SetupImportActivity extends Activity {

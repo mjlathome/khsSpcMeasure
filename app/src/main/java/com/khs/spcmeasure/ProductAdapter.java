@@ -1,15 +1,15 @@
 package com.khs.spcmeasure;
 
-import java.util.List;
-
-import com.khs.spcmeasure.entity.Product;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.khs.spcmeasure.entity.Product;
+
+import java.util.List;
 
 public class ProductAdapter extends ArrayAdapter<Product>{
 

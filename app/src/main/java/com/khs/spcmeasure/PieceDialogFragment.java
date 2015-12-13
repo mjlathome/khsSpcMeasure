@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.entity.Product;
 import com.khs.spcmeasure.library.AlertUtils;
@@ -25,11 +27,7 @@ import com.khs.spcmeasure.library.DateTimeUtils;
 import com.khs.spcmeasure.library.ProgressUtils;
 import com.khs.spcmeasure.library.SecurityUtils;
 
-import java.security.Security;
 import java.util.Date;
-
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 
 // captures new piece details and launches measurement activity
 public class PieceDialogFragment extends DialogFragment implements OnClickListener{

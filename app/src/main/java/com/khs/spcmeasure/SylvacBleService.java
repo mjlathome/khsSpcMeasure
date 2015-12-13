@@ -1,12 +1,5 @@
 package com.khs.spcmeasure;
 
-import java.nio.ByteBuffer;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
-import java.util.UUID;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
@@ -29,6 +22,13 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.khs.spcmeasure.library.NotificationId;
+
+import java.nio.ByteBuffer;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+import java.util.UUID;
 
 // handle all Bluetooth Low Energy (BLE) communication
 // queues are now used for the write/read requests.  see:

@@ -2,7 +2,6 @@ package com.khs.spcmeasure;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.MenuItem;
 

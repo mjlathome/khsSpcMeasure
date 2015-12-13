@@ -3,17 +3,17 @@
  */
 package com.khs.spcmeasure;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.khs.spcmeasure.entity.Product;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import com.khs.spcmeasure.entity.Product;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Mark

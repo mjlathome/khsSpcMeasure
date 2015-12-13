@@ -1,24 +1,16 @@
 package com.khs.spcmeasure;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import com.khs.spcmeasure.dao.PieceDao;
-import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.library.AlertUtils;
-import com.khs.spcmeasure.library.CollectStatus;
 import com.khs.spcmeasure.library.SecurityUtils;
-import com.khs.spcmeasure.service.MeasurementService;
 
 // TODO handle Action Bar menu Up button - see Stack Overflow
 

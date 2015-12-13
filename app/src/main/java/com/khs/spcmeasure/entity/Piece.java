@@ -1,8 +1,8 @@
 package com.khs.spcmeasure.entity;
 
-import java.util.Date;
-
 import com.khs.spcmeasure.library.CollectStatus;
+
+import java.util.Date;
 
 public class Piece {
 

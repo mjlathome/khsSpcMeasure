@@ -1,26 +1,19 @@
 package com.khs.spcmeasure.tasks;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.khs.spcmeasure.DBAdapter;
-import com.khs.spcmeasure.entity.Feature;
-import com.khs.spcmeasure.entity.Limits;
-import com.khs.spcmeasure.entity.Piece;
-import com.khs.spcmeasure.entity.Product;
-import com.khs.spcmeasure.library.CollectStatus;
-import com.khs.spcmeasure.library.JSONParser;
-import com.khs.spcmeasure.library.LimitType;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.khs.spcmeasure.DBAdapter;
+import com.khs.spcmeasure.entity.Piece;
+import com.khs.spcmeasure.library.CollectStatus;
+import com.khs.spcmeasure.library.JSONParser;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /* task to export piece/measurement data to the server.
 ** updates the Piece with the response sub-group id.

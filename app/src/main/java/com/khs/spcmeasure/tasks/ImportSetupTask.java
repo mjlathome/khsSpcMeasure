@@ -1,11 +1,9 @@
 package com.khs.spcmeasure.tasks;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import android.content.Context;
+import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.khs.spcmeasure.DBAdapter;
 import com.khs.spcmeasure.entity.Feature;
@@ -14,10 +12,9 @@ import com.khs.spcmeasure.entity.Product;
 import com.khs.spcmeasure.library.JSONParser;
 import com.khs.spcmeasure.library.LimitType;
 
-import android.content.Context;
-import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.Toast;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class ImportSetupTask extends AsyncTask<Long, String, JSONObject>{
     private static final String TAG = "ImportSetupTask";

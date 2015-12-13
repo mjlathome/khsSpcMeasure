@@ -1,18 +1,17 @@
 package com.khs.spcmeasure;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
+import android.content.AsyncTaskLoader;
+import android.content.Context;
+import android.util.Log;
 
 import com.khs.spcmeasure.entity.Product;
 import com.khs.spcmeasure.library.JSONParser;
 
-import android.content.AsyncTaskLoader;
-import android.content.Context;
-import android.util.Log;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProductLoader extends AsyncTaskLoader<List<Product>>{
 

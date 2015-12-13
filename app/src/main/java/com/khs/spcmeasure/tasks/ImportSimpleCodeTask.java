@@ -7,12 +7,8 @@ import android.widget.Toast;
 
 import com.khs.spcmeasure.DBAdapter;
 import com.khs.spcmeasure.R;
-import com.khs.spcmeasure.entity.Feature;
-import com.khs.spcmeasure.entity.Limits;
-import com.khs.spcmeasure.entity.Product;
 import com.khs.spcmeasure.entity.SimpleCode;
 import com.khs.spcmeasure.library.JSONParser;
-import com.khs.spcmeasure.library.LimitType;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -1,21 +1,19 @@
 package com.khs.spcmeasure.widget;
 
-import com.khs.spcmeasure.R;
-import com.khs.spcmeasure.library.CollectStatus;
-
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.ActionProvider;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+
+import com.khs.spcmeasure.R;
+import com.khs.spcmeasure.library.CollectStatus;
 
 // TODO needs comments
 

@@ -1,12 +1,12 @@
 package com.khs.spcmeasure;
 
-import com.khs.spcmeasure.library.AlertUtils;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.khs.spcmeasure.library.AlertUtils;
 
 public class ErrorDialogActivity extends Activity{
 

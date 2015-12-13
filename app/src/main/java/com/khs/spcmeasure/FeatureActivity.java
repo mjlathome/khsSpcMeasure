@@ -1,7 +1,6 @@
 package com.khs.spcmeasure;
 
 import android.app.ActionBar;
-
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
@@ -14,7 +13,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
-
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;

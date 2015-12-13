@@ -1,16 +1,5 @@
 package com.khs.spcmeasure;
 
-import com.khs.spcmeasure.entity.Product;
-import com.khs.spcmeasure.entity.Feature;
-import com.khs.spcmeasure.entity.Limits;
-import com.khs.spcmeasure.entity.Piece;
-import com.khs.spcmeasure.entity.Measurement;
-
-import com.khs.spcmeasure.entity.SimpleCode;
-import com.khs.spcmeasure.library.CollectStatus;
-import com.khs.spcmeasure.library.DateTimeUtils;
-import com.khs.spcmeasure.library.LimitType;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -18,6 +7,16 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import com.khs.spcmeasure.entity.Feature;
+import com.khs.spcmeasure.entity.Limits;
+import com.khs.spcmeasure.entity.Measurement;
+import com.khs.spcmeasure.entity.Piece;
+import com.khs.spcmeasure.entity.Product;
+import com.khs.spcmeasure.entity.SimpleCode;
+import com.khs.spcmeasure.library.CollectStatus;
+import com.khs.spcmeasure.library.DateTimeUtils;
+import com.khs.spcmeasure.library.LimitType;
 
 import java.util.Date;
 

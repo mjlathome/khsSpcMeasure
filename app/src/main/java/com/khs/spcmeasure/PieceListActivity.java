@@ -1,16 +1,11 @@
 package com.khs.spcmeasure;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.app.Activity;
-
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,12 +13,9 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.khs.spcmeasure.library.ActionStatus;
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.CollectStatus;
 import com.khs.spcmeasure.library.SecurityUtils;
-import com.khs.spcmeasure.service.HistoryService;
-import com.khs.spcmeasure.service.SetupService;
 
 /**
  * An activity representing a single Piece detail screen. This activity is only

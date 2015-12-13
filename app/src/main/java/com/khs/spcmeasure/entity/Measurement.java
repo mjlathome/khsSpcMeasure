@@ -1,8 +1,8 @@
 package com.khs.spcmeasure.entity;
 
-import java.util.Date;
-
 import android.util.Log;
+
+import java.util.Date;
 
 public class Measurement {
 	

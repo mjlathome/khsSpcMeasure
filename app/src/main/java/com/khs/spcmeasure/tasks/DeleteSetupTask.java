@@ -3,13 +3,13 @@
  */
 package com.khs.spcmeasure.tasks;
 
-import com.khs.spcmeasure.DBAdapter;
-import com.khs.spcmeasure.R;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.khs.spcmeasure.DBAdapter;
+import com.khs.spcmeasure.R;
 
 /**
  * @author Mark

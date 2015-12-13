@@ -4,23 +4,17 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Intent;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.util.Log;
 
 import com.khs.spcmeasure.DBAdapter;
 import com.khs.spcmeasure.PieceListActivity;
 import com.khs.spcmeasure.R;
-import com.khs.spcmeasure.SetupListActivity;
-import com.khs.spcmeasure.entity.Feature;
-import com.khs.spcmeasure.entity.Limits;
-import com.khs.spcmeasure.entity.Piece;
-import com.khs.spcmeasure.entity.Product;
 import com.khs.spcmeasure.library.ActionStatus;
 import com.khs.spcmeasure.library.CollectStatus;
 import com.khs.spcmeasure.library.JSONParser;
-import com.khs.spcmeasure.library.LimitType;
 import com.khs.spcmeasure.library.NotificationId;
 
 import org.json.JSONArray;
