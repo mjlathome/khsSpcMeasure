@@ -311,6 +311,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
     @Override
     protected void onResume() {
+        Log.d(TAG, "onResume");
         super.onResume();
 
         // FUTURE move all Ble checking to the service.  Can this be done due to UI interaction.
@@ -517,9 +518,9 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
         // TODO may need to close down the GATT etc here first, if already connected
         // close down BLE service, if finishing
-        if (isFinishing()) {
+        // if (isFinishing()) {
             unbindBleService();
-        }
+        // }
 
         // Intent intent = new Intent(this, SylvacBleService.class);
         // stopService(intent);
