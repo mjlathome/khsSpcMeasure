@@ -326,9 +326,6 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
         super.onResume();
 
-        // bind to BLE service
-        bindBleService();
-
         // FUTURE move all Ble checking to the service.  Can this be done due to UI interaction.
         // TODO at minimum move into private method
         // Maybe via a callback.
@@ -374,9 +371,6 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
         super.onPause();
 
-        // close down BLE service
-        unbindBleService();
-
         // unregister local broadcast receiver
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
     }
@@ -389,6 +383,9 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
         // TODO should this be in onResume instead?
         // set bound state
+
+        // bind to BLE service
+        bindBleService();
     }
 
     @Override
@@ -401,8 +398,12 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         // unbind from Ble service
         // unbindBleService();
 
+        // close down BLE service
+        unbindBleService();
+
+
         // disconnect ble device
-        disconnectBleDevice();
+        // disconnectBleDevice();
 
         super.onStop();
 

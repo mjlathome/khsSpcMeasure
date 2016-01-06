@@ -81,6 +81,8 @@ public class SetupImportActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+        Log.d(TAG, "onCreate");
+
         // add progress circle to Action Bar - must be done before content added
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
@@ -91,6 +93,12 @@ public class SetupImportActivity extends Activity {
 					.add(R.id.container, new SetupImportFragment()).commit();
 		}				
 	}
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy");
+    }
 
     @Override
     protected void onResume() {

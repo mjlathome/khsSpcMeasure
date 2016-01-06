@@ -28,6 +28,9 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
     // ensure Action Cause list is only imported once
     private static boolean importActionCause = true;
 
+    // ensure that User Login is only asked once when app initially starts
+    private static boolean askLogin = true;
+
     private SetupListFragment mSetupListFrag;
     private Long mProdId;
 
@@ -63,12 +66,17 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
             SimpleCodeService.startActionImport(this, SimpleCodeService.TYPE_ACTION_CAUSE);
         }
 
-        // initialize as logged out
-        SecurityUtils.setIsLoggedIn(this, false);
+        // check if user should be asked to login
+        if (askLogin) {
+            askLogin = false;
 
-        // show login screen
-        Intent intentLogin = new Intent(this, LoginActivity.class);
-        startActivity(intentLogin);
+            // initialize as logged out
+            SecurityUtils.setIsLoggedIn(this, false);
+
+            // show login screen
+            Intent intentLogin = new Intent(this, LoginActivity.class);
+            startActivity(intentLogin);
+        }
     }
 
     @Override

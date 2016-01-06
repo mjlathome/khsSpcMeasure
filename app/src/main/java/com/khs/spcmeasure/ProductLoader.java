@@ -50,10 +50,14 @@ public class ProductLoader extends AsyncTaskLoader<List<Product>>{
 		
 		JSONParser jParser = new JSONParser();
 		JSONArray jArray = null;
-		
+
+		Log.d(TAG, "before getJSONFromURL");
+
 		// get JSON from URL
 		JSONObject json = jParser.getJSONFromUrl(url);
-		
+
+		Log.d(TAG, "after getJSONFromURL");
+
 		Log.d(TAG, "json - " + json);
 		if (json == null) {
 			return null;

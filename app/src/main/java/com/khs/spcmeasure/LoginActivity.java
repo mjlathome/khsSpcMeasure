@@ -373,12 +373,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     private void returnResult(boolean ok) {
         Log.d(TAG, "returnResult: ok = " + ok);
 
-        Intent returnIntent = new Intent();
-        if (ok) {
-            LoginActivity.this.setResult(RESULT_OK, returnIntent);
-        } else {
-            LoginActivity.this.setResult(RESULT_CANCELED, returnIntent);
-        }
+//        Intent returnIntent = new Intent();
+//        if (ok) {
+//            LoginActivity.this.setResult(RESULT_OK, returnIntent);
+//        } else {
+//            LoginActivity.this.setResult(RESULT_CANCELED, returnIntent);
+//        }
         finish();
     }
 }
