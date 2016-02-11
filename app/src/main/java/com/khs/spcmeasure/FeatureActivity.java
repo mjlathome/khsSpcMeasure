@@ -330,14 +330,33 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         // TODO at minimum move into private method
         // Maybe via a callback.
 
-        // Check for Bluetooth LE Support.  In production, the manifest entry will keep this
-        // from installing on these devices, but this will allow test devices or other
-        // sideloads to report whether or not the feature exists.
-        // NOTE: Not really needed as included in Manifest.
-        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            Toast.makeText(this, getString(R.string.text_ble_not_supported), Toast.LENGTH_LONG).show();
-            finish();
-            return;
+        // TODO use isMeasurementEnabled within MeasurementFragment too
+        if (isMeasurementEnabled()) {
+            // Check for Bluetooth LE Support.  In production, the manifest entry will keep this
+            // from installing on these devices, but this will allow test devices or other
+            // sideloads to report whether or not the feature exists.
+            // NOTE: Not really needed as included in Manifest.
+            if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+                Toast.makeText(this, getString(R.string.text_ble_not_supported), Toast.LENGTH_LONG).show();
+                finish();
+                return;
+            }
+
+            // Initializes Bluetooth adapter.
+            final BluetoothManager bluetoothManager =
+                    (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+            BluetoothAdapter mBluetoothAdapter = bluetoothManager.getAdapter();
+
+            // Ensures Bluetooth is available on the device and it is enabled. If not,
+            // displays a dialog requesting user permission to enable Bluetooth.
+            if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                // TODO shouldn't ForResult be used to ensure that the user enabled BlueTooth?
+                // startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+                startActivity(enableBtIntent);
+                finish();
+                return;
+            }
         }
 
         // register local broadcast receiver - filter multiple intent actions
@@ -347,22 +366,6 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         bleFilter.addAction(SylvacBleService.ACTION_CHARACTERISTIC_CHANGED);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, bleFilter);
-
-        // Initializes Bluetooth adapter.
-        final BluetoothManager bluetoothManager =
-                (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-        BluetoothAdapter mBluetoothAdapter = bluetoothManager.getAdapter();
-
-        // Ensures Bluetooth is available on the device and it is enabled. If not,
-        // displays a dialog requesting user permission to enable Bluetooth.
-        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            // TODO shouldn't ForResult be used to enure that the user enabled BlueTooth?
-            // startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            startActivity(enableBtIntent);
-            finish();
-            return;
-        }
     }
 
     @Override
@@ -912,5 +915,8 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         return;
     }
 
-
+    // checks whether the app
+    public boolean isMeasurementEnabled() {
+        return (mPiece.getStatus() == CollectStatus.OPEN && SecurityUtils.checkSecurity(this, false));
+    }
 }
