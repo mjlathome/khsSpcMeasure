@@ -375,7 +375,20 @@ public class FeatureReviewFragment extends ListFragment {
         // extract features for the product
         DBAdapter db = new DBAdapter(getActivity());
         db.open();
-        Cursor c = db.getAllFeatures(mPiece.getProdId());
+
+        // extract cursor to features based upon piece collect state
+        Cursor c = null;
+        if (mPiece.getStatus() == CollectStatus.OPEN) {
+            // get active features for the product
+            c = db.getFeaturesByProdIdActive(mPiece.getProdId(), true);
+        } else {
+            // get features measured on the piece
+            c = db.getFeaturesByPieceId(mPieceId);
+        }
+
+        // TODO was always return all Features
+        // Cursor c = db.getAllFeatures(mPiece.getProdId());
+
         // SimpleCursorAdapter adapter = new SimpleCursorAdapter(getActivity(),
                 // android.R.layout.simple_list_item_activated_1, c,
         FeatureReviewAdapter adapter = new FeatureReviewAdapter(getActivity(), c, mPieceId);

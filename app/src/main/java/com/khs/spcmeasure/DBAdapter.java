@@ -315,7 +315,7 @@ public class DBAdapter {
 
 	// convert product to content values
 	private ContentValues productToValues(Product product) {
-		ContentValues values = new ContentValues();
+        ContentValues values = new ContentValues();
 		
 		values.put(KEY_ROWID, product.getId());
 		values.put(KEY_NAME, product.getName());
@@ -341,6 +341,20 @@ public class DBAdapter {
 		String selectQuery = "SELECT * FROM " + TABLE_FEATURE + " WHERE " + KEY_PROD_ID + " = " + Long.toString(prodId);		
 		return db.rawQuery(selectQuery, null);		
 	};	
+
+	// get Features by prodId and active
+	public Cursor getFeaturesByProdIdActive(long prodId, boolean active) {
+		String selectQuery = "SELECT * FROM " + TABLE_FEATURE + " WHERE " + KEY_PROD_ID + " = " + Long.toString(prodId) + " AND " + KEY_ACTIVE + " = " + boolToInt(active);
+		return db.rawQuery(selectQuery, null);
+	};
+
+	// get Features by pieceId
+	public Cursor getFeaturesByPieceId(long pieceId) {
+		String selectQuery = "SELECT * FROM " + TABLE_FEATURE + " t1 " +
+				" INNER JOIN " + TABLE_MEASUREMENT + " t2 ON t2." + KEY_PROD_ID + " = t1." + KEY_PROD_ID + " AND t2." + KEY_FEAT_ID + " = t1." + KEY_FEAT_ID +
+				" WHERE t2." + KEY_PIECE_ID + " = " + Long.toString(pieceId);
+		return db.rawQuery(selectQuery, null);
+	};
 
 	// get single Feature by rowId
 	public Cursor getFeature(long rowId) {
@@ -369,7 +383,7 @@ public class DBAdapter {
 		
 		return c;
 	};
-	
+
 	// update single Feature
 	public boolean updateFeature(Feature feature) {	
 		Log.d(TAG, "updFest:  RowId; Prod Id = " + String.valueOf(feature.getId()) + "; " + String.valueOf(feature.getProdId()));

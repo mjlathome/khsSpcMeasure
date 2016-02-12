@@ -13,6 +13,7 @@
     <string name="text_delete">Delete</string>
     <string name="text_deleting_setups">Deleting Setup(s)...</string>
     <string name="text_error">Error</string>
+    <string name="text_exit">Error</string>
     <string name="text_feature">Feature</string>
     <string name="text_get_value">Get Value</string>
     <string name="text_import">Import</string>

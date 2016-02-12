@@ -158,6 +158,12 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
         int id = item.getItemId();
 
         switch(id) {
+            case R.id.mnuExit:
+                // exit the app
+                Log.d(TAG, "Menu: Exit");
+                finish();
+                System.exit(0);
+                return true;
             case R.id.mnuImport:
                 Log.d(TAG, "Menu: Import");
                 // run the Import Setup Activity
