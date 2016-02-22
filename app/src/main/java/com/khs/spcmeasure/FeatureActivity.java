@@ -262,7 +262,19 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
         // extract data
         mPiece = mPieceDao.getPiece(mPieceId);
-        mFeatList = mFeatDao.getAllFeatures(mPiece.getProdId());
+
+        // TODO remove later - was always extracting all features
+        // mFeatList = mFeatDao.getAllFeatures(mPiece.getProdId());
+
+        // extract list of features based upon piece collect state
+        mFeatList = null;
+        if (mPiece.getStatus() == CollectStatus.OPEN) {
+            // get active features for the product
+            mFeatList = mFeatDao.getFeaturesByProdIdActive(mPiece.getProdId(), true);
+        } else {
+            // get features measured on the piece
+            mFeatList = mFeatDao.getFeaturesByPieceId(mPieceId);
+        }
 
         // display views
         displayView();

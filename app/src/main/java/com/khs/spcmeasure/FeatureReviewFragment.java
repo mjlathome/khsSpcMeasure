@@ -73,7 +73,12 @@ public class FeatureReviewFragment extends ListFragment {
                     // extract features and measurements for the product/piece
                     DBAdapter db = new DBAdapter(getActivity());
                     db.open();
-                    Cursor cFeat = db.getAllFeatures(mPiece.getProdId());
+
+                    // TODO remove later - was extracting all features
+                    // Cursor cFeat = db.getAllFeatures(mPiece.getProdId());
+
+                    // get active features for the product
+                    Cursor cFeat = db.getFeaturesByProdIdActive(mPiece.getProdId(), true);
                     Cursor cMeas = db.getAllMeasurements(mPiece.getId());
                     mNumFeat = cFeat.getCount();
                     mNumMeas = cMeas.getCount();

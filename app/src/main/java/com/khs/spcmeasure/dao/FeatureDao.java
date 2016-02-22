@@ -82,4 +82,66 @@ public class FeatureDao {
         return featList;
     }
 
+    // list Features by prodId and active
+    public List<Feature> getFeaturesByProdIdActive(long prodId, boolean active) {
+        List featList = new ArrayList();
+        Cursor cFeat = null;
+
+        try {
+            db.open();
+
+            // query the database
+            cFeat = db.getFeaturesByProdIdActive(prodId, active);
+
+            // iterate the results
+            if (cFeat.moveToFirst()) {
+                do {
+                    // add feature to the list
+                    featList.add(db.cursorToFeature(cFeat));
+                } while(cFeat.moveToNext());
+            }
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cFeat != null) {
+                cFeat.close();
+            }
+            db.close();
+        }
+
+        return featList;
+    }
+
+    // list Features by pieceId
+    public List<Feature> getFeaturesByPieceId(long pieceId) {
+        List featList = new ArrayList();
+        Cursor cFeat = null;
+
+        try {
+            db.open();
+
+            // query the database
+            cFeat = db.getFeaturesByPieceId(pieceId);
+
+            // iterate the results
+            if (cFeat.moveToFirst()) {
+                do {
+                    // add feature to the list
+                    featList.add(db.cursorToFeature(cFeat));
+                } while(cFeat.moveToNext());
+            }
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cFeat != null) {
+                cFeat.close();
+            }
+            db.close();
+        }
+
+        return featList;
+    }
+
 }
