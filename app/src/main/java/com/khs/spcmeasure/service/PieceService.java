@@ -9,9 +9,9 @@ import android.database.Cursor;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.khs.spcmeasure.DBAdapter;
+import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.R;
-import com.khs.spcmeasure.SetupListActivity;
+import com.khs.spcmeasure.ui.SetupListActivity;
 import com.khs.spcmeasure.library.ActionStatus;
 import com.khs.spcmeasure.library.CollectStatus;
 import com.khs.spcmeasure.library.NotificationId;

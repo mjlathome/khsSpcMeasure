@@ -1,4 +1,4 @@
-package com.khs.spcmeasure;
+package com.khs.spcmeasure.service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -21,6 +21,9 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.khs.spcmeasure.library.ConnectionState;
+import com.khs.spcmeasure.R;
+import com.khs.spcmeasure.library.SylvacGattAttributes;
 import com.khs.spcmeasure.library.NotificationId;
 
 import java.nio.ByteBuffer;
@@ -92,7 +95,7 @@ public class SylvacBleService extends Service {
     public final static String BATTERY_LOW = "BAT0\r";
     
     // service state
-    private ConnectionState mConnectionState = ConnectionState.DISCONNECTED;    
+    private ConnectionState mConnectionState = ConnectionState.DISCONNECTED;
     
 	@Override
 	public void onCreate() {
@@ -181,7 +184,7 @@ public class SylvacBleService extends Service {
 
 	public class MyLocalBinder extends Binder {
 		// allow bound component to obtain a reference to the Service for internal calls
-		SylvacBleService getService() {
+		public SylvacBleService getService() {
 			return SylvacBleService.this;
 		}
 	}	

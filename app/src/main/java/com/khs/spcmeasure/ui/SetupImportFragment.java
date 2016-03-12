@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.khs.spcmeasure;
+package com.khs.spcmeasure.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -27,7 +27,10 @@ import android.widget.SearchView.OnCloseListener;
 import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
 
+import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.entity.Product;
+import com.khs.spcmeasure.helper.ProductAdapter;
+import com.khs.spcmeasure.helper.ProductLoader;
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.service.SetupService;
 

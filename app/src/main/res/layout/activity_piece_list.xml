@@ -3,6 +3,6 @@
     android:id="@+id/piece_list_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.khs.spcmeasure.PieceListActivity"
+    tools:context=".ui.PieceListActivity"
     tools:ignore="MergeRootFrame" />
 

@@ -8,7 +8,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.khs.spcmeasure.DBAdapter;
+import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.R;
 
 /**

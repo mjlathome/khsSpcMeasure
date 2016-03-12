@@ -1,4 +1,4 @@
-package com.khs.spcmeasure;
+package com.khs.spcmeasure.ui;
 
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -18,6 +18,7 @@ import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
 import com.androidplot.xy.XYSeries;
 import com.androidplot.xy.XYStepMode;
+import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.dao.FeatureDao;
 import com.khs.spcmeasure.dao.LimitsDao;
 import com.khs.spcmeasure.dao.MeasurementDao;
@@ -27,6 +28,7 @@ import com.khs.spcmeasure.entity.Limits;
 import com.khs.spcmeasure.entity.Measurement;
 import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.library.AlertUtils;
+import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.library.DateTimeUtils;
 import com.khs.spcmeasure.library.LimitType;
 

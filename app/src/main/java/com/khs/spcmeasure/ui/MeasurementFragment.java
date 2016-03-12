@@ -1,4 +1,4 @@
-package com.khs.spcmeasure;
+package com.khs.spcmeasure.ui;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -26,6 +26,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.dao.FeatureDao;
 import com.khs.spcmeasure.dao.LimitsDao;
 import com.khs.spcmeasure.dao.MeasurementDao;
@@ -40,6 +41,7 @@ import com.khs.spcmeasure.entity.SimpleCode;
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.CollectStatus;
 import com.khs.spcmeasure.library.CursorAdapterUtils;
+import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.library.DateTimeUtils;
 import com.khs.spcmeasure.library.LimitType;
 import com.khs.spcmeasure.library.SecurityUtils;

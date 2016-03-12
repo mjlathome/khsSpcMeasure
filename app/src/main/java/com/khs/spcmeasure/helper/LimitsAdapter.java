@@ -1,4 +1,4 @@
-package com.khs.spcmeasure;
+package com.khs.spcmeasure.helper;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -6,6 +6,9 @@ import android.graphics.Typeface;
 import android.view.View;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
+
+import com.khs.spcmeasure.R;
+import com.khs.spcmeasure.helper.DBAdapter;
 
 import java.text.DecimalFormat;
 

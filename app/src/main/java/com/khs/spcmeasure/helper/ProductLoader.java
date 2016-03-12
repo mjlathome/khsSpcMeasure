@@ -1,4 +1,4 @@
-package com.khs.spcmeasure;
+package com.khs.spcmeasure.helper;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;

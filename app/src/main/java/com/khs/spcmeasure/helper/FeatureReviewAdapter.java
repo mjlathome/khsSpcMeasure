@@ -1,4 +1,4 @@
-package com.khs.spcmeasure;
+package com.khs.spcmeasure.helper;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -9,10 +9,12 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.dao.MeasurementDao;
 import com.khs.spcmeasure.dao.PieceDao;
 import com.khs.spcmeasure.entity.Measurement;
 import com.khs.spcmeasure.entity.Piece;
+import com.khs.spcmeasure.helper.DBAdapter;
 
 /**
  * Created by Mark on 23/02/2015.

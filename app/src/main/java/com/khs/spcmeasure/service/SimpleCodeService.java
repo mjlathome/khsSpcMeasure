@@ -7,9 +7,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
-import com.khs.spcmeasure.DBAdapter;
+import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.R;
-import com.khs.spcmeasure.SetupListActivity;
+import com.khs.spcmeasure.ui.SetupListActivity;
 import com.khs.spcmeasure.entity.SimpleCode;
 import com.khs.spcmeasure.library.ActionStatus;
 import com.khs.spcmeasure.library.JSONParser;
@@ -38,6 +38,7 @@ public class SimpleCodeService extends IntentService {
 
     // Simple Code types supported
     public static final String TYPE_ACTION_CAUSE = "actionCause";
+    public static final String TYPE_GAUGE_AUDIT = "gaugeAudit";
 
     // url address
     private static String url = "http://thor.kmx.cosma.com/spc/get_simple_code.php?type=";

@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.khs.spcmeasure.DBAdapter;
+import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.library.CollectStatus;
 import com.khs.spcmeasure.library.JSONParser;

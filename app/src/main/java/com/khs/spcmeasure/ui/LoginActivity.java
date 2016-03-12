@@ -1,4 +1,4 @@
-package com.khs.spcmeasure;
+package com.khs.spcmeasure.ui;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -6,7 +6,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
-import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -26,6 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.library.JSONParser;
 import com.khs.spcmeasure.library.SecurityUtils;
 

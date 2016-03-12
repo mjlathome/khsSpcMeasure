@@ -50,11 +50,11 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <service
-            android:name=".SylvacBleService"
+            android:name=".service.SylvacBleService"
             android:exported="false" />
 
         <activity
-            android:name=".SetupListActivity"
+            android:name=".ui.SetupListActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop">
             <intent-filter>
@@ -64,45 +64,45 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SetupImportActivity"
+            android:name=".ui.SetupImportActivity"
             android:label="@string/title_activity_import_setup"
             android:launchMode="singleTop"
-            android:parentActivityName=".SetupListActivity">
+            android:parentActivityName=".ui.SetupListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".SetupListActivity" />
+                android:value=".ui.SetupListActivity" />
         </activity>
         <activity
-            android:name=".PieceListActivity"
+            android:name=".ui.PieceListActivity"
             android:label="@string/title_activity_piece_list"
             android:launchMode="singleTop"
-            android:parentActivityName=".SetupListActivity">
+            android:parentActivityName=".ui.SetupListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.khs.spcmeasure.SetupListActivity" />
+                android:value=".ui.SetupListActivity" />
         </activity>
         <activity
-            android:name=".FeatureReviewActivity"
+            android:name=".ui.FeatureReviewActivity"
             android:label="@string/title_activity_feature_review"
             android:launchMode="singleTop"
-            android:parentActivityName=".PieceListActivity">
+            android:parentActivityName=".ui.PieceListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.khs.spcmeasure.PieceListActivity" />
+                android:value=".ui.PieceListActivity" />
         </activity>
         <activity
-            android:name=".FeatureActivity"
+            android:name=".ui.FeatureActivity"
             android:label="@string/title_activity_feature"
             android:launchMode="singleTop"
-            android:parentActivityName=".FeatureReviewActivity">
+            android:parentActivityName=".ui.FeatureReviewActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.khs.spcmeasure.FeatureReviewActivity" />
+                android:value=".ui.FeatureReviewActivity" />
         </activity>
-        <activity android:name=".SettingsActivity">
+        <activity android:name=".ui.SettingsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".SetupListActivity" />
+                android:value=".ui.SetupListActivity" />
         </activity>
 
         <service
@@ -125,13 +125,13 @@
         <activity
             android:name=".widget.LoginActivityOld"
             android:label="@string/title_activity_login"
-            android:parentActivityName=".SetupListActivity">
+            android:parentActivityName=".ui.SetupListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.khs.spcmeasure.SetupListActivity" />
+                android:value=".ui.SetupListActivity" />
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.LoginActivity"
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="adjustResize|stateVisible"></activity>
 

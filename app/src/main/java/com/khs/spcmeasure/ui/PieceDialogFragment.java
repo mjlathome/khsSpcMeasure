@@ -1,4 +1,4 @@
-package com.khs.spcmeasure;
+package com.khs.spcmeasure.ui;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -18,11 +18,13 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.entity.Product;
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.BarCodeUtils;
 import com.khs.spcmeasure.library.CollectStatus;
+import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.library.DateTimeUtils;
 import com.khs.spcmeasure.library.ProgressUtils;
 import com.khs.spcmeasure.library.SecurityUtils;

@@ -1,4 +1,4 @@
-package com.khs.spcmeasure;
+package com.khs.spcmeasure.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -18,10 +18,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.dao.PieceDao;
 import com.khs.spcmeasure.entity.Piece;
+import com.khs.spcmeasure.helper.FeatureReviewAdapter;
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.CollectStatus;
+import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.library.DateTimeUtils;
 import com.khs.spcmeasure.library.SecurityUtils;
 import com.khs.spcmeasure.service.MeasurementService;

@@ -1,4 +1,4 @@
-package com.khs.spcmeasure;
+package com.khs.spcmeasure.ui;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,7 +9,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
+import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.library.AlertUtils;
+import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.library.SecurityUtils;
 
 // TODO handle Action Bar menu Up button - see Stack Overflow

@@ -1,4 +1,4 @@
-package com.khs.spcmeasure;
+package com.khs.spcmeasure.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -22,15 +22,17 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.CollectStatus;
+import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.library.DateTimeUtils;
 import com.khs.spcmeasure.library.SecurityUtils;
 
 /**
  * A fragment representing a single Piece detail screen. This fragment is either
- * contained in a {@link com.khs.spcmeasure.PieceListActivity} in two-pane mode (on tablets) or a
+ * contained in a {@link PieceListActivity} in two-pane mode (on tablets) or a
  * {@link PieceListActivity} on handsets.
  */
 public class PieceListFragment extends ListFragment implements AdapterView.OnItemSelectedListener {

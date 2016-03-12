@@ -1,4 +1,4 @@
-package com.khs.spcmeasure;
+package com.khs.spcmeasure.ui;
 
 import android.app.ActionBar;
 import android.bluetooth.BluetoothAdapter;
@@ -34,13 +34,17 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.dao.FeatureDao;
 import com.khs.spcmeasure.dao.PieceDao;
 import com.khs.spcmeasure.entity.Feature;
 import com.khs.spcmeasure.entity.Piece;
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.CollectStatus;
+import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.library.SecurityUtils;
+import com.khs.spcmeasure.library.SylvacGattAttributes;
+import com.khs.spcmeasure.service.SylvacBleService;
 
 import java.util.List;
 

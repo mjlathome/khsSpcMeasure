@@ -9,8 +9,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.util.Log;
 
-import com.khs.spcmeasure.DBAdapter;
-import com.khs.spcmeasure.PieceListActivity;
+import com.khs.spcmeasure.helper.DBAdapter;
+import com.khs.spcmeasure.ui.PieceListActivity;
 import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.library.ActionStatus;
 import com.khs.spcmeasure.library.CollectStatus;

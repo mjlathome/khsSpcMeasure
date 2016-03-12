@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
-import com.khs.spcmeasure.DBAdapter;
+import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.entity.Piece;
 
 import java.util.ArrayList;

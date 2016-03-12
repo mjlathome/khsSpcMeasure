@@ -1,4 +1,4 @@
-package com.khs.spcmeasure;
+package com.khs.spcmeasure.ui;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -9,10 +9,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.khs.spcmeasure.R;
+import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.library.SecurityUtils;
 import com.khs.spcmeasure.service.PieceService;
 import com.khs.spcmeasure.service.SetupService;
 import com.khs.spcmeasure.service.SimpleCodeService;
+import com.khs.spcmeasure.service.SylvacBleService;
 import com.khs.spcmeasure.tasks.DeleteSetupTask;
 
 public class SetupListActivity extends Activity implements SetupListFragment.OnSetupListListener, DeleteSetupTask.OnDeleteSetupListener {
@@ -27,6 +30,9 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
 
     // ensure Action Cause list is only imported once
     private static boolean importActionCause = true;
+
+    // ensure Gauge Audit questions are only imported once
+    private static boolean importGaugeAudit = true;
 
     // ensure that User Login is only asked once when app initially starts
     private static boolean askLogin = true;
@@ -64,6 +70,12 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
             importActionCause = false;
             // new ImportSimpleCodeTask(this).execute(ImportSimpleCodeTask.TYPE_ACTION_CAUSE);
             SimpleCodeService.startActionImport(this, SimpleCodeService.TYPE_ACTION_CAUSE);
+        }
+
+        // import Gauge Audit Simple Codes
+        if (importGaugeAudit == true) {
+            importGaugeAudit = false;
+            SimpleCodeService.startActionImport(this, SimpleCodeService.TYPE_GAUGE_AUDIT);
         }
 
         // check if user should be asked to login

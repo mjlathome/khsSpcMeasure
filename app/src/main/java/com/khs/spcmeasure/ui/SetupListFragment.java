@@ -1,4 +1,4 @@
-package com.khs.spcmeasure;
+package com.khs.spcmeasure.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -17,9 +17,11 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
+import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.entity.Product;
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.CursorAdapterUtils;
+import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.library.SecurityUtils;
 import com.khs.spcmeasure.tasks.DeleteSetupTask;
 

@@ -8,10 +8,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 
-import com.khs.spcmeasure.DBAdapter;
-import com.khs.spcmeasure.PieceListActivity;
+import com.khs.spcmeasure.helper.DBAdapter;
+import com.khs.spcmeasure.ui.PieceListActivity;
 import com.khs.spcmeasure.R;
-import com.khs.spcmeasure.SetupListActivity;
+import com.khs.spcmeasure.ui.SetupListActivity;
 import com.khs.spcmeasure.entity.Feature;
 import com.khs.spcmeasure.entity.Limits;
 import com.khs.spcmeasure.entity.Product;

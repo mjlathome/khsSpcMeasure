@@ -1,4 +1,4 @@
-package com.khs.spcmeasure;
+package com.khs.spcmeasure.ui;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.Window;
 
+import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.library.ActionStatus;
 import com.khs.spcmeasure.library.SecurityUtils;
 import com.khs.spcmeasure.service.SetupService;

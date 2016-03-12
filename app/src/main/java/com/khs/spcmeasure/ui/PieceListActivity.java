@@ -1,4 +1,4 @@
-package com.khs.spcmeasure;
+package com.khs.spcmeasure.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -13,14 +13,16 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.CollectStatus;
+import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.library.SecurityUtils;
 
 /**
  * An activity representing a single Piece detail screen. This activity is only
  * used on handset devices. On tablet-size devices, item details are presented
- * side-by-side with a list of items in a {@link com.khs.spcmeasure.PieceListActivity}.
+ * side-by-side with a list of items in a {@link PieceListActivity}.
  * <p>
  * This activity is mostly just a 'shell' activity containing nothing more than
  * a {@link PieceListFragment}.

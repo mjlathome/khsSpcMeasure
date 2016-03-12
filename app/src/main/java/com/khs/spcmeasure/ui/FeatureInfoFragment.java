@@ -1,4 +1,4 @@
-package com.khs.spcmeasure;
+package com.khs.spcmeasure.ui;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -10,11 +10,14 @@ import android.view.ViewGroup;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 
+import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.dao.FeatureDao;
 import com.khs.spcmeasure.dao.ProductDao;
 import com.khs.spcmeasure.entity.Feature;
 import com.khs.spcmeasure.entity.Product;
+import com.khs.spcmeasure.helper.LimitsAdapter;
 import com.khs.spcmeasure.library.AlertUtils;
+import com.khs.spcmeasure.helper.DBAdapter;
 
 import java.text.DecimalFormat;
 

@@ -1,8 +1,10 @@
-package com.khs.spcmeasure;
+package com.khs.spcmeasure.ui;
 
 import android.app.Fragment;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+
+import com.khs.spcmeasure.R;
 
 /**
  * A simple {@link Fragment} subclass.

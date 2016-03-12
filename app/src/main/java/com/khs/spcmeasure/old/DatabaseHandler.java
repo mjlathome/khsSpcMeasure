@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.khs.spcmeasure;
+package com.khs.spcmeasure.old;
 
 import android.content.ContentValues;
 import android.content.Context;

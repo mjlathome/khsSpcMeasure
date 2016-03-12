@@ -3,7 +3,7 @@ package com.khs.spcmeasure.dao;
 import android.content.Context;
 import android.database.Cursor;
 
-import com.khs.spcmeasure.DBAdapter;
+import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.entity.SimpleCode;
 
 import java.util.ArrayList;
