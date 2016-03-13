@@ -167,6 +167,12 @@ public class SetupImportActivity extends Activity {
                 Intent intentPrefs = new Intent(this, SettingsActivity.class);
                 startActivity(intentPrefs);
                 return true;
+            case R.id.action_about:
+                // about activity
+                Log.d(TAG, "Menu: About");
+                Intent intentAbout = new Intent(this, AboutActivity.class);
+                startActivity(intentAbout);
+                return true;
 		    default:
 			    return super.onOptionsItemSelected(item);
 		}

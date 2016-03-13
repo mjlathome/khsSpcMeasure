@@ -177,6 +177,12 @@ public class PieceListActivity extends Activity implements
                 Intent intentPrefs = new Intent(this, SettingsActivity.class);
                 startActivity(intentPrefs);
                 return true;
+            case R.id.action_about:
+                // about activity
+                Log.d(TAG, "Menu: About");
+                Intent intentAbout = new Intent(this, AboutActivity.class);
+                startActivity(intentAbout);
+                return true;
             case R.id.mnuNewPiece:
                 createPiece();
                 return true;

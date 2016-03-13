@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
@@ -16,7 +17,14 @@ import com.khs.spcmeasure.service.PieceService;
 import com.khs.spcmeasure.service.SetupService;
 import com.khs.spcmeasure.service.SimpleCodeService;
 import com.khs.spcmeasure.service.SylvacBleService;
+import com.khs.spcmeasure.tasks.CheckVersionTask;
 import com.khs.spcmeasure.tasks.DeleteSetupTask;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 
 public class SetupListActivity extends Activity implements SetupListFragment.OnSetupListListener, DeleteSetupTask.OnDeleteSetupListener {
 
@@ -27,6 +35,9 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
 
     // Activity result codes
     private static int RESULT_IMPORT = 1;
+
+    // check version
+    private static boolean checkVersion = true;
 
     // ensure Action Cause list is only imported once
     private static boolean importActionCause = true;
@@ -65,6 +76,12 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
         // start Piece Service
         startService(new Intent(getBaseContext(), PieceService.class));
 
+        // check version
+        if (checkVersion == true) {
+            checkVersion = false;
+            new CheckVersionTask(this).execute();
+        }
+
         // import Action Cause Simple Codes
         if (importActionCause == true) {
             importActionCause = false;
@@ -76,6 +93,13 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
         if (importGaugeAudit == true) {
             importGaugeAudit = false;
             SimpleCodeService.startActionImport(this, SimpleCodeService.TYPE_GAUGE_AUDIT);
+        }
+
+        // copy the db for debug purposes
+        try {
+            copyAppDbToDownloadFolder();
+        } catch(Exception e) {
+            e.printStackTrace();
         }
 
         // check if user should be asked to login
@@ -106,6 +130,11 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
 //            SecurityUtils.setInAppStatus(this, true);
 //        }
 //        Log.d(TAG, "OnStart: 2 Lock = " + SecurityUtils.getLockStatus(this) + "; App = " + SecurityUtils.getInAppStatus(this));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -199,6 +228,12 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
                 Intent intentPrefs = new Intent(this, SettingsActivity.class);
                 startActivity(intentPrefs);
                 return true;
+            case R.id.action_about:
+                // about activity
+                Log.d(TAG, "Menu: About");
+                Intent intentAbout = new Intent(this, AboutActivity.class);
+                startActivity(intentAbout);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -239,5 +274,19 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
     public void stopBleService() {
         Log.d(TAG, "stopBleService");
         stopService(new Intent(getBaseContext(), SylvacBleService.class));
+    }
+
+    public void copyAppDbToDownloadFolder() throws IOException {
+        File backupDB = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), DBAdapter.DATABASE_NAME); // for example "my_data_backup.db"
+        Log.d(TAG, "backupDb = " + backupDB.getAbsolutePath());
+        File currentDB = getApplicationContext().getDatabasePath(DBAdapter.DATABASE_NAME); //databaseName=your current application database name, for example "my_data.db"
+        if (currentDB.exists()) {
+            Log.d(TAG, "current exists");
+            FileChannel src = new FileInputStream(currentDB).getChannel();
+            FileChannel dst = new FileOutputStream(backupDB).getChannel();
+            Log.d(TAG, "transferFrom = " + dst.transferFrom(src, 0, src.size()));
+            src.close();
+            dst.close();
+        }
     }
 }

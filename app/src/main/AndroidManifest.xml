@@ -25,13 +25,15 @@
     <uses-feature
         android:name="android:.hardware.bluetooth_le"
         android:required="true" />
-
     // barcode scanning
     <uses-feature android:name="android.hardware.camera" />
 
-    <uses-permission
+    <!--
+     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
+    -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission
@@ -108,19 +110,19 @@
         <service
             android:name=".service.SimpleCodeService"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false" />
         <service
             android:name=".service.SetupService"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false" />
         <service
             android:name=".service.MeasurementService"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false" />
         <service
             android:name=".service.PieceService"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false" />
 
         <activity
             android:name=".widget.LoginActivityOld"
@@ -133,11 +135,16 @@
         <activity
             android:name=".ui.LoginActivity"
             android:label="@string/title_activity_login"
-            android:windowSoftInputMode="adjustResize|stateVisible"></activity>
+            android:windowSoftInputMode="adjustResize|stateVisible" />
 
         <service
             android:name=".service.HistoryService"
-            android:exported="false"></service>
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.AboutActivity"
+            android:label="@string/text_about">
+        </activity>
     </application>
 
 </manifest>
