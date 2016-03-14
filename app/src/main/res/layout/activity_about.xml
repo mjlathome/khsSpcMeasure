@@ -52,7 +52,9 @@
         android:layout_marginTop="33dp"
         android:layout_below="@+id/textAppName"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="53dp" />
+        android:layout_marginEnd="53dp"
+        android:onClick="onClickVersionName"
+        android:clickable="true" />
 
     <Button
         android:layout_width="wrap_content"

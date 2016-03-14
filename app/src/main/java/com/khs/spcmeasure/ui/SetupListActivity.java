@@ -95,13 +95,6 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
             SimpleCodeService.startActionImport(this, SimpleCodeService.TYPE_GAUGE_AUDIT);
         }
 
-        // copy the db for debug purposes
-        try {
-            copyAppDbToDownloadFolder();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-
         // check if user should be asked to login
         if (askLogin) {
             askLogin = false;
@@ -276,17 +269,4 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
         stopService(new Intent(getBaseContext(), SylvacBleService.class));
     }
 
-    public void copyAppDbToDownloadFolder() throws IOException {
-        File backupDB = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), DBAdapter.DATABASE_NAME); // for example "my_data_backup.db"
-        Log.d(TAG, "backupDb = " + backupDB.getAbsolutePath());
-        File currentDB = getApplicationContext().getDatabasePath(DBAdapter.DATABASE_NAME); //databaseName=your current application database name, for example "my_data.db"
-        if (currentDB.exists()) {
-            Log.d(TAG, "current exists");
-            FileChannel src = new FileInputStream(currentDB).getChannel();
-            FileChannel dst = new FileOutputStream(backupDB).getChannel();
-            Log.d(TAG, "transferFrom = " + dst.transferFrom(src, 0, src.size()));
-            src.close();
-            dst.close();
-        }
-    }
 }

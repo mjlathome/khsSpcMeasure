@@ -11,6 +11,7 @@
     <string name="text_collect_status">Collect Status</string>
     <string name="text_cp">Cp</string>
     <string name="text_cpk">Cpk</string>
+    <string name="text_db_written">Database Written</string>
     <string name="text_delete">Delete</string>
     <string name="text_deleting_setups">Deleting Setup(s)...</string>
     <string name="text_error">Error</string>
@@ -48,6 +49,7 @@
     <string name="text_open">Open</string>
     <string name="text_out_control">Out of Control</string>
     <string name="text_out_control_select_cause">Out of Control - Select Cause</string>
+    <string name="text_pathname">Pathname: %1$s</string>
     <string name="text_piece_already_closed">Piece is already closed.</string>
     <string name="text_piece_not_open">Piece is not Open.</string>
     <string name="text_piece_now_closed">Piece is now Closed.</string>
