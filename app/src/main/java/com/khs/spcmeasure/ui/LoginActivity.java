@@ -377,22 +377,23 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         // check successful login
         if (ok) {
-            // check version
-            new CheckVersionTask(getApplicationContext()).execute();
-
             // import Action Cause Simple Codes
             SimpleCodeService.startActionImport(getApplicationContext(), SimpleCodeService.TYPE_ACTION_CAUSE);
 
             // import Gauge Audit Simple Codes
             SimpleCodeService.startActionImport(getApplicationContext(), SimpleCodeService.TYPE_GAUGE_AUDIT);
-        }
 
-        returnResult(ok);
+            // check version
+            new CheckVersionTask(this).execute();
+
+        } else {
+            returnResult(ok);
+        }
 
     }   // postLogin
 
     // return result to calling activity
-    private void returnResult(boolean ok) {
+    public void returnResult(boolean ok) {
         Log.d(TAG, "returnResult: ok = " + ok);
 
 //        Intent returnIntent = new Intent();

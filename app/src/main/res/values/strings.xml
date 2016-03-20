@@ -72,6 +72,7 @@
     <string name="text_piece_feature_measured_all">All Features have been measured.</string>
     <string name="text_piece_feature_measured_some">Only %1$s out of %2$s features have been measured.</string>
     <string name="text_version_title">Application Outdated</string>
+    <string name="text_version_logout_too_old">Logged out as app is too old.</string>
     <string name="text_version_install">Installed version %1$s (%2$s).</string>
     <string name="text_version_latest">Latest version %1$s (%2$s).</string>
     <string name="text_version_contact">Please contact SPC Coordinator for an update.</string>
