@@ -28,6 +28,8 @@ import android.widget.TextView;
 import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.library.JSONParser;
 import com.khs.spcmeasure.library.SecurityUtils;
+import com.khs.spcmeasure.service.SimpleCodeService;
+import com.khs.spcmeasure.tasks.CheckVersionTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -109,7 +111,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     public void onBackPressed() {
         Log.d(TAG, "onBackPressed");
 
-        returnResult(false);
+        postLogin(false);
 
         super.onBackPressed();
     }
@@ -355,7 +357,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             Log.d(TAG, "OnPostExecute: 2 Lock = " + SecurityUtils.getIsLoggedIn(LoginActivity.this) + "; App = " + SecurityUtils.getIsLoggedIn(LoginActivity.this));
 
             if (ldapAuth) {
-                returnResult(true);
+                postLogin(true);
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
@@ -368,6 +370,26 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             showProgress(false);
         }
     }
+
+    // handle post login actions based up success parameter
+    private void postLogin(boolean ok) {
+        Log.d(TAG, "postLogin: ok = " + ok);
+
+        // check successful login
+        if (ok) {
+            // check version
+            new CheckVersionTask(getApplicationContext()).execute();
+
+            // import Action Cause Simple Codes
+            SimpleCodeService.startActionImport(getApplicationContext(), SimpleCodeService.TYPE_ACTION_CAUSE);
+
+            // import Gauge Audit Simple Codes
+            SimpleCodeService.startActionImport(getApplicationContext(), SimpleCodeService.TYPE_GAUGE_AUDIT);
+        }
+
+        returnResult(ok);
+
+    }   // postLogin
 
     // return result to calling activity
     private void returnResult(boolean ok) {

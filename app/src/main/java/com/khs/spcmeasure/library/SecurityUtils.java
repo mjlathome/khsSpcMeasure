@@ -1,6 +1,7 @@
 package com.khs.spcmeasure.library;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.khs.spcmeasure.R;
 
@@ -17,6 +18,17 @@ public class SecurityUtils {
     static final String IS_LOGGED_IN = "is_logged_in";
     static final String CAN_MEASURE = "can_meassure";
     static final String USERNAME = "username";
+
+    // handle log out
+    public static void doLogout(Context context) {
+        Log.d(TAG, "logoutOut: getIsLoggedIn(context) = " + getIsLoggedIn(context));
+
+        // inform user
+        AlertUtils.alertDialogShow(context, context.getString(R.string.text_information), context.getString(R.string.sec_now_logged_out));
+
+        // set logged out
+        setIsLoggedIn(context, false);
+    }
 
     public static void setIsLoggedIn(Context context, boolean status) {
         context.getApplicationContext().getSharedPreferences(SECURITY, Context.MODE_PRIVATE).edit().putBoolean(IS_LOGGED_IN, status).commit();

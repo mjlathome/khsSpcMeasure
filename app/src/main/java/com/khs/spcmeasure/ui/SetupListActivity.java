@@ -36,15 +36,6 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
     // Activity result codes
     private static int RESULT_IMPORT = 1;
 
-    // check version
-    private static boolean checkVersion = true;
-
-    // ensure Action Cause list is only imported once
-    private static boolean importActionCause = true;
-
-    // ensure Gauge Audit questions are only imported once
-    private static boolean importGaugeAudit = true;
-
     // ensure that User Login is only asked once when app initially starts
     private static boolean askLogin = true;
 
@@ -75,25 +66,6 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
 
         // start Piece Service
         startService(new Intent(getBaseContext(), PieceService.class));
-
-        // check version
-        if (checkVersion == true) {
-            checkVersion = false;
-            new CheckVersionTask(this).execute();
-        }
-
-        // import Action Cause Simple Codes
-        if (importActionCause == true) {
-            importActionCause = false;
-            // new ImportSimpleCodeTask(this).execute(ImportSimpleCodeTask.TYPE_ACTION_CAUSE);
-            SimpleCodeService.startActionImport(this, SimpleCodeService.TYPE_ACTION_CAUSE);
-        }
-
-        // import Gauge Audit Simple Codes
-        if (importGaugeAudit == true) {
-            importGaugeAudit = false;
-            SimpleCodeService.startActionImport(this, SimpleCodeService.TYPE_GAUGE_AUDIT);
-        }
 
         // check if user should be asked to login
         if (askLogin) {
@@ -213,7 +185,7 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
             case R.id.action_logout:
                 Log.d(TAG, "Menu: Logout");
                 // set logged out
-                SecurityUtils.setIsLoggedIn(this, false);
+                SecurityUtils.doLogout(this);
                 return true;
             case R.id.action_settings:
                 Log.d(TAG, "Menu: Settings");

@@ -169,7 +169,7 @@ public class PieceListActivity extends Activity implements
             case R.id.action_logout:
                 Log.d(TAG, "Menu: Logout");
                 // set logged out
-                SecurityUtils.setIsLoggedIn(this, false);
+                SecurityUtils.doLogout(this);
                 return true;
             case R.id.action_settings:
                 Log.d(TAG, "Menu: Settings");

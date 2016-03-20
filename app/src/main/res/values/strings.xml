@@ -158,6 +158,7 @@
     <string name="title_activity_login_old">Login</string>
 
     <!-- Security strings -->
+    <string name="sec_now_logged_out">You are now logged out.</string>
     <string name="sec_not_logged_in">You are not logged in.  Please Login and try again.</string>
     <string name="sec_cannot_measure">You cannot measure.  Please contact administrator.</string>
 

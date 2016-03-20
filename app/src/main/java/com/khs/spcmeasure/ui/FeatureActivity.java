@@ -494,7 +494,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
                 Log.d(TAG, "Menu: Logout");
                 mShowSecMess = true;
                 // set logged out
-                SecurityUtils.setIsLoggedIn(this, false);
+                SecurityUtils.doLogout(this);
                 enableMeasurement();
                 return true;
             case R.id.action_settings:
