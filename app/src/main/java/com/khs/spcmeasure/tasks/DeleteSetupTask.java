@@ -22,7 +22,7 @@ public class DeleteSetupTask extends AsyncTask <Long, Void, Void>{
 
 	private ProgressDialog pDialog;
 
-    //
+    // generate task
     public static DeleteSetupTask newInstance(Context context) {
         DeleteSetupTask asyncTask = new DeleteSetupTask(context);
         return asyncTask;
