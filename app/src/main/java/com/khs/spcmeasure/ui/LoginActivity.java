@@ -4,8 +4,10 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -26,10 +28,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.khs.spcmeasure.R;
+import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.JSONParser;
 import com.khs.spcmeasure.library.SecurityUtils;
+import com.khs.spcmeasure.library.VersionUtils;
 import com.khs.spcmeasure.service.SimpleCodeService;
-import com.khs.spcmeasure.tasks.CheckVersionTask;
+import com.khs.spcmeasure.tasks.GetVersionTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,7 +44,7 @@ import java.util.List;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>, GetVersionTask.OnGetVersionListener {
 
     private static final String TAG = "LoginActivity";
 
@@ -384,9 +388,10 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             SimpleCodeService.startActionImport(getApplicationContext(), SimpleCodeService.TYPE_GAUGE_AUDIT);
 
             // check version
-            new CheckVersionTask(this).execute();
+            new GetVersionTask(this).execute();
 
         } else {
+            // handle login failure
             returnResult(ok);
         }
 
@@ -403,6 +408,67 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 //            LoginActivity.this.setResult(RESULT_CANCELED, returnIntent);
 //        }
         finish();
+    }
+
+    @Override
+    public void onGetVersionPostExecute(boolean success, int latestCode, String latestName) {
+
+        // initialize
+        StringBuffer message = new StringBuffer("");
+        boolean showDialog = false;
+        boolean versionOk = false;
+
+        // handle version check
+        if (!success) {
+            // latest version info not found
+            showDialog = true;
+            versionOk = false;
+            message.append(getString(R.string.text_version_logout_not_found) + "\n");
+            message.append(getString(R.string.text_contact_admin));
+        } else if (!VersionUtils.isVersionCodeChanged(this, latestCode)) {
+            // latest version code not changed
+            versionOk = true;
+        } else {
+            // latest version changed
+            showDialog = true;
+
+            // build confirmation message
+            message.append(getString(R.string.text_version_contact) + "\n");
+            message.append(getString(R.string.text_version_install, VersionUtils.getVersionName(this), VersionUtils.getVersionCode(this)) + "\n");
+            message.append(getString(R.string.text_version_latest, latestName, latestCode));
+
+            if (VersionUtils.isMajorVersionNameChanged(this, latestName)) {
+                // major version changed
+                versionOk = false;
+                message.insert(0, getString(R.string.text_version_logout_too_old) + "\n");
+
+            } else {
+                // major version not changes
+                versionOk = true;
+            }
+        }
+
+        // force logout if version not ok
+        if (!versionOk) {
+            SecurityUtils.setIsLoggedIn(this, false);
+        }
+
+        // inform user if required
+        if (showDialog) {
+            final boolean returnVal = versionOk;
+            AlertDialog.Builder dlgAlert = AlertUtils.createAlert(this, getString(R.string.text_version_title), message.toString());
+            dlgAlert.setPositiveButton(getString(R.string.text_okay), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // dismiss the dialog
+                    returnResult(returnVal);
+                }
+            });
+            dlgAlert.create().show();
+        } else {
+            // version okay
+            returnResult(versionOk);
+        }
     }
 }
 

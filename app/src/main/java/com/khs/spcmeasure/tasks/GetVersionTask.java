@@ -4,16 +4,17 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.khs.spcmeasure.library.JSONParser;
+import com.khs.spcmeasure.library.VersionUtils;
 
 import org.json.JSONObject;
 
-public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
-    private static final String TAG = "CheckVersionTask";
+public class GetVersionTask extends AsyncTask<Void, Void, JSONObject>{
+    private static final String TAG = "GetVersionTask";
 
-	private OnCheckVersionListener mListener;
+	private OnGetVersionListener mListener;
 
 	// constants
-	private static String url = "http://thor.kmx.cosma.com/spc/get_version.php";
+	private static final String url = "http://thor.kmx.cosma.com/spc/get_version.php";
 
 	//JSON Node Names
 	private static final String TAG_SUCCESS = "success";
@@ -21,7 +22,7 @@ public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
 	private static final String TAG_NAME = "name";
 
 	// constructor
-	public CheckVersionTask(OnCheckVersionListener listener) {
+	public GetVersionTask(OnGetVersionListener listener) {
 		mListener = listener;
 	}
 	
@@ -49,33 +50,35 @@ public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
 
 		Log.d(TAG, "json = " + json.toString());
 
-		boolean versionOk = false;
-		StringBuffer message = new StringBuffer("");
+		// initialize
+		boolean success = false;
+		int latestCode = VersionUtils.VERSION_CODE_UNKNOWN;
+		String latestName = VersionUtils.VERSION_NAME_UNKNOWN;
 
 		try {
 			// handle null
-			if (json == null) {
-				mListener.onCheckVersionPostExecute(-1, "");
-			} else {
+			if (json != null) {
 				// extract latest version info
-				int latestCode = json.getInt(TAG_CODE);
-				String latestName = json.getString(TAG_NAME);
-				mListener.onCheckVersionPostExecute(latestCode, latestName);
+				latestCode = json.getInt(TAG_CODE);
+				latestName = json.getString(TAG_NAME);
+				success = true;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		mListener.onGetVersionPostExecute(success, latestCode, latestName);
 	}
 
 	// generate task
-	public static CheckVersionTask newInstance(OnCheckVersionListener listener) {
-		CheckVersionTask asyncTask = new CheckVersionTask(listener);
+	public static GetVersionTask newInstance(OnGetVersionListener listener) {
+		GetVersionTask asyncTask = new GetVersionTask(listener);
 		return asyncTask;
 	}
 
 	// communication interface
-	public interface OnCheckVersionListener {
+	public interface OnGetVersionListener {
 		// TODO: Update argument type and name
-		public void onCheckVersionPostExecute(int latestCode, String latestName);
+		public void onGetVersionPostExecute(boolean success, int latestCode, String latestName);
 	}
 }

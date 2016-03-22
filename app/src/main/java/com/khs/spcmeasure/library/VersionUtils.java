@@ -21,96 +21,83 @@ public class VersionUtils {
     // extract version code
     public static int getVersionCode(Context context) {
 
+        // initialize
+        int installCode = VERSION_CODE_UNKNOWN;
+
         try {
-            // extract installed version  info
+            // extract installed version code
             PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            return pInfo.versionCode;
+            installCode = pInfo.versionCode;
         } catch(Exception e) {
             e.printStackTrace();
         }
 
-        return VERSION_CODE_UNKNOWN;
+        return installCode;
     }
 
     // extract version name
     public static String getVersionName(Context context) {
 
+        // initialize
+        String installName = VERSION_NAME_UNKNOWN;
+
         try {
-            // extract installed version  info
+            // extract installed version name
             PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            return pInfo.versionName;
+            installName = pInfo.versionName;
         } catch(Exception e) {
             e.printStackTrace();
         }
 
-        return VERSION_NAME_UNKNOWN;
+        // Toast.makeText(context, "version name = " + versionName, Toast.LENGTH_LONG).show();
+
+        return installName;
     }
 
-    // check version names
-    public boolean checkVersionName(String install, String latest) {
+    // check version code to see if changed
+    public static boolean isVersionCodeChanged(Context context, int latestCode) {
 
-        // extract major, minor and patch version info
-        String[] installRev = installName.split("\\.");
-        String[] latestRev = latestName.split("\\.");
+        // initialize
+        boolean changed = false;
 
-        // check for major revision change
-        if (installRev == null || latestRev == null || !installRev[0].equals(latestRev[0]) ) {
-            // force logout as too old
-            SecurityUtils.setIsLoggedIn(mContext, false);
-            message.insert(0, mContext.getString(R.string.text_version_logout_too_old) + "\n");
+        // get installed version code
+        int installCode = getVersionCode(context);
+
+        Log.d(TAG, "isVersionCodeChanged: latestCode = " + latestCode + "; installCode = " + installCode);
+
+        // compare versions
+        if (Integer.compare(installCode, latestCode) != 0) {
+            changed = true;
         }
 
-
+        return changed;
     }
 
-    // message.append(getBasegetString(R.string.text_version_logout_not_found));
+    // check version names to see if major version has changed
+    public static boolean isMajorVersionNameChanged(Context context, String latestName) {
 
+        // initialize
+        boolean changed = false;
 
-    // extract latest version info
-    int latestCode = json.getInt(TAG_CODE);
-    String latestName = json.getString(TAG_NAME);
+        try {
+            // get installed version name
+            String installName = getVersionName(context);
 
-    // extract installed version  info
-    PackageInfo pInfo = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0);
-    String installName = pInfo.versionName;
-    int installCode = pInfo.versionCode;
+            // extract major, minor and patch version info
+            String[] installRev = installName.split("\\.");
+            String[] latestRev = latestName.split("\\.");
 
-    // DEBUG remove later
-    installName = "0.1.3";
-    installCode = 0;
-
-    if (installCode == latestCode) {
-        // nothing as installed version is the latest
-    } else {
-        // extract major, minor and patch version info
-        String[] installRev = installName.split("\\.");
-        String[] latestRev = latestName.split("\\.");
-
-        Log.d(TAG, "installRev = " + Arrays.toString(installRev));
-        Log.d(TAG, "latestRev = " + Arrays.toString(latestRev));
-
-        // build confirmation message
-        StringBuffer message = new StringBuffer(mContext.getString(R.string.text_version_contact) + "\n");
-        message.append(mContext.getString(R.string.text_version_install, installName, installCode) + "\n");
-        message.append(mContext.getString(R.string.text_version_latest, latestName, latestCode));
-
-        // check for major revision change
-        if (installRev == null || latestRev == null || !installRev[0].equals(latestRev[0]) ) {
-            // force logout as too old
-            SecurityUtils.setIsLoggedIn(mContext, false);
-            message.insert(0, mContext.getString(R.string.text_version_logout_too_old) + "\n");
+            // check for major revision change
+            if (installRev == null || installRev.equals("") ||
+                    latestRev == null || latestRev.equals("") ||
+                    !installRev[0].equals(latestRev[0])) {
+                changed = true;
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            changed = true;
         }
 
-        Log.d(TAG, "message = " + message.toString());
-
-        // display version dialog
-        // TODO need to send a broadcast so that version failure an be checked upon
-        // AlertUtils.alertDialogShow(mContext, mContext.getString(R.string.text_version_title), message.toString());
-
-        // handle failure in caller
-        mContext.onCheckVersionPostExecute(false, message);
+        return changed;
     }
-
-    // Toast.makeText(mContext, "version name = " + versionName, Toast.LENGTH_LONG).show();
-
 }

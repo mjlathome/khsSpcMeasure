@@ -2,10 +2,8 @@ package com.khs.spcmeasure.ui;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
@@ -16,16 +14,8 @@ import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.library.SecurityUtils;
 import com.khs.spcmeasure.service.PieceService;
 import com.khs.spcmeasure.service.SetupService;
-import com.khs.spcmeasure.service.SimpleCodeService;
 import com.khs.spcmeasure.service.SylvacBleService;
-import com.khs.spcmeasure.tasks.CheckVersionTask;
 import com.khs.spcmeasure.tasks.DeleteSetupTask;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
 
 public class SetupListActivity extends Activity implements SetupListFragment.OnSetupListListener, DeleteSetupTask.OnDeleteSetupListener {
 
