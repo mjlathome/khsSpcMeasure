@@ -14,7 +14,12 @@ import java.util.Arrays;
 public class VersionUtils {
 
     // constants
-    public static final String TAG = "VersionUtils";
+    private static final String TAG = "VersionUtils";
+    public static final String TAG_VERSION_OK = "versionOk";
+    public static final String URL_INSTALL_CODE = "installCode";
+    public static final String URL_INSTALL_NAME = "installName";
+
+
     public static final int VERSION_CODE_UNKNOWN = -1;
     public static final String VERSION_NAME_UNKNOWN = "";
 
@@ -52,6 +57,11 @@ public class VersionUtils {
         // Toast.makeText(context, "version name = " + versionName, Toast.LENGTH_LONG).show();
 
         return installName;
+    }
+
+    // returns URL query string for installed version
+    public static String getUrlQuery(Context context) {
+        return URL_INSTALL_CODE + "=" + String.valueOf(getVersionCode(context)) + "&" + URL_INSTALL_NAME + "=" + getVersionName(context);
     }
 
     // check version code to see if changed

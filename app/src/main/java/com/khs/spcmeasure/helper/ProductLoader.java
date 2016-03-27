@@ -4,8 +4,10 @@ import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
 
+import com.khs.spcmeasure.Globals;
 import com.khs.spcmeasure.entity.Product;
 import com.khs.spcmeasure.library.JSONParser;
+import com.khs.spcmeasure.library.VersionUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,12 +22,11 @@ public class ProductLoader extends AsyncTaskLoader<List<Product>>{
 	// URL to get JSON Array
 	// TODO why hardcoded IP?
 	// private static String url = "http://192.168.0.111/karmax/spc/getAllProducts.php";	
-	private static String url = "http://thor.kmx.cosma.com/spc/get_products.php";
-	// private static String url = "http://json.org/example";
-	// private static String url = "http://10.35.33.58/spc/get_products.php";
-	
-	// private static String url = "http://thor.kmx.cosma.com/spc/getAllProducts.php";
-	
+	private static String url = "http://thor.kmx.cosma.com/spc/get_products.php?";
+
+	// callee context
+	private Context mContext;
+
 	//JSON Node Names
 	// TODO relocate these later on
 	private static final String TAG_SUCCESS = "success";
@@ -36,6 +37,8 @@ public class ProductLoader extends AsyncTaskLoader<List<Product>>{
 	
 	public ProductLoader(Context context) {
 		super(context);
+
+		mContext = context;
 	}
 	
     /**
@@ -54,7 +57,7 @@ public class ProductLoader extends AsyncTaskLoader<List<Product>>{
 		Log.d(TAG, "before getJSONFromURL");
 
 		// get JSON from URL
-		JSONObject json = jParser.getJSONFromUrl(url);
+		JSONObject json = jParser.getJSONFromUrl(url + VersionUtils.getUrlQuery(mContext));
 
 		Log.d(TAG, "after getJSONFromURL");
 
@@ -66,6 +69,11 @@ public class ProductLoader extends AsyncTaskLoader<List<Product>>{
 		// TODO handle null json return?
 		
 		try {
+			// handle version check
+			boolean versionOk = json.getBoolean(VersionUtils.TAG_VERSION_OK);
+			Globals g = Globals.getInstance();
+			g.setVersionOk(versionOk);
+
 			// get JSON Array from URL
 			jArray = json.getJSONArray(TAG_PRODUCT);
 			
