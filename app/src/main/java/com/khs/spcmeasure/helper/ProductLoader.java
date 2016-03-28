@@ -50,7 +50,15 @@ public class ProductLoader extends AsyncTaskLoader<List<Product>>{
 	public List<Product> loadInBackground() {
 		
 		Log.d(TAG, "loadInBackground - start");
-		
+
+		// get global vars
+		Globals g = Globals.getInstance();
+
+		// check version ans exit if in error
+		if (!g.getVerionOk()) {
+			return null;
+		}
+
 		JSONParser jParser = new JSONParser();
 		JSONArray jArray = null;
 
@@ -69,34 +77,36 @@ public class ProductLoader extends AsyncTaskLoader<List<Product>>{
 		// TODO handle null json return?
 		
 		try {
-			// handle version check
 			boolean versionOk = json.getBoolean(VersionUtils.TAG_VERSION_OK);
-			Globals g = Globals.getInstance();
+
+			// update version global
 			g.setVersionOk(versionOk);
 
-			// get JSON Array from URL
-			jArray = json.getJSONArray(TAG_PRODUCT);
-			
-			// create array to hold the Products
-			List<Product> prodList = new ArrayList<Product>(jArray.length());
-			
-			for (int i = 0; i < jArray.length(); i++) {
-				JSONObject jProduct = jArray.getJSONObject(i);
-				
-				// store JSON items as variables
-				long id = jProduct.getLong(TAG_ID);
-				String name = jProduct.getString(TAG_NAME);
-				
-				// create Product and add to the list
-				// TODO assume all returned are active?
-				Product prod = new Product(id, name, true);
-				prodList.add(prod);
-			}		
-					
-			// TODO perform any sort here... assume sorted already
-			Log.d(TAG, "loadInBackground - end");
-			// done
-			return prodList;
+			if (versionOk) {
+				// get JSON Array from URL
+				jArray = json.getJSONArray(TAG_PRODUCT);
+
+				// create array to hold the Products
+				List<Product> prodList = new ArrayList<Product>(jArray.length());
+
+				for (int i = 0; i < jArray.length(); i++) {
+					JSONObject jProduct = jArray.getJSONObject(i);
+
+					// store JSON items as variables
+					long id = jProduct.getLong(TAG_ID);
+					String name = jProduct.getString(TAG_NAME);
+
+					// create Product and add to the list
+					// TODO assume all returned are active?
+					Product prod = new Product(id, name, true);
+					prodList.add(prod);
+				}
+
+				// TODO perform any sort here... assume sorted already
+				Log.d(TAG, "loadInBackground - end");
+				// done
+				return prodList;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

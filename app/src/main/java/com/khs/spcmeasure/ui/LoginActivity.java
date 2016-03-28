@@ -33,7 +33,7 @@ import com.khs.spcmeasure.library.JSONParser;
 import com.khs.spcmeasure.library.SecurityUtils;
 import com.khs.spcmeasure.library.VersionUtils;
 import com.khs.spcmeasure.service.SimpleCodeService;
-import com.khs.spcmeasure.tasks.GetVersionTask;
+import com.khs.spcmeasure.tasks.CheckVersionTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,7 +44,7 @@ import java.util.List;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>, GetVersionTask.OnGetVersionListener {
+public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>, CheckVersionTask.OnCheckVersionListener {
 
     private static final String TAG = "LoginActivity";
 
@@ -376,23 +376,17 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>, 
     }
 
     // handle post login actions based up success parameter
-    private void postLogin(boolean ok) {
-        Log.d(TAG, "postLogin: ok = " + ok);
+    private void postLogin(boolean loginOk) {
+        Log.d(TAG, "postLogin: loginOk = " + loginOk);
 
         // check successful login
-        if (ok) {
-            // import Action Cause Simple Codes
-            SimpleCodeService.startActionImport(getApplicationContext(), SimpleCodeService.TYPE_ACTION_CAUSE);
-
-            // import Gauge Audit Simple Codes
-            SimpleCodeService.startActionImport(getApplicationContext(), SimpleCodeService.TYPE_GAUGE_AUDIT);
-
+        if (loginOk) {
             // check version
-            new GetVersionTask(this).execute();
+            new CheckVersionTask(this).execute();
 
         } else {
             // handle login failure
-            returnResult(ok);
+            returnResult(loginOk);
         }
 
     }   // postLogin
@@ -411,50 +405,41 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>, 
     }
 
     @Override
-    public void onGetVersionPostExecute(boolean success, int latestCode, String latestName) {
+    public void onCheckVersionPostExecute(boolean versionOk, int latestCode, String latestName) {
 
         // initialize
         StringBuffer message = new StringBuffer("");
         boolean showDialog = false;
-        boolean versionOk = false;
 
-        // handle version check
-        if (!success) {
-            // latest version info not found
-            showDialog = true;
-            versionOk = false;
-            message.append(getString(R.string.text_version_logout_not_found) + "\n");
-            message.append(getString(R.string.text_contact_admin));
-        } else if (!VersionUtils.isVersionCodeChanged(this, latestCode)) {
-            // latest version code not changed
-            versionOk = true;
+        // handle version ok
+        if (versionOk) {
+            // import Action Cause Simple Codes
+            SimpleCodeService.startActionImport(getApplicationContext(), SimpleCodeService.TYPE_ACTION_CAUSE);
+
+            // import Gauge Audit Simple Codes
+            SimpleCodeService.startActionImport(getApplicationContext(), SimpleCodeService.TYPE_GAUGE_AUDIT);
+
+            // check if latest version is not installed
+            if (VersionUtils.isVersionCodeChanged(this, latestCode)) {
+                // latest version changed
+                showDialog = true;
+            }
         } else {
-            // latest version changed
             showDialog = true;
+        }
 
+        if (showDialog) {
             // build confirmation message
             message.append(getString(R.string.text_version_contact) + "\n");
             message.append(getString(R.string.text_version_install, VersionUtils.getVersionName(this), VersionUtils.getVersionCode(this)) + "\n");
             message.append(getString(R.string.text_version_latest, latestName, latestCode));
 
-            if (VersionUtils.isMajorVersionNameChanged(this, latestName)) {
+            if (versionOk) {
                 // major version changed
-                versionOk = false;
+                SecurityUtils.setIsLoggedIn(this, false);
                 message.insert(0, getString(R.string.text_version_logout_too_old) + "\n");
-
-            } else {
-                // major version not changes
-                versionOk = true;
             }
-        }
 
-        // force logout if version not ok
-        if (!versionOk) {
-            SecurityUtils.setIsLoggedIn(this, false);
-        }
-
-        // inform user if required
-        if (showDialog) {
             final boolean returnVal = versionOk;
             AlertDialog.Builder dlgAlert = AlertUtils.createAlert(this, getString(R.string.text_version_title), message.toString());
             dlgAlert.setPositiveButton(getString(R.string.text_okay), new DialogInterface.OnClickListener() {
@@ -469,6 +454,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>, 
             // version okay
             returnResult(versionOk);
         }
+
     }
 }
 
