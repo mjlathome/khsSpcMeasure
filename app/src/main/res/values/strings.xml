@@ -151,6 +151,8 @@
 
     <!-- Preference strings -->
     <string name="pref_title_measurement">Measurement</string>
+    <string name="pref_show_notifications_title">Show Notifications</string>
+    <string name="pref_show_notifications_summary">Specify whether notification messages should be generated</string>
     <string name="pref_in_control_auto_move_title">In-control Auto Move</string>
     <string name="pref_in_control_auto_move_summary">Specify whether to automatically move onto next Feature after in-control measurement taken</string>
     <string name="pref_in_control_delay_title">In-control Delay</string>

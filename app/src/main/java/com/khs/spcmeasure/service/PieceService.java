@@ -5,12 +5,15 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.R;
+import com.khs.spcmeasure.ui.SettingsActivity;
 import com.khs.spcmeasure.ui.SetupListActivity;
 import com.khs.spcmeasure.library.ActionStatus;
 import com.khs.spcmeasure.library.CollectStatus;
@@ -150,6 +153,10 @@ public class PieceService extends Service {
 
     // update service notification - uses text string provided
     private void updateNotification(ActionStatus actStat, String text, int export) {
+        // extract shared preferences and exit if show notifications is not required
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        if(!sharedPref.getBoolean(SettingsActivity.KEY_PREF_SHOW_NOTIFICATIONS, false)) {return;}
+
         String title = this.getString(R.string.text_piece_export_title, actStat);
 
         mNotificationManager.notify(mNotifyId, getNotification(title, text, export));

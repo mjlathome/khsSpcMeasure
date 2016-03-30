@@ -13,6 +13,7 @@ public class SettingsActivity extends Activity {
     private final String TAG = "SettingsActivity";
 
     // preference keys
+    public static final String KEY_PREF_SHOW_NOTIFICATIONS      = "key_pref_show_notifications";
     public static final String KEY_PREF_IN_CONTROL_AUTO_MOVE    = "key_pref_in_control_auto_move";
     public static final String KEY_PREF_IN_CONTROL_DELAY        = "key_pref_in_control_delay";
 

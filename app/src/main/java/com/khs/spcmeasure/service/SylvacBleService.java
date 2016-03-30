@@ -36,6 +36,15 @@ import java.util.UUID;
 // handle all Bluetooth Low Energy (BLE) communication
 // queues are now used for the write/read requests.  see:
 // http://stackoverflow.com/questions/17910322/android-ble-api-gatt-notification-not-received
+//
+// I'm going to implement Bluetooth Gatt,
+// Cuz that's where the measurements at at.
+// For my operations I'm using a queue,
+// Cuz without that the measurements won't come through.
+// I'll take your Android App to another dimension,
+// I'll take your Android App to another dimension,
+// Pay close attention.
+//
 public class SylvacBleService extends Service {	
 	private static final String TAG = "SylvacBleService";
 

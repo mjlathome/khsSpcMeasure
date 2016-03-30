@@ -6,9 +6,12 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.R;
+import com.khs.spcmeasure.ui.SettingsActivity;
 import com.khs.spcmeasure.ui.SetupListActivity;
 import com.khs.spcmeasure.entity.SimpleCode;
 import com.khs.spcmeasure.library.ActionStatus;
@@ -181,6 +184,10 @@ public class SimpleCodeService extends IntentService {
 
     // update service notification - uses text string provided
     private void updateNotification(String action, ActionStatus actStat, String text) {
+        // extract shared preferences and exit if show notifications is not required
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        if(!sharedPref.getBoolean(SettingsActivity.KEY_PREF_SHOW_NOTIFICATIONS, false)) {return;}
+
         String title = this.getString(R.string.text_unknown);
         if (action.equals(ACTION_IMPORT)) {
             title = this.getString(R.string.text_simple_code_import, actStat);

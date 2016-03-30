@@ -6,7 +6,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.khs.spcmeasure.helper.DBAdapter;
@@ -16,6 +18,7 @@ import com.khs.spcmeasure.library.ActionStatus;
 import com.khs.spcmeasure.library.CollectStatus;
 import com.khs.spcmeasure.library.JSONParser;
 import com.khs.spcmeasure.library.NotificationId;
+import com.khs.spcmeasure.ui.SettingsActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -367,6 +370,10 @@ public class HistoryService extends IntentService {
 
     // update service notification - uses text string provided
     private void updateNotification(String action, ActionStatus actStat, String text, Long prodId) {
+        // extract shared preferences and exit if show notifications is not required
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        if(!sharedPref.getBoolean(SettingsActivity.KEY_PREF_SHOW_NOTIFICATIONS, false)) {return;}
+
         String title = this.getString(R.string.text_unknown);
         if (action.equals(ACTION_MEAS_HIST)) {
             title = this.getString(R.string.text_meas_hist_title, actStat);

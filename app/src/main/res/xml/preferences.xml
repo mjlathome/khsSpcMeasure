@@ -8,6 +8,13 @@
         android:key="measurement_settings">
 
         <CheckBoxPreference
+            android:key="key_pref_show_notifications"
+            android:title="@string/pref_show_notifications_title"
+            android:summary="@string/pref_show_notifications_summary"
+            android:defaultValue="false"
+            />
+
+        <CheckBoxPreference
             android:key="key_pref_in_control_auto_move"
             android:title="@string/pref_in_control_auto_move_title"
             android:summary="@string/pref_in_control_auto_move_summary"

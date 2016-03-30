@@ -30,18 +30,20 @@ public class DBAdapter {
 	
 	// All Static variables
     // Database Version
-    static final int DATABASE_VERSION = 14;
+    static final int DATABASE_VERSION = 15;
  
     // Database Name
     public static final String DATABASE_NAME = "spcMeasure";
  
     // table names
-    public static final String TABLE_PRODUCT 		= "product";
-    public static final String TABLE_FEATURE 		= "feature";
-    public static final String TABLE_LIMITS   		= "limits";
-    public static final String TABLE_PIECE   		= "piece";
-    public static final String TABLE_MEASUREMENT    = "measurement";
-    public static final String TABLE_SIMPLE_CODE    = "simpleCode";
+    public static final String TABLE_PRODUCT 			= "product";
+    public static final String TABLE_FEATURE 			= "feature";
+    public static final String TABLE_LIMITS   			= "limits";
+    public static final String TABLE_PIECE   			= "piece";
+    public static final String TABLE_MEASUREMENT    	= "measurement";
+    public static final String TABLE_SIMPLE_CODE    	= "simpleCode";
+	public static final String TABLE_GAUGE_AUDIT_HDR	= "gaugeAuditHdr";
+	public static final String TABLE_GAUGE_AUDIT_DTL	= "gaugeAuditDtl";
 	
     // column names
     public static final String KEY_ROWID = "_id";
@@ -73,6 +75,11 @@ public class DBAdapter {
     public static final String KEY_CODE = "code";
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_INT_CODE = "intCode";
+	public static final String KEY_GAUGE_AUDIT_ID = "auditId";
+	public static final String KEY_HDR_ROWID = "hdrRowId";
+	public static final String KEY_QUESTION_ID = "questionId";
+	public static final String KEY_ANSWER = "answer";
+	public static final String KEY_COMMENTS = "comments";
 
     // sql table creates
     static final String CREATE_TABLE_PRODUCT = "CREATE TABLE " + TABLE_PRODUCT + "(" + 
@@ -133,7 +140,22 @@ public class DBAdapter {
             KEY_INT_CODE + " TEXT KEY," +
             KEY_ACTIVE + " INTEGER" + ")";
 
-    // member variables
+	static final String CREATE_TABLE_GAUGE_AUDIT_HDR = "CREATE TABLE " + TABLE_GAUGE_AUDIT_HDR + "(" +
+			KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+			KEY_GAUGE_AUDIT_ID + " INTEGER KEY," +
+			KEY_COLLECT_DATETIME + " TEXT," +
+			KEY_COLLECT_STATUS + " TEXT KEY NOT NULL," +
+			KEY_PROD_ID + " INTEGER KEY NOT NULL," +
+			KEY_OPERATOR + " TEXT" + ")";
+
+	static final String CREATE_TABLE_GAUGE_AUDIT_DTL = "CREATE TABLE " + TABLE_GAUGE_AUDIT_DTL + "(" +
+			KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+			KEY_HDR_ROWID + " INTEGER KEY NOT NULL," +
+			KEY_QUESTION_ID + " INTEGER KEY NOT NULL," +
+			KEY_ANSWER + " INTEGER," +
+			KEY_COMMENTS + " TEXT" + ")";
+
+	// member variables
     final Context context;
     
     DatabaseHelper DBHelper;
@@ -163,6 +185,8 @@ public class DBAdapter {
 				db.execSQL(CREATE_TABLE_PIECE);
 				db.execSQL(CREATE_TABLE_MEASUREMENT);
                 db.execSQL(CREATE_TABLE_SIMPLE_CODE);
+				db.execSQL(CREATE_TABLE_GAUGE_AUDIT_HDR);
+				db.execSQL(CREATE_TABLE_GAUGE_AUDIT_DTL);
 			} catch(SQLException e) {
 				e.printStackTrace();
 			}
@@ -180,6 +204,8 @@ public class DBAdapter {
 				db.execSQL("DROP TABLE IF EXISTS " + TABLE_PIECE);
 				db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEASUREMENT);
                 db.execSQL("DROP TABLE IF EXISTS " + TABLE_SIMPLE_CODE);
+				db.execSQL("DROP TABLE IF EXISTS " + TABLE_GAUGE_AUDIT_HDR);
+				db.execSQL("DROP TABLE IF EXISTS " + TABLE_GAUGE_AUDIT_DTL);
 
 				// create tables again
 				onCreate(db);							
