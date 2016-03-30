@@ -25,6 +25,7 @@ public class AboutActivity extends Activity {
     // counts number of times version name clicked on
     private static final int DEBUG_COUNT = 5;
     private int mVersionCount = 0;
+    private int mAppNameCount = 0;
 
 
     @Override
@@ -34,6 +35,15 @@ public class AboutActivity extends Activity {
 
         // display version
         displayVersion();
+    }
+
+    // hand
+    public void onClickAppName(View v) {
+        mAppNameCount++;
+        if (mAppNameCount >= DEBUG_COUNT) {
+            mAppNameCount = 0;
+            clearPreferredApp();
+        }
     }
 
     // handle click of versionName
@@ -68,6 +78,13 @@ public class AboutActivity extends Activity {
             TextView txtVersionName = (TextView) findViewById(R.id.txtVersionName);
             txtVersionName.setText(versionName);
         }
+    }
+
+    // clear preferred app from system
+    public void clearPreferredApp() {
+        this.getPackageManager().clearPackagePreferredActivities(this.getPackageName());
+        AlertUtils.alertDialogShow(this, getString(R.string.text_clear_pref_app), getString(R.string.text_please_exit_app));
+        return;
     }
 
     // copy SQLite db to download folder for debug purposes

@@ -29,7 +29,9 @@
         android:textSize="@dimen/text_large"
         android:textStyle="bold"
         android:layout_below="@+id/textKhs"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:onClick="onClickAppName"
+        android:clickable="true" />
 
     <TextView
         android:id="@+id/lblVersionName"
