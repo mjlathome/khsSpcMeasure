@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +22,9 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
 
     private static final String TAG = "SetupListActivity";
 
+    // local broadcast constants
+    public static final String SPC_MEASURE_CLOSE = "SpcMeasureClose";
+
     // BLE member variables
     private SylvacBleService mSylvacBleSrvc = null;
 
@@ -28,7 +32,9 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
     private static int RESULT_IMPORT = 1;
 
     // ensure that User Login is only asked once when app initially starts
-    private static boolean askLogin = true;
+    // TODO remove later as even though onCreate is re-run when activity is re-started
+    // TODO the static var was set to true so no login shown
+    // private static boolean askLogin = true;
 
     private SetupListFragment mSetupListFrag;
     private Long mProdId;
@@ -59,8 +65,9 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
         startService(new Intent(getBaseContext(), PieceService.class));
 
         // check if user should be asked to login
-        if (askLogin) {
-            askLogin = false;
+        // if (askLogin) {
+        if (!SecurityUtils.getIsLoggedIn(this)) {
+            // askLogin = false;
 
             // initialize as logged out
             SecurityUtils.setIsLoggedIn(this, false);
@@ -113,6 +120,7 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
         stopBleService();
+        broadcastUpdate(SPC_MEASURE_CLOSE);
         super.onDestroy();
     }
 
@@ -158,8 +166,11 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
             case R.id.mnuExit:
                 // exit the app
                 Log.d(TAG, "Menu: Exit");
+                // set logged out
+                SecurityUtils.setIsLoggedIn(this, false);
+                // close activity
                 finish();
-                System.exit(0);
+                // System.exit(0);
                 return true;
             case R.id.mnuImport:
                 Log.d(TAG, "Menu: Import");
@@ -230,6 +241,12 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
     public void stopBleService() {
         Log.d(TAG, "stopBleService");
         stopService(new Intent(getBaseContext(), SylvacBleService.class));
+    }
+
+    // broadcast action - no extras
+    private void broadcastUpdate(final String action) {
+        final Intent intent = new Intent(action);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
 }

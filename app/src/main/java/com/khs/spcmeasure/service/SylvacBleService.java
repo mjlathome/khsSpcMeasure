@@ -12,7 +12,10 @@ import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Binder;
 import android.os.Handler;
@@ -25,6 +28,7 @@ import com.khs.spcmeasure.library.ConnectionState;
 import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.library.SylvacGattAttributes;
 import com.khs.spcmeasure.library.NotificationId;
+import com.khs.spcmeasure.ui.SetupListActivity;
 
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
@@ -105,12 +109,28 @@ public class SylvacBleService extends Service {
     
     // service state
     private ConnectionState mConnectionState = ConnectionState.DISCONNECTED;
-    
+
+    // receiver for local broadcast messages
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            // handle app closure by stopping BLE service
+            if (action.equals(SetupListActivity.SPC_MEASURE_CLOSE)) {
+                stopSelf();
+            }
+        }
+    };
+
 	@Override
 	public void onCreate() {
         Log.d(TAG, "onCreate");
 		super.onCreate();
-					
+
+        // register for app closure local broadcast event
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                mMessageReceiver, new IntentFilter(SetupListActivity.SPC_MEASURE_CLOSE));
+
 		// create new handler for queuing runnables i.e. stopLeScan
 		mHandler = new Handler();
 		
@@ -170,6 +190,9 @@ public class SylvacBleService extends Service {
 	@Override
 	public void onDestroy() {
         Log.d(TAG, "onDestroy");
+
+        // unregister for app closure local broadcast event
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
 
         // ensure Ble resources are released
         mConnectedGatt = disconnectGatt(mConnectedGatt);
@@ -902,4 +925,5 @@ public class SylvacBleService extends Service {
             return "";
         }
     }
+
 }
