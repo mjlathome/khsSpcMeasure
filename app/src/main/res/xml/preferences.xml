@@ -4,8 +4,8 @@
     android:layout_width="match_parent" android:layout_height="match_parent" >
 
     <PreferenceCategory
-        android:title="@string/pref_title_measurement"
-        android:key="measurement_settings">
+        android:title="@string/pref_title_general"
+        android:key="general_settings">
 
         <CheckBoxPreference
             android:key="key_pref_show_notifications"
@@ -13,6 +13,12 @@
             android:summary="@string/pref_show_notifications_summary"
             android:defaultValue="false"
             />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_title_measurement"
+        android:key="measurement_settings">
 
         <CheckBoxPreference
             android:key="key_pref_in_control_auto_move"
