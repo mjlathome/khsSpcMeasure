@@ -3,9 +3,9 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         karmax {
-            keyAlias 'KarmaxReleaseKey'
+            keyAlias 'karmax'
             keyPassword 'Kmx5571'
-            storeFile file('C:/Users/Mark/AndroidKeystore/karmax.release.jks')
+            storeFile file('C:/Users/mlees/AndroidKeystore/karmax.release.jks')
             storePassword 'Kmx5571'
         }
     }

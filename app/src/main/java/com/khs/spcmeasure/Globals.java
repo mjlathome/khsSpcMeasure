@@ -10,6 +10,8 @@ public class Globals{
 
     // global variables
     private boolean versionOk = false;  // assume version is not ok
+    private int latestCode = -1;
+    private String latestName = "";
 
     // restrict constructor from being instantiated
     public Globals(){}
@@ -22,13 +24,27 @@ public class Globals{
         return instance;
     }
 
-    // get version ok
-    public boolean getVerionOk() {
-        return this.versionOk;
+    public boolean isVersionOk() {
+        return versionOk;
     }
 
-    // set verion ok
-    public void setVersionOk(boolean ok) {
-        this.versionOk = ok;
+    public void setVersionOk(boolean versionOk) {
+        this.versionOk = versionOk;
+    }
+
+    public int getLatestCode() {
+        return latestCode;
+    }
+
+    public void setLatestCode(int latestCode) {
+        this.latestCode = latestCode;
+    }
+
+    public String getLatestName() {
+        return latestName;
+    }
+
+    public void setLatestName(String latestName) {
+        this.latestName = latestName;
     }
 }
