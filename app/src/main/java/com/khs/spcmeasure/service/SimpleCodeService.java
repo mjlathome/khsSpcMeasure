@@ -8,9 +8,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
+import com.khs.spcmeasure.Globals;
 import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.R;
+import com.khs.spcmeasure.library.VersionUtils;
 import com.khs.spcmeasure.ui.SettingsActivity;
 import com.khs.spcmeasure.ui.SetupListActivity;
 import com.khs.spcmeasure.entity.SimpleCode;
@@ -44,7 +47,10 @@ public class SimpleCodeService extends IntentService {
     public static final String TYPE_GAUGE_AUDIT = "gaugeAudit";
 
     // url address
-    private static String url = "http://thor.kmx.cosma.com/spc/get_simple_code.php?type=";
+    private static String url = "http://thor.kmx.cosma.com/spc/get_simple_code.php?";
+    private static String querySep = "&";
+    private static String queryType = "type=";
+
 
     // JSON node names
     private static final String TAG_SUCCESS = "success";
@@ -110,58 +116,83 @@ public class SimpleCodeService extends IntentService {
      */
     private void handleActionImport(String codeType) {
 
+        Log.d(TAG, "codeType = " + codeType);
+
         // assume failure
         ActionStatus actStat = ActionStatus.FAILED;
         String notifyText = codeType;
 
-        if (!NetworkUtils.isWiFi(this)) {
+        // get global vars
+        Globals g = Globals.getInstance();
+
+        // skip if version is not ok or no WiFi
+        if (!g.isVersionOk() || !NetworkUtils.isWiFi(this)) {
             actStat = ActionStatus.SKIPPED;
         } else {
             try {
                 JSONParser jParser = new JSONParser();
 
                 // get JSON from URL
-                JSONObject json = jParser.getJSONFromUrl(url + codeType);
+                JSONObject json = jParser.getJSONFromUrl(url + VersionUtils.getUrlQuery(this) + querySep + queryType + codeType);
+
+                Log.d(TAG, "json - " + json);
 
                 // verify json was successful
-                if (json == null || json.getBoolean(TAG_SUCCESS) != true) {
+                if (json == null) {
                     // notify user - failure
                     actStat = ActionStatus.FAILED;
                 } else {
-                    // open the DB
-                    DBAdapter db = new DBAdapter(this);
-                    db.open();
+                    // extract success and versionOk
+                    boolean success = json.getBoolean(TAG_SUCCESS);
+                    boolean versionOk = json.getBoolean(VersionUtils.TAG_VERSION_OK);
 
-                    // create SimpleCodes
-                    JSONArray jSimpleCodeArr = json.getJSONArray(TAG_SIMPLE_CODE);
-                    for (int i = 0; i < jSimpleCodeArr.length(); i++) {
-                        JSONObject jSimpleCode = jSimpleCodeArr.getJSONObject(i);
+                    // update version global
+                    g.setVersionOk(versionOk);
 
-                        // extract Simple Code fields from json data
-                        long id = Long.valueOf(jSimpleCode.getString(TAG_ID));
-                        String type = jSimpleCode.getString(TAG_TYPE);
-                        String code = jSimpleCode.getString(TAG_CODE);
-                        String desc = jSimpleCode.getString(TAG_DESC);
-                        String intCode = jSimpleCode.getString(TAG_INT_CODE);
-                        boolean active = Boolean.valueOf(jSimpleCode.getString(TAG_ACTIVE));
+                    // verify success and versionOk
+                    if (!success || !versionOk) {
+                        // notify user - failure
+                        actStat = ActionStatus.FAILED;
 
-                        // create the SimpleCode object
-                        SimpleCode simpleCode = new SimpleCode(id, type, code, desc, intCode, active);
-                        // Log.d(TAG, "onPostExecute id = " + id);
-
-                        // update or insert SimpleCode into the DB
-                        if (db.updateSimpleCode(simpleCode) == false) {
-                            db.createSimpleCode(simpleCode);
+                        // handle version failure
+                        if (!versionOk) {
+                            // TODO broadcast version failure
                         }
-                    }  // create SimpleCodes
+                    } else {
+                        // open the DB
+                        DBAdapter db = new DBAdapter(this);
+                        db.open();
 
-                    // close the DB
-                    db.close();
+                        // create SimpleCodes
+                        JSONArray jSimpleCodeArr = json.getJSONArray(TAG_SIMPLE_CODE);
+                        for (int i = 0; i < jSimpleCodeArr.length(); i++) {
+                            JSONObject jSimpleCode = jSimpleCodeArr.getJSONObject(i);
 
-                    // notify user - success
-                    actStat = ActionStatus.COMPLETE;
+                            // extract Simple Code fields from json data
+                            long id = Long.valueOf(jSimpleCode.getString(TAG_ID));
+                            String type = jSimpleCode.getString(TAG_TYPE);
+                            String code = jSimpleCode.getString(TAG_CODE);
+                            String desc = jSimpleCode.getString(TAG_DESC);
+                            String intCode = jSimpleCode.getString(TAG_INT_CODE);
+                            boolean active = Boolean.valueOf(jSimpleCode.getString(TAG_ACTIVE));
+
+                            // create the SimpleCode object
+                            SimpleCode simpleCode = new SimpleCode(id, type, code, desc, intCode, active);
+                            // Log.d(TAG, "onPostExecute id = " + id);
+
+                            // update or insert SimpleCode into the DB
+                            if (db.updateSimpleCode(simpleCode) == false) {
+                                db.createSimpleCode(simpleCode);
+                            }
+                        }  // create SimpleCodes
+
+                        // close the DB
+                        db.close();
+
+                        // notify user - success
+                        actStat = ActionStatus.COMPLETE;
+                    }
                 }
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
