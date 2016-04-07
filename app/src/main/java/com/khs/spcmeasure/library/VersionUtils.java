@@ -16,8 +16,8 @@ public class VersionUtils {
     // constants
     private static final String TAG = "VersionUtils";
     public static final String TAG_VERSION_OK = "versionOk";
-    public static final String URL_INSTALL_CODE = "installCode";
-    public static final String URL_INSTALL_NAME = "installName";
+    public static final String TAG_INSTALL_CODE = "installCode";
+    public static final String TAG_INSTALL_NAME = "installName";
 
 
     public static final int VERSION_CODE_UNKNOWN = -1;
@@ -61,7 +61,7 @@ public class VersionUtils {
 
     // returns URL query string for installed version
     public static String getUrlQuery(Context context) {
-        return URL_INSTALL_CODE + "=" + String.valueOf(getVersionCode(context)) + "&" + URL_INSTALL_NAME + "=" + getVersionName(context);
+        return TAG_INSTALL_CODE + "=" + String.valueOf(getVersionCode(context)) + "&" + TAG_INSTALL_NAME + "=" + getVersionName(context);
     }
 
     // check version code to see if changed

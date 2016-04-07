@@ -14,6 +14,7 @@ import android.util.Log;
 
 import com.khs.spcmeasure.Globals;
 import com.khs.spcmeasure.helper.DBAdapter;
+import com.khs.spcmeasure.library.NetworkUtils;
 import com.khs.spcmeasure.library.VersionUtils;
 import com.khs.spcmeasure.ui.FeatureReviewActivity;
 import com.khs.spcmeasure.R;
@@ -190,6 +191,8 @@ public class MeasurementService extends IntentService {
      */
     // export closed piece from device to server
     private void handleActionExport(Long pieceId) {
+        Log.d(TAG, "handleActionExport: " + pieceId);
+
         // notify user - starting
         broadcastUpdate(ACTION_EXPORT, pieceId, ActionStatus.WORKING);
 
@@ -197,52 +200,58 @@ public class MeasurementService extends IntentService {
         ActionStatus actStat = ActionStatus.FAILED;
         String notifyText = pieceId.toString();
 
-        try {
-            // extract data
-            Piece piece = mPieceDao.getPiece(pieceId);
-            Product product = mProductDao.getProduct(piece.getProdId());
-            notifyText = product.getName() + " - " + DateTimeUtils.getDateTimeStr(piece.getCollectDt());
+        // get global vars
+        Globals g = Globals.getInstance();
 
-            if (piece.getStatus() == CollectStatus.CLOSED) {
+        // check version and WiFi are ok
+        if (g.isVersionOk() && NetworkUtils.isWiFi(this)) {
+            try {
+                // extract data
+                Piece piece = mPieceDao.getPiece(pieceId);
+                Product product = mProductDao.getProduct(piece.getProdId());
+                notifyText = product.getName() + " - " + DateTimeUtils.getDateTimeStr(piece.getCollectDt());
 
-                // build json for the piece/measurements
-                JSONObject jResults = getJsonResultsExport(pieceId);
+                if (piece.getStatus() == CollectStatus.CLOSED) {
 
-                if (jResults == null) {
-                    // notify user - failure
-                    actStat = ActionStatus.FAILED;
-                } else {
-                    Log.d(TAG, "results of " + pieceId + " = " + jResults.toString());
+                    // build json for the piece/measurements
+                    JSONObject jResults = getJsonResultsExport(pieceId);
 
-                    // post json request
-                    JSONParser jParser = new JSONParser();
-                    JSONObject json = jParser.getJSONFromUrl(urlExport, jResults.toString());
-
-                    // process json response
-                    if (processResponseExport(json) == true) {
-                        // notify user - success
-                        actStat = ActionStatus.COMPLETE;
-
-                        // TODO want to do history delete now
-                        HistoryService.startActionDelete(this, piece.getProdId());
-                    } else {
+                    if (jResults == null) {
                         // notify user - failure
                         actStat = ActionStatus.FAILED;
+                    } else {
+                        Log.d(TAG, "results of " + pieceId + " = " + jResults.toString());
+
+                        // post json request
+                        JSONParser jParser = new JSONParser();
+                        JSONObject json = jParser.getJSONFromUrl(urlExport, jResults.toString());
+
+                        // process json response
+                        if (processResponseExport(json) == true) {
+                            // notify user - success
+                            actStat = ActionStatus.COMPLETE;
+
+                            // TODO want to do history delete now
+                            HistoryService.startActionDelete(this, piece.getProdId());
+                        } else {
+                            // notify user - failure
+                            actStat = ActionStatus.FAILED;
+                        }
                     }
+                } else {
+                    // notify user - skipped
+                    actStat = ActionStatus.SKIPPED;
                 }
-            } else {
-                // notify user - skipped
-                actStat = ActionStatus.SKIPPED;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+
+                // cancel import to stop re-try
+                cancelExport(pieceId);
+
+                // notify user - failure
+                actStat = ActionStatus.FAILED;
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            // cancel import to stop re-try
-            cancelExport(pieceId);
-
-            // notify user - failure
-            actStat = ActionStatus.FAILED;
         }
 
         // notify user
@@ -313,6 +322,9 @@ public class MeasurementService extends IntentService {
                 jPiece.put(DBAdapter.TABLE_MEASUREMENT, jMeasArr);
 
                 // build json results
+                // add in installed version info to body data
+                jResults.put(VersionUtils.TAG_INSTALL_CODE, VersionUtils.getVersionCode(this));
+                jResults.put(VersionUtils.TAG_INSTALL_NAME, VersionUtils.getVersionName(this));
                 jResults.put(TAG_SUCCESS, true);
                 jResults.put(DBAdapter.TABLE_PIECE, jPiece);
             }
@@ -335,11 +347,21 @@ public class MeasurementService extends IntentService {
         Log.d(TAG, "processResponseExport: json = " + json.toString());
 
         try {
+            // get global vars
+            Globals g = Globals.getInstance();
+
+            // extract versionOk
+            boolean versionOk = json.getBoolean(VersionUtils.TAG_VERSION_OK);
+
+            // update version global
+            g.setVersionOk(versionOk);
+
             // unpack success flag and message
             success = Boolean.valueOf(json.getBoolean(TAG_SUCCESS));
             String  message = String.valueOf(json.getString(TAG_MESSAGE));
 
-            if (success == true) {
+            // verify success and version
+            if (success && versionOk) {
 
                 // unpack Piece data from json response
                 JSONObject jPiece = json.getJSONObject(DBAdapter.TABLE_PIECE);
@@ -403,8 +425,8 @@ public class MeasurementService extends IntentService {
         // get global vars
         Globals g = Globals.getInstance();
 
-        // check version and skip if in error
-        if (g.isVersionOk()) {
+        // check version and WiFi are ok
+        if (g.isVersionOk() && NetworkUtils.isWiFi(this)) {
             try {
                 // extract data
                 Product product = mProductDao.getProduct(prodId);
