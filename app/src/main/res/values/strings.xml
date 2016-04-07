@@ -79,6 +79,7 @@
     <string name="text_version_logout_too_old">Logged out as app is too old.</string>
     <string name="text_version_install">Installed version %1$s (%2$s).</string>
     <string name="text_version_latest">Latest version %1$s (%2$s).</string>
+    <string name="text_version_too_old">Installed version is too old.</string>
     <string name="text_version_contact">Please contact SPC Coordinator for an update.</string>
     <string name="text_refresh">Refresh</string>
     <string name="text_scan">Scan</string>

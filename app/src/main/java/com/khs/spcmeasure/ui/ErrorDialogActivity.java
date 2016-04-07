@@ -40,7 +40,9 @@ public class ErrorDialogActivity extends Activity{
 				}
 			}
 		}); 				
-		
+
+		dlgAlert.show();
+
 		return;
 	}
 	

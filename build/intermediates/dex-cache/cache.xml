@@ -2,228 +2,67 @@
 <items version="2" >
 
     <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-cast\7.5.0\jars\classes.jar"
+        jar="C:\Users\mlees\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.1.1\support-annotations-23.1.1.jar"
         jumboMode="false"
         revision="23.0.1"
-        sha1="8e3a972f28b8bae817e382257ba177a31bcadbbc">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-d2fce80e184302958447c09d2da47966fb6fd4ab.jar" />
+        sha1="8d680ba5a623724d1fb0e81c36a790f023a6cede">
+        <dex dex="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\support-annotations-23.1.1-e9166b396918255ba07cb9ec77da17713f8c6cf8.jar" />
     </item>
     <item
-        jar="C:\Users\Mark\.gradle\caches\modules-2\files-2.1\com.androidplot\androidplot-core\0.6.1\3db0daea52375b26bfa61c59b8df93950bdefbbc\androidplot-core-0.6.1.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="3db0daea52375b26bfa61c59b8df93950bdefbbc">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\androidplot-core-0.6.1-c76aac1cdfecd802d3f70b872639d08d524d6237.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.android.support\mediarouter-v7\22.0.0\jars\libs\internal_impl-22.0.0.jar"
+        jar="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.1\jars\classes.jar"
         jumboMode="false"
         revision="23.0.1"
-        sha1="ba3df4eb0a630d7de294f0e48d3f9267d279b784">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\internal_impl-22.0.0-6edf72a185357a0b2fa5d835eebf09a026ff4a79.jar" />
+        sha1="6cbc7773921fcfedbe55657578f0cbfe614778dc">
+        <dex dex="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-1230203fc5f325b9c1609f1808d06e1dbcde607e.jar" />
     </item>
     <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-panorama\7.5.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="ba207be21987c11b37d9f8faa08ed6e722569f30">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-127e71d8be41e4d9925c97742c3c8ac52740060e.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\AppData\Local\Android\sdk1\extras\android\m2repository\com\android\support\support-annotations\23.1.0\support-annotations-23.1.0.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="92e3fc113ec3ee36b64603a38857b95700025633">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\support-annotations-23.1.0-ec75bbf890fb68a15d1cf37538a731139434b6b6.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-location\7.5.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="1e98ef3f124bb7a11f8575f9ff5dfea330b61b6f">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-32f3ab79c85d6a48afb2dcc5e29ac160f9995584.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-identity\7.5.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="d405025c600055237c171a0bbabaa49d69696573">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-7b5ec4e81dbfb64874005465961f5a7d41e400cb.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-drive\7.5.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="f44d03c138cb6488fdbaa65e3a7e5878861a56d8">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-7bb75af6150568ef684688f5b797056cbbce0db8.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.0\jars\libs\internal_impl-23.1.0.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="8716243bf04bae8d6c9ca94d27b9a9be7236f0a3">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\internal_impl-23.1.0-a01e6abbf7c0b55dd0dff8687e529584b159e5b4.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-ads\7.5.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="29ebc7e04d877062317c8cc0e68b20f0c1fcda66">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-c1d00db282f3230ae53f8656f6a786d61d402df4.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="ddde541c289c8b816a8f8fd6c325d80788c522a6">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-1c280ba60801f45efa4c18a4d235285ddf9210de.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-plus\7.5.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="272bc5d7063f24bc3a33ea1d318cde8f31f5ec4c">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-c7eb404fc7128228189383ed7ff468d297f3b0ca.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\.gradle\caches\modules-2\files-2.1\com.google.zxing\android-integration\3.2.1\87a3d7da33a6c633fb1ff30023dbf0d05e8ea74c\android-integration-3.2.1.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="87a3d7da33a6c633fb1ff30023dbf0d05e8ea74c">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\android-integration-3.2.1-a4066304693316e32d86102a79b5c9b0a869756a.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-wearable\7.5.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="69dd177337ead693c408c8dddc9546bb6f1244fa">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-174ca1d6fbd4bb4cc9f5665d2b69caadac0014a6.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-appinvite\7.5.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="63ec6e9f4fe5482a7447d0f3091b8e543a02554c">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-39071f1cebc7c6e1e34506e8754cba1769d9f36f.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.1.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="57ae0d750ff83f0c738d21720224ac7ea866a094">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-61996b5ae3a10cd1b6263fc3b5954c91de78c990.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-maps\7.5.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="06a42becc33232ec0ee125161da68c1829c9f8fd">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-ec0d40ddf107c7904a96c7cd4529083022fba4de.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\.gradle\caches\modules-2\files-2.1\com.google.zxing\core\3.2.1\2287494d4f5f9f3a9a2bb6980e3f32053721b315\core-3.2.1.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="2287494d4f5f9f3a9a2bb6980e3f32053721b315">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\core-3.2.1-6126ea7dc71d39bf4123378c833af4c321774959.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-fitness\7.5.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="a172852a35ff919e85b9b7f14bbc15c5bee25520">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-5c0a020d449a72b7a59ca66461015f66cca7d173.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-appindexing\7.5.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="f02127a85abd52a2cd526d4c2409f21969f80ee8">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-369fdef5d6c2303fa66dab03462e269550037a44.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-appstate\7.5.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="68c140702c7242d914655bcb3164d9e8c45b84cb">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-b2ec2ea44d5d387c026162c02a8ae2c2c9fe2f33.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-base\7.5.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="a78183f30e769a98ab4820794f597763088d3065">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-d0110324330971fcd022a8ec563fd8a38883c0a6.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-games\7.5.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="02bac2dc792d78241077861566f2c82da955e7fa">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-b0da407075ab844234c9e6ab95a0cb3cf71eb6bb.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.android.support\mediarouter-v7\22.0.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="a1372c17fccacca753d3951d3ad820571cbce075">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-be2995c8b19e744555d600a6b51c726c538730b0.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-gcm\7.5.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="8d736fefa22d896e84a268354b3ed48a42663150">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-bcbaf6b7f107924da541db116bc02b0bf0710910.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-nearby\7.5.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="6440e5e5cfe368f9bff3c537fb8988048069cb33">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-1c094ada4b687d7cff049787c12cc19e283dda4a.jar" />
-    </item>
-    <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.android.support\support-v13\23.1.0\jars\classes.jar"
+        jar="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.android.support\support-v13\23.1.0\jars\classes.jar"
         jumboMode="false"
         revision="23.0.1"
         sha1="1a57337a520bf40b9ad1e074cb780527dffa1aac">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-86c6fdc79ab59696a2a92debced50140ea4f53f6.jar" />
+        <dex dex="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-e925c3ec1cd9efb9a56e0a44b155b7f65c6a0133.jar" />
     </item>
     <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-analytics\7.5.0\jars\classes.jar"
+        jar="C:\Users\mlees\.gradle\caches\modules-2\files-2.1\com.google.zxing\android-integration\3.2.1\87a3d7da33a6c633fb1ff30023dbf0d05e8ea74c\android-integration-3.2.1.jar"
         jumboMode="false"
         revision="23.0.1"
-        sha1="e7b35244f50663b3f8d150714bca9ecd7a290da1">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-0ade5a70527c6c9e87eb29f2f8b92ee41f1965c8.jar" />
+        sha1="87a3d7da33a6c633fb1ff30023dbf0d05e8ea74c">
+        <dex dex="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\android-integration-3.2.1-a04d8714cf0d87ef52d3c5052b9ddcc30eeba86a.jar" />
     </item>
     <item
-        jar="C:\Users\Mark\.gradle\caches\modules-2\files-2.1\com.androidplot\androidplot-core\0.6.1\3db0daea52375b26bfa61c59b8df93950bdefbbc\androidplot-core-0.6.1.jar"
+        jar="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.1.1\jars\classes.jar"
         jumboMode="false"
         revision="23.0.1"
-        sha1="3db0daea52375b26bfa61c59b8df93950bdefbbc">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\androidplot-core-0.6.1-c76aac1cdfecd802d3f70b872639d08d524d6237.jar" />
+        sha1="5c5699834e9722f1c288fea2de82725d078ba127">
+        <dex dex="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-b12f0c69f9b61b909f63e97bdf303063ffad343c.jar" />
     </item>
     <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-safetynet\7.5.0\jars\classes.jar"
+        jar="C:\Users\mlees\.gradle\caches\modules-2\files-2.1\com.google.zxing\core\3.2.1\2287494d4f5f9f3a9a2bb6980e3f32053721b315\core-3.2.1.jar"
         jumboMode="false"
         revision="23.0.1"
-        sha1="1a6411087ab88ce5542f593e63a2752b6b0d6f1a">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-411cf4f75604ce73d729918e41a81ff917350f05.jar" />
+        sha1="2287494d4f5f9f3a9a2bb6980e3f32053721b315">
+        <dex dex="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\core-3.2.1-ffff1c9473ef67cf4cddf49152005276345be89f.jar" />
     </item>
     <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.android.support\support-v13\23.1.0\jars\libs\internal_impl-23.1.0.jar"
+        jar="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.android.support\support-v13\23.1.0\jars\libs\internal_impl-23.1.0.jar"
         jumboMode="false"
         revision="23.0.1"
         sha1="076c7d9e22cc325b8008ff799e0c06dfb8eefdf3">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\internal_impl-23.1.0-678a4bd8f9e9994ac09f25033da6d3eb929c19cb.jar" />
+        <dex dex="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\internal_impl-23.1.0-10cc881a25ec80f632f112383bee15d1bc26b5c9.jar" />
     </item>
     <item
-        jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-wallet\7.5.0\jars\classes.jar"
+        jar="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.1\jars\libs\internal_impl-23.1.1.jar"
         jumboMode="false"
         revision="23.0.1"
-        sha1="6836d188602ec5382d1967c58b00960eb8ff8773">
-        <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-f3b8b620a92d228dbc32b394aad2cd40c66cf9de.jar" />
+        sha1="a4de9c81ae239414e1ed0f86441b02abaf29bca9">
+        <dex dex="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\internal_impl-23.1.1-3f4df9e52379d3255bfe19ae04492141e4652efe.jar" />
+    </item>
+    <item
+        jar="C:\Users\mlees\.gradle\caches\modules-2\files-2.1\com.androidplot\androidplot-core\0.6.1\3db0daea52375b26bfa61c59b8df93950bdefbbc\androidplot-core-0.6.1.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="3db0daea52375b26bfa61c59b8df93950bdefbbc">
+        <dex dex="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\androidplot-core-0.6.1-574c0364bc175045ba54cb69a1e174ab5e54503d.jar" />
     </item>
 
 </items>

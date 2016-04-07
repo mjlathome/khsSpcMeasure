@@ -61,6 +61,7 @@
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -142,8 +143,17 @@
 
         <activity
             android:name=".ui.AboutActivity"
-            android:label="@string/text_about">
-        </activity>
+            android:label="@string/text_about"></activity>
+
+        <receiver
+            android:name=".receiver.VersionReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.khs.spcmeasure.VERSION_NOT_OK">
+                </action>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

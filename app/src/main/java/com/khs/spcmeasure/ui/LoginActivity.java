@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -32,6 +33,7 @@ import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.JSONParser;
 import com.khs.spcmeasure.library.SecurityUtils;
 import com.khs.spcmeasure.library.VersionUtils;
+import com.khs.spcmeasure.receiver.VersionReceiver;
 import com.khs.spcmeasure.service.SimpleCodeService;
 import com.khs.spcmeasure.tasks.CheckVersionTask;
 
@@ -315,6 +317,9 @@ public class LoginActivity extends Activity implements CheckVersionTask.OnCheckV
         // initialize
         StringBuffer message = new StringBuffer("");
         boolean showDialog = false;
+
+        // TODO remove later
+        VersionReceiver.sendBroadcast(this);
 
         // handle version ok
         if (versionOk) {
