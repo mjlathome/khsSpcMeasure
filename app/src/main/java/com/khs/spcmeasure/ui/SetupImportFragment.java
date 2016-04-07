@@ -219,14 +219,14 @@ public class SetupImportFragment extends ListFragment
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		
-		Log.d("Debug OnListItemClick Id = ", Long.toString(id));	
+		Log.d(TAG, "Debug OnListItemClick Id = " + Long.toString(id));
 	}
 
 	// import the selected setups 
 	// TODO make importSetup task accept multiple id's with Progress bar
 	public void importSetup() {			
 		// confirm with user
-		String message = String.format(getString(R.string.text_mess_import_setup, getListView().getCheckedItemCount()));
+		String message = getString(R.string.text_mess_import_setup, getListView().getCheckedItemCount());
 		AlertDialog.Builder dlgAlert = AlertUtils.createAlert(getActivity(), getString(R.string.text_warning), message);
 		dlgAlert.setPositiveButton(getString(R.string.text_okay), new DialogInterface.OnClickListener() {
 			@Override

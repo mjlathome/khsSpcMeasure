@@ -71,9 +71,11 @@ public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
 			e.printStackTrace();
 		}
 
-		// update version global
+		// update version globals
 		Globals g = Globals.getInstance();
 		g.setVersionOk(versionOk);
+		g.setLatestCode(latestCode);
+		g.setLatestName(latestName);
 
 		mListener.onCheckVersionPostExecute(versionOk, latestCode, latestName);
 	}
