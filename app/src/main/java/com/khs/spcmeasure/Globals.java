@@ -9,7 +9,7 @@ public class Globals{
     private static Globals instance;
 
     // global variables
-    private boolean versionOk = false;  // assume version is not ok
+    private boolean versionOk = true;  // assume version is ok
     private int latestCode = -1;
     private String latestName = "";
 

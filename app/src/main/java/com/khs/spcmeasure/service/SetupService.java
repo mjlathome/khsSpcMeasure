@@ -9,8 +9,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
+import com.khs.spcmeasure.Globals;
 import com.khs.spcmeasure.helper.DBAdapter;
+import com.khs.spcmeasure.library.VersionUtils;
 import com.khs.spcmeasure.ui.PieceListActivity;
 import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.ui.SettingsActivity;
@@ -51,7 +54,8 @@ public class SetupService extends IntentService {
     private static List<Long> canceledImportProdId = new ArrayList<Long>();
 
     // url address
-    private static String url = "http://thor.kmx.cosma.com/spc/get_setup.php?prodId=";
+    private static final String url = "http://thor.kmx.cosma.com/spc/get_setup.php?";
+    private static final String URL_PROD_ID = "prodId";
 
     // JSON node names
     private static final String TAG_SUCCESS = "success";
@@ -147,115 +151,138 @@ public class SetupService extends IntentService {
         ActionStatus actStat = ActionStatus.FAILED;
         String notifyText = setupId.toString();
 
-        try {
-            JSONParser jParser = new JSONParser();
+        // get global vars
+        Globals g = Globals.getInstance();
 
-            // get JSON from URL
-            JSONObject json = jParser.getJSONFromUrl(url + String.valueOf(setupId));
+        // check version and skip if in error
+        if (g.isVersionOk()) {
+            try {
+                JSONParser jParser = new JSONParser();
 
-            // verify json was successful
-            if (json == null || json.getBoolean(TAG_SUCCESS) != true) {
-                // notify user - failure
-                actStat = ActionStatus.FAILED;
-            } else {
-                // get JSON Array from URL
-                JSONObject jSetup = json.getJSONObject(TAG_SETUP);
-                JSONObject jProduct = jSetup.getJSONObject(TAG_PRODUCT);
+                // get JSON from URL
+                JSONObject json = jParser.getJSONFromUrl(url + VersionUtils.getUrlQuery(this) + "&" + URL_PROD_ID + "=" + String.valueOf(setupId));
 
-                // open the DB
-                DBAdapter db = new DBAdapter(this);
-                db.open();
+                Log.d(TAG, "json - " + json);
 
-                // TODO write helper for json to array of products???
-                // store JSON items as variables
+                // verify json was returned
+                if (json == null) {
+                    // notify user - failure
+                    actStat = ActionStatus.FAILED;
+                } else {
+                    // extract success and version
+                    boolean success = json.getBoolean(TAG_SUCCESS);
+                    boolean versionOk = json.getBoolean(VersionUtils.TAG_VERSION_OK);
 
-                // extract Product fields from json data
-                long prodId = Long.valueOf(jProduct.getString(TAG_ID));
-                String name = jProduct.getString(TAG_NAME);
-                notifyText = name;
+                    // verify success and version
+                    if (!success || !versionOk) {
+                        // notify user - failure
+                        actStat = ActionStatus.FAILED;
 
-                boolean active = Boolean.valueOf(jProduct.getString(TAG_ACTIVE));
-                String customer = jProduct.getString(TAG_CUSTOMER);
-                String program = jProduct.getString(TAG_PROGRAM);
+                        // handle version failure
+                        if (!versionOk) {
+                            // TODO broadcast version failure
+                        }
+                    } else {
+                        // get JSON Array from URL
+                        JSONObject jSetup = json.getJSONObject(TAG_SETUP);
+                        JSONObject jProduct = jSetup.getJSONObject(TAG_PRODUCT);
 
-                // Log.d(TAG, "id = " + Long.toString(prodId));
+                        // open the DB
+                        DBAdapter db = new DBAdapter(this);
+                        db.open();
 
-                // create Product
-                Product product = new Product(prodId, name, active, customer, program);
+                        // TODO write helper for json to array of products???
+                        // store JSON items as variables
 
-                // update or insert Product into the DB
-                if (db.updateProduct(product) == false) {
-                    db.createProduct(product);
-                }
+                        // extract Product fields from json data
+                        long prodId = Long.valueOf(jProduct.getString(TAG_ID));
+                        String name = jProduct.getString(TAG_NAME);
+                        notifyText = name;
 
-                // create Features
-                JSONArray jFeatureArr = jProduct.getJSONArray(TAG_FEATURE);
-                for(int i = 0; i < jFeatureArr.length(); i++) {
+                        boolean active = Boolean.valueOf(jProduct.getString(TAG_ACTIVE));
+                        String customer = jProduct.getString(TAG_CUSTOMER);
+                        String program = jProduct.getString(TAG_PROGRAM);
 
-                    JSONObject jFeature = jFeatureArr.getJSONObject(i);
+                        // Log.d(TAG, "id = " + Long.toString(prodId));
 
-                    // extract Feature fields from json data
-                    long featId = Long.valueOf(jFeature.getString(TAG_ID));
-                    name = jFeature.getString(TAG_NAME);
-                    active = Boolean.valueOf(jFeature.getString(TAG_ACTIVE));
-                    Double cp 	 = jFeature.getDouble(TAG_CP);
-                    Double cpk     = jFeature.getDouble(TAG_CPK);
-                    long limitRev = Long.valueOf(jFeature.getString(TAG_LIMIT_REV));
+                        // create Product
+                        Product product = new Product(prodId, name, active, customer, program);
 
-                    // create the Feature object
-                    Feature feature = new Feature(product.getId(), featId, name, active, limitRev, cp, cpk);
-                    // Log.d(TAG, "feat id;name = " + Long.toString(featId) + "; " + name);
-
-                    // update or insert Feature into the DB
-                    if (db.updateFeature(feature) == false) {
-                        db.createFeature(feature);
-                    }
-
-                    // create Limits
-                    JSONArray jLimitArr = jFeature.getJSONArray(TAG_LIMIT);
-                    for(int j = 0; j < jLimitArr.length(); j++) {
-
-                        JSONObject jLimit = jLimitArr.getJSONObject(j);
-
-                        // extract Limit fields from json data
-                        String limitType = jLimit.getString(TAG_LIMIT_TYPE);
-                        double upper 	 = jLimit.getDouble(TAG_UPPER);
-                        double lower     = jLimit.getDouble(TAG_LOWER);
-
-                        // Log.d(TAG, "DEBUG limit type; upper; lower; LimitType = " +
-                        //        limitType + "; " + upper + "; " + lower + "; " + LimitType.fromValue(limitType).getValue() );
-
-                        // create the Limit object
-                        Limits limit = new Limits(product.getId(), feature.getFeatId(), limitRev, LimitType.fromValue(limitType), upper, lower);
-                        // Log.d(TAG, "DEBUG limit type; upper; lower = " + limitType + "; " + upper + "; " + lower);
-
-                        // update or insert Limit into the DB
-                        if (db.updateLimit(limit) == false) {
-                            db.createLimit(limit);
+                        // update or insert Product into the DB
+                        if (db.updateProduct(product) == false) {
+                            db.createProduct(product);
                         }
 
-                    }  // create Limits
+                        // create Features
+                        JSONArray jFeatureArr = jProduct.getJSONArray(TAG_FEATURE);
+                        for (int i = 0; i < jFeatureArr.length(); i++) {
 
-                }  // create Features
+                            JSONObject jFeature = jFeatureArr.getJSONObject(i);
 
-                // close the DB
-                db.close();
+                            // extract Feature fields from json data
+                            long featId = Long.valueOf(jFeature.getString(TAG_ID));
+                            name = jFeature.getString(TAG_NAME);
+                            active = Boolean.valueOf(jFeature.getString(TAG_ACTIVE));
+                            Double cp = jFeature.getDouble(TAG_CP);
+                            Double cpk = jFeature.getDouble(TAG_CPK);
+                            long limitRev = Long.valueOf(jFeature.getString(TAG_LIMIT_REV));
 
-                // notify user - success
-                actStat = ActionStatus.COMPLETE;
+                            // create the Feature object
+                            Feature feature = new Feature(product.getId(), featId, name, active, limitRev, cp, cpk);
+                            // Log.d(TAG, "feat id;name = " + Long.toString(featId) + "; " + name);
 
-                // TODO want to do history import now
-                HistoryService.startActionMeasHist(this, prodId);
+                            // update or insert Feature into the DB
+                            if (db.updateFeature(feature) == false) {
+                                db.createFeature(feature);
+                            }
+
+                            // create Limits
+                            JSONArray jLimitArr = jFeature.getJSONArray(TAG_LIMIT);
+                            for (int j = 0; j < jLimitArr.length(); j++) {
+
+                                JSONObject jLimit = jLimitArr.getJSONObject(j);
+
+                                // extract Limit fields from json data
+                                String limitType = jLimit.getString(TAG_LIMIT_TYPE);
+                                double upper = jLimit.getDouble(TAG_UPPER);
+                                double lower = jLimit.getDouble(TAG_LOWER);
+
+                                // Log.d(TAG, "DEBUG limit type; upper; lower; LimitType = " +
+                                //        limitType + "; " + upper + "; " + lower + "; " + LimitType.fromValue(limitType).getValue() );
+
+                                // create the Limit object
+                                Limits limit = new Limits(product.getId(), feature.getFeatId(), limitRev, LimitType.fromValue(limitType), upper, lower);
+                                // Log.d(TAG, "DEBUG limit type; upper; lower = " + limitType + "; " + upper + "; " + lower);
+
+                                // update or insert Limit into the DB
+                                if (db.updateLimit(limit) == false) {
+                                    db.createLimit(limit);
+                                }
+
+                            }  // create Limits
+
+                        }  // create Features
+
+                        // close the DB
+                        db.close();
+
+                        // notify user - success
+                        actStat = ActionStatus.COMPLETE;
+
+                        // TODO want to do history import now
+                        HistoryService.startActionMeasHist(this, prodId);
+                    }
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+
+                // cancel import to stop re-try
+                cancelImport(setupId);
+
+                // notify user - failure
+                actStat = ActionStatus.FAILED;
             }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-
-            // cancel import to stop re-try
-            cancelImport(setupId);
-
-            // notify user - failure
-            actStat = ActionStatus.FAILED;
         }
 
         // notify user

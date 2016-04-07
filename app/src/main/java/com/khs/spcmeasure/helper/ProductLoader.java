@@ -54,7 +54,7 @@ public class ProductLoader extends AsyncTaskLoader<List<Product>>{
 		// get global vars
 		Globals g = Globals.getInstance();
 
-		// check version ans exit if in error
+		// check version and exit if in error
 		if (!g.isVersionOk()) {
 			return null;
 		}
