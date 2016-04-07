@@ -11,7 +11,9 @@ import android.database.Cursor;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.khs.spcmeasure.Globals;
 import com.khs.spcmeasure.helper.DBAdapter;
+import com.khs.spcmeasure.library.VersionUtils;
 import com.khs.spcmeasure.ui.PieceListActivity;
 import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.library.ActionStatus;
@@ -168,39 +170,6 @@ public class HistoryService extends IntentService {
      */
     private void handleActionMeasHist(Long prodId, Integer maxSg) {
 
-        // json data format is:
-//        {
-//            "success": true,
-//                "prodId": 83192616,
-//                "sg": [
-//            {
-//                "sgId": 62,
-//                    "collectDt": "2015-11-21 07:35:45",
-//                    "operator": "mlees"
-//            },
-//            {
-//                "sgId": 61,
-//                    "collectDt": "2015-11-21 07:32:16",
-//                    "operator": "mlees"
-//            },
-//            {
-//                "sgId": 60,
-//                    "collectDt": "2015-11-15 07:18:07",
-//                    "operator": "mlees"
-//            },
-//            {
-//                "sgId": 58,
-//                    "collectDt": "2015-11-11 20:51:11",
-//                    "operator": "mlees"
-//            },
-//            {
-//                "sgId": 59,
-//                    "collectDt": "2015-10-18 18:07:52",
-//                    "operator": "mark"
-//            }
-//            ]
-//        }
-
         Log.d(TAG, "handleActionMeasHist");
 
         // assume failure
@@ -209,63 +178,90 @@ public class HistoryService extends IntentService {
         int numFound = 0;
         int numImport = 0;
 
-        try {
-            JSONParser jParser = new JSONParser();
+        // get global vars
+        Globals g = Globals.getInstance();
 
-            // get JSON from URL
-            JSONObject json = jParser.getJSONFromUrl(url + queryProdId + String.valueOf(prodId) + querySep + queryMaxSg + String.valueOf(maxSg));
+        // check version and skip if in error
+        if (g.isVersionOk()) {
+            try {
+                JSONParser jParser = new JSONParser();
 
-            // verify json was successful
-            if (json == null || json.getBoolean(TAG_SUCCESS) != true || json.getLong(TAG_PROD_ID) != prodId) {
-                // notify user - failure
-                actStat = ActionStatus.FAILED;
-            } else {
-                // open the DB
-                DBAdapter db = new DBAdapter(this);
-                db.open();
+                // get JSON from URL
+                JSONObject json = jParser.getJSONFromUrl(url + VersionUtils.getUrlQuery(this) + querySep + queryProdId + String.valueOf(prodId) + querySep + queryMaxSg + String.valueOf(maxSg));
 
-                // get JSON sub-group array
-                JSONArray jSgArr = json.getJSONArray(TAG_SUB_GROUP);
-                numFound = jSgArr.length();
+                Log.d(TAG, "json - " + json);
 
-                // loop sub-groups
-                for (int i = 0; i < jSgArr.length(); i++) {
-                    JSONObject jSubGrp = jSgArr.getJSONObject(i);
+                // verify json was returned
+                if (json == null) {
+                    // notify user - failure
+                    actStat = ActionStatus.FAILED;
+                } else {
+                    // extract success, version and product id
+                    boolean success = json.getBoolean(TAG_SUCCESS);
+                    boolean versionOk = json.getBoolean(VersionUtils.TAG_VERSION_OK);
+                    long resProdId = json.getLong(TAG_PROD_ID);
 
-                    long sgId = Long.valueOf(jSubGrp.getString(TAG_SG_ID));
-                    String collDt = jSubGrp.getString(TAG_COLLECT_DT);
-                    String operator = jSubGrp.getString(TAG_OPERATOR);
+                    // update version global
+                    g.setVersionOk(versionOk);
 
-                    // extract Piece
-                    Cursor cPiece = db.getPiece(prodId, sgId, 1);
-                    // Log.d(TAG, "sgId = " + sgId + "; collDt = " + collDt + "; operator = " + operator + "; cPiece = " + db.isCursorEmpty(cPiece));
+                    // verify success and version
+                    if (!success || !versionOk || resProdId != prodId.longValue()) {
+                        // notify user - failure
+                        actStat = ActionStatus.FAILED;
 
-                    // import Piece if not found on device
-                    // TODO need to check last modified date in the future
-                    if (db.isCursorEmpty(cPiece)) {
-                        numImport++;
-                        MeasurementService.startActionImport(this, prodId, sgId, collDt);
+                        // handle version failure
+                        if (!versionOk) {
+                            // TODO broadcast version failure
+                        }
+                    } else {
+                        // open the DB
+                        DBAdapter db = new DBAdapter(this);
+                        db.open();
+
+                        // get JSON sub-group array
+                        JSONArray jSgArr = json.getJSONArray(TAG_SUB_GROUP);
+                        numFound = jSgArr.length();
+
+                        // loop sub-groups
+                        for (int i = 0; i < jSgArr.length(); i++) {
+                            JSONObject jSubGrp = jSgArr.getJSONObject(i);
+
+                            long sgId = Long.valueOf(jSubGrp.getString(TAG_SG_ID));
+                            String collDt = jSubGrp.getString(TAG_COLLECT_DT);
+                            String operator = jSubGrp.getString(TAG_OPERATOR);
+
+                            // extract Piece
+                            Cursor cPiece = db.getPiece(prodId, sgId, 1);
+                            // Log.d(TAG, "sgId = " + sgId + "; collDt = " + collDt + "; operator = " + operator + "; cPiece = " + db.isCursorEmpty(cPiece));
+
+                            // import Piece if not found on device
+                            // TODO need to check last modified date in the future
+                            if (db.isCursorEmpty(cPiece)) {
+                                numImport++;
+                                MeasurementService.startActionImport(this, prodId, sgId, collDt);
+                            }
+                        }
+
+                        // close the DB
+                        db.close();
+
+                        // notify user - success
+                        actStat = ActionStatus.COMPLETE;
+
+                        // TODO want to do history delete now
+                        HistoryService.startActionDelete(this, prodId);
                     }
                 }
 
-                // close the DB
-                db.close();
+            } catch (JSONException e) {
+                e.printStackTrace();
 
-                // notify user - success
-                actStat = ActionStatus.COMPLETE;
+                // cancel import to stop re-try
+                cancelMeasHist(prodId);
 
-                // TODO want to do history delete now
-                HistoryService.startActionDelete(this, prodId);
+                // notify user - failure
+                actStat = ActionStatus.FAILED;
             }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-
-            // cancel import to stop re-try
-            cancelMeasHist(prodId);
-
-            // notify user - failure
-            actStat = ActionStatus.FAILED;
         }
 
         // notify user

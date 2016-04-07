@@ -55,7 +55,8 @@ public class SetupService extends IntentService {
 
     // url address
     private static final String url = "http://thor.kmx.cosma.com/spc/get_setup.php?";
-    private static final String URL_PROD_ID = "prodId";
+    private static final String querySep = "&";
+    private static final String queryProdId = "prodId=";
 
     // JSON node names
     private static final String TAG_SUCCESS = "success";
@@ -160,7 +161,7 @@ public class SetupService extends IntentService {
                 JSONParser jParser = new JSONParser();
 
                 // get JSON from URL
-                JSONObject json = jParser.getJSONFromUrl(url + VersionUtils.getUrlQuery(this) + "&" + URL_PROD_ID + "=" + String.valueOf(setupId));
+                JSONObject json = jParser.getJSONFromUrl(url + VersionUtils.getUrlQuery(this) + querySep + queryProdId + String.valueOf(setupId));
 
                 Log.d(TAG, "json - " + json);
 
@@ -172,6 +173,9 @@ public class SetupService extends IntentService {
                     // extract success and version
                     boolean success = json.getBoolean(TAG_SUCCESS);
                     boolean versionOk = json.getBoolean(VersionUtils.TAG_VERSION_OK);
+
+                    // update version global
+                    g.setVersionOk(versionOk);
 
                     // verify success and version
                     if (!success || !versionOk) {

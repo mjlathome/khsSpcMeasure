@@ -12,7 +12,9 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.khs.spcmeasure.Globals;
 import com.khs.spcmeasure.helper.DBAdapter;
+import com.khs.spcmeasure.library.VersionUtils;
 import com.khs.spcmeasure.ui.FeatureReviewActivity;
 import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.dao.PieceDao;
@@ -398,36 +400,42 @@ public class MeasurementService extends IntentService {
         ActionStatus actStat = ActionStatus.FAILED;
         String notifyText = prodId.toString();
 
-        try {
-            // extract data
-            Product product = mProductDao.getProduct(prodId);
-            // TODO work out better notify text - maybe use CollectDate as Piece is not on device yet
-            notifyText = product.getName() + " - " + collDt; // + " - " + DateTimeUtils.getDateTimeStr(piece.getCollectDt());
+        // get global vars
+        Globals g = Globals.getInstance();
 
-            // build url
-            String url = urlImport + queryProdId + prodId.toString() + querySep + querySgId + sgId.toString();
+        // check version and skip if in error
+        if (g.isVersionOk()) {
+            try {
+                // extract data
+                Product product = mProductDao.getProduct(prodId);
+                // TODO work out better notify text - maybe use CollectDate as Piece is not on device yet
+                notifyText = product.getName() + " - " + collDt; // + " - " + DateTimeUtils.getDateTimeStr(piece.getCollectDt());
 
-            // get json request
-            JSONParser jParser = new JSONParser();
-            JSONObject json = jParser.getJSONFromUrl(url);
+                // build url
+                String url = urlImport + VersionUtils.getUrlQuery(this) + querySep + queryProdId + prodId.toString() + querySep + querySgId + sgId.toString();
 
-            // process json response
-            if (processResponseImport(json, prodId, sgId) == true) {
-                // notify user - success
-                actStat = ActionStatus.COMPLETE;
-            } else {
+                // get json request
+                JSONParser jParser = new JSONParser();
+                JSONObject json = jParser.getJSONFromUrl(url);
+
+                // process json response
+                if (processResponseImport(json, prodId, sgId) == true) {
+                    // notify user - success
+                    actStat = ActionStatus.COMPLETE;
+                } else {
+                    // notify user - failure
+                    actStat = ActionStatus.FAILED;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+
+                // cancel import to stop re-try
+                // TODO work out how to stop import when we have prodId and sgId
+                // cancelExport(pieceId);
+
                 // notify user - failure
                 actStat = ActionStatus.FAILED;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            // cancel import to stop re-try
-            // TODO work out how to stop import when we have prodId and sgId
-            // cancelExport(pieceId);
-
-            // notify user - failure
-            actStat = ActionStatus.FAILED;
         }
 
         // notify user
@@ -445,14 +453,21 @@ public class MeasurementService extends IntentService {
         Log.d(TAG, "processResponseImport: json = " + json.toString());
 
         try {
+            // get global vars
+            Globals g = Globals.getInstance();
+
             // open the DB
             db.open();
 
-            // unpack success flag
+            // extract success and versionOk
             success = Boolean.valueOf(json.getBoolean(TAG_SUCCESS));
+            boolean versionOk = json.getBoolean(VersionUtils.TAG_VERSION_OK);
 
-            // TODO verify prodId and sgId too
-            if (success == true) {
+            // update version global
+            g.setVersionOk(versionOk);
+
+            // verify success and version
+            if (success == true && versionOk) {
 
                 // verify product id
                 if (json.getLong(TAG_PROD_ID) != prodId) {
