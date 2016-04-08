@@ -16,11 +16,11 @@
         <dex dex="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-1230203fc5f325b9c1609f1808d06e1dbcde607e.jar" />
     </item>
     <item
-        jar="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.android.support\support-v13\23.1.0\jars\classes.jar"
+        jar="C:\Users\mlees\.gradle\caches\modules-2\files-2.1\com.google.zxing\core\3.2.1\2287494d4f5f9f3a9a2bb6980e3f32053721b315\core-3.2.1.jar"
         jumboMode="false"
         revision="23.0.1"
-        sha1="1a57337a520bf40b9ad1e074cb780527dffa1aac">
-        <dex dex="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-e925c3ec1cd9efb9a56e0a44b155b7f65c6a0133.jar" />
+        sha1="2287494d4f5f9f3a9a2bb6980e3f32053721b315">
+        <dex dex="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\core-3.2.1-ffff1c9473ef67cf4cddf49152005276345be89f.jar" />
     </item>
     <item
         jar="C:\Users\mlees\.gradle\caches\modules-2\files-2.1\com.google.zxing\android-integration\3.2.1\87a3d7da33a6c633fb1ff30023dbf0d05e8ea74c\android-integration-3.2.1.jar"
@@ -30,18 +30,18 @@
         <dex dex="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\android-integration-3.2.1-a04d8714cf0d87ef52d3c5052b9ddcc30eeba86a.jar" />
     </item>
     <item
+        jar="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.android.support\support-v13\23.1.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="1a57337a520bf40b9ad1e074cb780527dffa1aac">
+        <dex dex="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-e925c3ec1cd9efb9a56e0a44b155b7f65c6a0133.jar" />
+    </item>
+    <item
         jar="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.1.1\jars\classes.jar"
         jumboMode="false"
         revision="23.0.1"
         sha1="5c5699834e9722f1c288fea2de82725d078ba127">
         <dex dex="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\classes-b12f0c69f9b61b909f63e97bdf303063ffad343c.jar" />
-    </item>
-    <item
-        jar="C:\Users\mlees\.gradle\caches\modules-2\files-2.1\com.google.zxing\core\3.2.1\2287494d4f5f9f3a9a2bb6980e3f32053721b315\core-3.2.1.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="2287494d4f5f9f3a9a2bb6980e3f32053721b315">
-        <dex dex="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\pre-dexed\debug\core-3.2.1-ffff1c9473ef67cf4cddf49152005276345be89f.jar" />
     </item>
     <item
         jar="C:\Users\mlees\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\exploded-aar\com.android.support\support-v13\23.1.0\jars\libs\internal_impl-23.1.0.jar"

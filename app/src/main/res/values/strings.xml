@@ -118,7 +118,8 @@
     <string name="label_cause">Cause:</string>
     <string name="label_cp">Cp:</string>
     <string name="label_cpk">Cpk:</string>
-    <string name="label_versionName">Version Name:</string>
+    <string name="label_version_name">Version Name:</string>
+    <string name="label_device_name">Device Name:</string>
 
     <!-- title strings -->
     <string name="title_activity_import_setup">Import Setup</string>

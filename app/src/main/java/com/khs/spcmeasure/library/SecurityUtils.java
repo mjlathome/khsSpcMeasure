@@ -74,4 +74,9 @@ public class SecurityUtils {
 
         return securityOkay;
     }
+
+    // returns URL query string for username
+    public static String getUrlQuery(Context context) {
+        return USERNAME + "=" + getUsername(context);
+    }
 }

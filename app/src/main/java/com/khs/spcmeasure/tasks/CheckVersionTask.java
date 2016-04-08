@@ -5,12 +5,16 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.khs.spcmeasure.Globals;
+import com.khs.spcmeasure.library.DeviceUtils;
 import com.khs.spcmeasure.library.JSONParser;
 import com.khs.spcmeasure.library.NetworkUtils;
+import com.khs.spcmeasure.library.SecurityUtils;
 import com.khs.spcmeasure.library.VersionUtils;
 import com.khs.spcmeasure.receiver.VersionReceiver;
 
 import org.json.JSONObject;
+
+import java.net.URLEncoder;
 
 public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
     private static final String TAG = "CheckVersionTask";
@@ -20,6 +24,7 @@ public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
 
 	// constants
 	private static final String url = "http://thor.kmx.cosma.com/spc/check_version.php?";
+    private static final String querySep = "&";
 
 	//JSON Node Names
 	private static final String TAG_SUCCESS = "success";
@@ -44,13 +49,17 @@ public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
 
 		JSONObject json = null;
 
-		// verify wifi connection
-		if (NetworkUtils.isWiFi(mContext)) {
-			JSONParser jParser = new JSONParser();
+        try {
+            // verify wifi connection
+            if (NetworkUtils.isWiFi(mContext)) {
+                JSONParser jParser = new JSONParser();
 
-			// get JSON from URL
-			json = jParser.getJSONFromUrl(url + VersionUtils.getUrlQuery((Context) mListener));
-		}
+                // get JSON from URL
+                json = jParser.getJSONFromUrl(url + VersionUtils.getUrlQuery(mContext) + querySep + DeviceUtils.getUrlQuery() + querySep + SecurityUtils.getUrlQuery(mContext));
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
 
 		return json;
 	}
@@ -59,7 +68,7 @@ public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
 	protected void onPostExecute(JSONObject json) {
 		super.onPostExecute(json);
 
-		Log.d(TAG, "json = " + json.toString());
+		Log.d(TAG, "json = " + json);
 
 		// initialize
 		boolean success = false;
@@ -72,15 +81,16 @@ public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
 			if (json != null) {
 				// extract latest version info
 				versionOk = json.getBoolean(VersionUtils.TAG_VERSION_OK);
-				latestCode = json.getInt(TAG_LATEST_CODE);
-				latestName = json.getString(TAG_LATEST_NAME);
-				success = true;
 
-				// handle version failure
-				if (!versionOk) {
-					// broadcast version failure
-					VersionReceiver.sendBroadcast(mContext);
-				}
+                // handle version failure
+                if (!versionOk) {
+                    // broadcast version failure
+                    VersionReceiver.sendBroadcast(mContext);
+                } else {
+                    latestCode = json.getInt(TAG_LATEST_CODE);
+                    latestName = json.getString(TAG_LATEST_NAME);
+                    success = true;
+                }
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

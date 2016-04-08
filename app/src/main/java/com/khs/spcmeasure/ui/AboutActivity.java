@@ -1,7 +1,9 @@
 package com.khs.spcmeasure.ui;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.pm.PackageInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.library.AlertUtils;
+import com.khs.spcmeasure.library.DeviceUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,8 +36,8 @@ public class AboutActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
-        // display version
-        displayVersion();
+        // display fields
+        displayFields();
     }
 
     // hand
@@ -62,7 +65,7 @@ public class AboutActivity extends Activity {
     }
 
     // display version
-    private void displayVersion() {
+    private void displayFields() {
         String versionName = null;
 
         // extract version
@@ -77,6 +80,14 @@ public class AboutActivity extends Activity {
         if (versionName != null) {
             TextView txtVersionName = (TextView) findViewById(R.id.txtVersionName);
             txtVersionName.setText(versionName);
+        }
+
+        // extract device name
+        try {
+            TextView txtDeviceName = (TextView) findViewById(R.id.txtDeviceName);
+            txtDeviceName.setText(DeviceUtils.getDeviceName());
+        } catch(Exception e) {
+            e.printStackTrace();
         }
     }
 
