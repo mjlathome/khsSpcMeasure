@@ -77,7 +77,7 @@ public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
 		g.setLatestCode(latestCode);
 		g.setLatestName(latestName);
 
-		mListener.onCheckVersionPostExecute(versionOk, latestCode, latestName);
+		mListener.onCheckVersionPostExecute(versionOk);
 	}
 
 	// generate task
@@ -89,6 +89,6 @@ public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
 	// communication interface
 	public interface OnCheckVersionListener {
 		// TODO: Update argument type and name
-		public void onCheckVersionPostExecute(boolean versionOk, int latestCode, String latestName);
+		public void onCheckVersionPostExecute(boolean versionOk);
 	}
 }

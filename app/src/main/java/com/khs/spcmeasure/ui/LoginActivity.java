@@ -6,9 +6,11 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.BroadcastReceiver;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -28,6 +30,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.khs.spcmeasure.Globals;
 import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.JSONParser;
@@ -98,6 +101,16 @@ public class LoginActivity extends Activity implements CheckVersionTask.OnCheckV
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     // handle back out
@@ -312,14 +325,16 @@ public class LoginActivity extends Activity implements CheckVersionTask.OnCheckV
     }
 
     @Override
-    public void onCheckVersionPostExecute(boolean versionOk, int latestCode, String latestName) {
+    public void onCheckVersionPostExecute(boolean versionOk) {
 
         // initialize
         StringBuffer message = new StringBuffer("");
         boolean showDialog = false;
 
-        // TODO remove later
-        VersionReceiver.sendBroadcast(this);
+        // update version globals
+        Globals g = Globals.getInstance();
+        int latestCode = g.getLatestCode();
+        String latestName = g.getLatestName();
 
         // handle version ok
         if (versionOk) {
@@ -335,6 +350,7 @@ public class LoginActivity extends Activity implements CheckVersionTask.OnCheckV
                 showDialog = true;
             }
         } else {
+            VersionReceiver.sendBroadcast(this);
             showDialog = true;
         }
 
@@ -344,9 +360,9 @@ public class LoginActivity extends Activity implements CheckVersionTask.OnCheckV
             message.append(getString(R.string.text_version_install, VersionUtils.getVersionName(this), VersionUtils.getVersionCode(this)) + "\n");
             message.append(getString(R.string.text_version_latest, latestName, latestCode));
 
-            if (versionOk) {
+            if (!versionOk) {
                 // major version changed
-                SecurityUtils.setIsLoggedIn(this, false);
+                // SecurityUtils.setIsLoggedIn(this, false);
                 message.insert(0, getString(R.string.text_version_logout_too_old) + "\n");
             }
 

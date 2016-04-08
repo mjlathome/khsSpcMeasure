@@ -2,8 +2,11 @@ package com.khs.spcmeasure.ui;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -13,6 +16,7 @@ import android.view.MenuItem;
 import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.library.SecurityUtils;
+import com.khs.spcmeasure.receiver.VersionReceiver;
 import com.khs.spcmeasure.service.PieceService;
 import com.khs.spcmeasure.service.SetupService;
 import com.khs.spcmeasure.service.SylvacBleService;
@@ -39,6 +43,12 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
     private SetupListFragment mSetupListFrag;
     private Long mProdId;
 
+    // TODO - remove dynamic broadcast receiver later on
+//    // version receiver members
+//    private BroadcastReceiver mVersionReceiver;
+//    private IntentFilter mVersionFilter;
+//    private Handler mHandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate");
@@ -49,6 +59,11 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
 
         // start the BLE service
         startBleService();
+
+        // TODO - remove dynamic broadcast receiver later on
+//        // instantiate version receiver and filter
+//        mVersionReceiver = new VersionReceiver(this);
+//        mVersionFilter = new IntentFilter(VersionReceiver.ACTION_VERSION_NOT_OK);
 
         setContentView(R.layout.activity_setup_list);
         if (savedInstanceState == null) {
@@ -83,6 +98,8 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
         Log.d(TAG, "onStart");
         super.onStart();
 
+
+
 //        Log.d(TAG, "OnStart: 1 Lock = " + SecurityUtils.getLockStatus(this) + "; App = " + SecurityUtils.getInAppStatus(this));
 //        if (SecurityUtils.getLockStatus(this)) {
 //            // show lock screen
@@ -98,6 +115,29 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
     @Override
     protected void onResume() {
         super.onResume();
+
+        // TODO - remove dynamic broadcast receiver later on
+        // register version receiver
+        // registerReceiver(mVersionReceiver, mVersionFilter);
+
+        // TODO - remove dynamic broadcast receiver later on
+        // TODO debug receiver - remove later
+//        mHandler = new Handler();
+//        mHandler.postDelayed(new Runnable(){
+//            @Override
+//            public void run() {
+//                // TODO remove later
+//                VersionReceiver.sendBroadcast(SetupListActivity.this);
+//            }
+//        }, 5000);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // TODO - remove dynamic broadcast receiver later on
+//        // unregister version receiver
+//        unregisterReceiver(mVersionReceiver);
     }
 
     @Override

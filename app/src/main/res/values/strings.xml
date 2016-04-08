@@ -77,6 +77,7 @@
     <string name="text_version_title">Application Outdated</string>
     <string name="text_version_logout_not_found">Logged out as app version not found.</string>
     <string name="text_version_logout_too_old">Logged out as app is too old.</string>
+    <string name="text_version_logout_app_old">App old.  Logged out.</string>
     <string name="text_version_install">Installed version %1$s (%2$s).</string>
     <string name="text_version_latest">Latest version %1$s (%2$s).</string>
     <string name="text_version_too_old">Installed version is too old.</string>
