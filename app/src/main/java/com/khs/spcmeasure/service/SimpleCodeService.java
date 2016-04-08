@@ -14,6 +14,7 @@ import com.khs.spcmeasure.Globals;
 import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.library.VersionUtils;
+import com.khs.spcmeasure.receiver.VersionReceiver;
 import com.khs.spcmeasure.ui.SettingsActivity;
 import com.khs.spcmeasure.ui.SetupListActivity;
 import com.khs.spcmeasure.entity.SimpleCode;
@@ -156,8 +157,8 @@ public class SimpleCodeService extends IntentService {
 
                         // handle version failure
                         if (!versionOk) {
-                            // TODO broadcast version failure
-                        }
+                            // broadcast version failure
+                            VersionReceiver.sendBroadcast(SimpleCodeService.this);                        }
                     } else {
                         // open the DB
                         DBAdapter db = new DBAdapter(this);

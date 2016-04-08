@@ -6,13 +6,16 @@ import android.util.Log;
 
 import com.khs.spcmeasure.Globals;
 import com.khs.spcmeasure.library.JSONParser;
+import com.khs.spcmeasure.library.NetworkUtils;
 import com.khs.spcmeasure.library.VersionUtils;
+import com.khs.spcmeasure.receiver.VersionReceiver;
 
 import org.json.JSONObject;
 
 public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
     private static final String TAG = "CheckVersionTask";
 
+	private Context mContext;
 	private OnCheckVersionListener mListener;
 
 	// constants
@@ -24,7 +27,8 @@ public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
 	private static final String TAG_LATEST_NAME = "latestName";
 
 	// constructor
-	public CheckVersionTask(OnCheckVersionListener listener) {
+	public CheckVersionTask(Context context, OnCheckVersionListener listener) {
+		mContext = context;
 		mListener = listener;
 	}
 	
@@ -38,11 +42,16 @@ public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
 	protected JSONObject doInBackground(Void... params) {
         Log.d(TAG, "start");
 
-		JSONParser jParser = new JSONParser();
-		
-		// get JSON from URL
-		JSONObject json = jParser.getJSONFromUrl(url + VersionUtils.getUrlQuery((Context) mListener));
-		
+		JSONObject json = null;
+
+		// verify wifi connection
+		if (NetworkUtils.isWiFi(mContext)) {
+			JSONParser jParser = new JSONParser();
+
+			// get JSON from URL
+			json = jParser.getJSONFromUrl(url + VersionUtils.getUrlQuery((Context) mListener));
+		}
+
 		return json;
 	}
 
@@ -66,6 +75,12 @@ public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
 				latestCode = json.getInt(TAG_LATEST_CODE);
 				latestName = json.getString(TAG_LATEST_NAME);
 				success = true;
+
+				// handle version failure
+				if (!versionOk) {
+					// broadcast version failure
+					VersionReceiver.sendBroadcast(mContext);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -81,8 +96,8 @@ public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
 	}
 
 	// generate task
-	public static CheckVersionTask newInstance(OnCheckVersionListener listener) {
-		CheckVersionTask asyncTask = new CheckVersionTask(listener);
+	public static CheckVersionTask newInstance(Context context, OnCheckVersionListener listener) {
+		CheckVersionTask asyncTask = new CheckVersionTask(context, listener);
 		return asyncTask;
 	}
 

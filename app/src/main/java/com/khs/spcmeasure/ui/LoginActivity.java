@@ -34,6 +34,7 @@ import com.khs.spcmeasure.Globals;
 import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.JSONParser;
+import com.khs.spcmeasure.library.NetworkUtils;
 import com.khs.spcmeasure.library.SecurityUtils;
 import com.khs.spcmeasure.library.VersionUtils;
 import com.khs.spcmeasure.receiver.VersionReceiver;
@@ -106,6 +107,11 @@ public class LoginActivity extends Activity implements CheckVersionTask.OnCheckV
     @Override
     protected void onResume() {
         super.onResume();
+
+        // Check WiFi is available
+        if (!NetworkUtils.isWiFi(this)) {
+            AlertUtils.errorDialogShow(this, getString(R.string.text_no_wifi_conn));
+        }
     }
 
     @Override
@@ -154,6 +160,13 @@ public class LoginActivity extends Activity implements CheckVersionTask.OnCheckV
         // Check for a valid username.
         if (TextUtils.isEmpty(username)) {
             mUsernameView.setError(getString(R.string.error_field_required));
+            focusView = mUsernameView;
+            cancel = true;
+        }
+
+        // Check WiFi is available
+        if (!NetworkUtils.isWiFi(this)) {
+            AlertUtils.errorDialogShow(this, getString(R.string.text_no_wifi_conn));
             focusView = mUsernameView;
             cancel = true;
         }
@@ -230,20 +243,25 @@ public class LoginActivity extends Activity implements CheckVersionTask.OnCheckV
         protected JSONObject doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
-            JSONObject jAuth = new JSONObject();
+            JSONObject json = null;
 
-            try {
-                // build json for the authentication
-                jAuth.put("user_name", mUsername);
-                jAuth.put("password", mPassword);
-            } catch (JSONException e) {
-                e.printStackTrace();
+            if (NetworkUtils.isWiFi(LoginActivity.this)) {
+
+                JSONObject jAuth = new JSONObject();
+
+                try {
+                    // build json for the authentication
+                    jAuth.put("user_name", mUsername);
+                    jAuth.put("password", mPassword);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                JSONParser jParser = new JSONParser();
+
+                // get JSON from URL
+                json = jParser.getJSONFromUrl(url, jAuth.toString());
             }
-
-            JSONParser jParser = new JSONParser();
-
-            // get JSON from URL
-            JSONObject json = jParser.getJSONFromUrl(url, jAuth.toString());
 
             // TODO: register the new account here.
             return json;
@@ -254,17 +272,19 @@ public class LoginActivity extends Activity implements CheckVersionTask.OnCheckV
             boolean ldapAuth = false;
             boolean canAccess = false;
 
-            Log.d(TAG, "processResponse: json = " + json.toString());
+            Log.d(TAG, "processResponse: json = " + json);
 
-            try {
-                // unpack success flag and message
-                ldapAuth  = Boolean.valueOf(json.getBoolean(TAG_LDAP_AUTH));
-                canAccess = Boolean.valueOf(json.getBoolean(TAG_CAN_ACCESS));
+            if (json != null) {
+                try {
+                    // unpack success flag and message
+                    ldapAuth = Boolean.valueOf(json.getBoolean(TAG_LDAP_AUTH));
+                    canAccess = Boolean.valueOf(json.getBoolean(TAG_CAN_ACCESS));
 
-            } catch (JSONException e) {
-                e.printStackTrace();
-                ldapAuth = false;
-                canAccess = false;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    ldapAuth = false;
+                    canAccess = false;
+                }
             }
 
             mAuthTask = null;
@@ -302,7 +322,7 @@ public class LoginActivity extends Activity implements CheckVersionTask.OnCheckV
             // check version - handled as a separate task as
             // ldap in php is used for username and password authentication and
             // sas security function check is handled by checkUserAccess verb, not an spc verb
-            new CheckVersionTask(this).execute();
+            new CheckVersionTask(this, this).execute();
 
         } else {
             // handle login failure
@@ -350,21 +370,20 @@ public class LoginActivity extends Activity implements CheckVersionTask.OnCheckV
                 showDialog = true;
             }
         } else {
-            VersionReceiver.sendBroadcast(this);
             showDialog = true;
         }
 
         if (showDialog) {
             // build confirmation message
-            message.append(getString(R.string.text_version_contact) + "\n");
-            message.append(getString(R.string.text_version_install, VersionUtils.getVersionName(this), VersionUtils.getVersionCode(this)) + "\n");
-            message.append(getString(R.string.text_version_latest, latestName, latestCode));
-
             if (!versionOk) {
                 // major version changed
                 // SecurityUtils.setIsLoggedIn(this, false);
                 message.insert(0, getString(R.string.text_version_logout_too_old) + "\n");
             }
+
+            message.append(getString(R.string.text_version_contact) + "\n");
+            message.append(getString(R.string.text_version_install, VersionUtils.getVersionName(this), VersionUtils.getVersionCode(this)) + "\n");
+            message.append(getString(R.string.text_version_latest, latestName, latestCode));
 
             final boolean returnVal = versionOk;
             AlertDialog.Builder dlgAlert = AlertUtils.createAlert(this, getString(R.string.text_version_title), message.toString());

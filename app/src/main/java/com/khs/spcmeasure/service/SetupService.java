@@ -13,7 +13,9 @@ import android.util.Log;
 
 import com.khs.spcmeasure.Globals;
 import com.khs.spcmeasure.helper.DBAdapter;
+import com.khs.spcmeasure.library.NetworkUtils;
 import com.khs.spcmeasure.library.VersionUtils;
+import com.khs.spcmeasure.receiver.VersionReceiver;
 import com.khs.spcmeasure.ui.PieceListActivity;
 import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.ui.SettingsActivity;
@@ -155,8 +157,8 @@ public class SetupService extends IntentService {
         // get global vars
         Globals g = Globals.getInstance();
 
-        // check version and skip if in error
-        if (g.isVersionOk()) {
+        // check version and wifi.  skip if in error
+        if (g.isVersionOk() && NetworkUtils.isWiFi(this)) {
             try {
                 JSONParser jParser = new JSONParser();
 
@@ -184,7 +186,9 @@ public class SetupService extends IntentService {
 
                         // handle version failure
                         if (!versionOk) {
-                            // TODO broadcast version failure
+                            Log.d(TAG, "version not ok");
+                            // broadcast version failure
+                            VersionReceiver.sendBroadcast(SetupService.this);
                         }
                     } else {
                         // get JSON Array from URL

@@ -7,7 +7,9 @@ import android.util.Log;
 import com.khs.spcmeasure.Globals;
 import com.khs.spcmeasure.entity.Product;
 import com.khs.spcmeasure.library.JSONParser;
+import com.khs.spcmeasure.library.NetworkUtils;
 import com.khs.spcmeasure.library.VersionUtils;
+import com.khs.spcmeasure.receiver.VersionReceiver;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -54,8 +56,8 @@ public class ProductLoader extends AsyncTaskLoader<List<Product>>{
 		// get global vars
 		Globals g = Globals.getInstance();
 
-		// check version and exit if in error
-		if (!g.isVersionOk()) {
+		// check version and wifi.  exit if in error
+		if (!g.isVersionOk() || !NetworkUtils.isWiFi(mContext)) {
 			return null;
 		}
 
@@ -82,7 +84,10 @@ public class ProductLoader extends AsyncTaskLoader<List<Product>>{
 			// update version global
 			g.setVersionOk(versionOk);
 
-			if (versionOk) {
+			if (!versionOk) {
+				// broadcast version failure
+				VersionReceiver.sendBroadcast(mContext);
+			} else {
 				// get JSON Array from URL
 				jArray = json.getJSONArray(TAG_PRODUCT);
 

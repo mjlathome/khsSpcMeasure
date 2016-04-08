@@ -47,6 +47,7 @@
     <string name="text_meas_save_failed">Measurement save failed.  Contact Administrator.</string>
     <string name="text_new_piece">New Piece</string>
     <string name="text_no_data">No Data</string>
+    <string name="text_no_wifi_conn">No WiFi Connection</string>
     <string name="text_okay">OK</string>
     <string name="text_open">Open</string>
     <string name="text_out_control">Out of Control</string>

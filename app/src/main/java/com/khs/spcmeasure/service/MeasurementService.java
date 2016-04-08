@@ -16,6 +16,7 @@ import com.khs.spcmeasure.Globals;
 import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.library.NetworkUtils;
 import com.khs.spcmeasure.library.VersionUtils;
+import com.khs.spcmeasure.receiver.VersionReceiver;
 import com.khs.spcmeasure.ui.FeatureReviewActivity;
 import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.dao.PieceDao;
@@ -361,7 +362,17 @@ public class MeasurementService extends IntentService {
             String  message = String.valueOf(json.getString(TAG_MESSAGE));
 
             // verify success and version
-            if (success && versionOk) {
+            if (!success || !versionOk) {
+                // notify user - failure
+                success = false;
+
+                // handle version failure
+                if (!versionOk) {
+                    Log.d(TAG, "version not ok");
+                    // broadcast version failure
+                    VersionReceiver.sendBroadcast(MeasurementService.this);
+                }
+            } else {
 
                 // unpack Piece data from json response
                 JSONObject jPiece = json.getJSONObject(DBAdapter.TABLE_PIECE);
@@ -390,11 +401,6 @@ public class MeasurementService extends IntentService {
                 db.close();
 
                 Log.d(TAG, "processResponseExport: success");
-
-            } else {
-                // TODO handle error
-                // Toast.makeText(mContext, "ERROR: " + message, Toast.LENGTH_LONG).show();
-                success = false;
             }
 
         } catch (JSONException e) {
@@ -489,8 +495,17 @@ public class MeasurementService extends IntentService {
             g.setVersionOk(versionOk);
 
             // verify success and version
-            if (success == true && versionOk) {
+            if (!success || !versionOk) {
+                // notify user - failure
+                success = false;
 
+                // handle version failure
+                if (!versionOk) {
+                    Log.d(TAG, "version not ok");
+                    // broadcast version failure
+                    VersionReceiver.sendBroadcast(MeasurementService.this);
+                }
+            } else {
                 // verify product id
                 if (json.getLong(TAG_PROD_ID) != prodId) {
                     throw new JSONException("prodId does not match: " + prodId + " != " + json.getLong(TAG_PROD_ID));
@@ -582,13 +597,7 @@ public class MeasurementService extends IntentService {
                 }
 
                 Log.d(TAG, "processResponse: success");
-
-            } else {
-                // TODO handle error
-                // Toast.makeText(mContext, "ERROR: " + message, Toast.LENGTH_LONG).show();
-                success = false;
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
             success = false;
