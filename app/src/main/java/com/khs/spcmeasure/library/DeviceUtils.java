@@ -22,7 +22,8 @@ public class DeviceUtils {
     public static String getUrlQuery() {
         String url = "";
         try {
-            url = URLEncoder.encode(TAG_DEVICE_NAME + "=" + getDeviceName(), "UTF-8");
+            url = TAG_DEVICE_NAME + "=" + URLEncoder.encode(getDeviceName(), "UTF-8");
+            // url = TAG_DEVICE_NAME + "=" + getDeviceName();
         } catch(Exception e) {
             e.printStackTrace();
         }

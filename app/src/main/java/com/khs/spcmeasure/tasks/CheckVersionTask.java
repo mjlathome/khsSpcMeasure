@@ -55,7 +55,9 @@ public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
                 JSONParser jParser = new JSONParser();
 
                 // get JSON from URL
-                json = jParser.getJSONFromUrl(url + VersionUtils.getUrlQuery(mContext) + querySep + DeviceUtils.getUrlQuery() + querySep + SecurityUtils.getUrlQuery(mContext));
+				String chkVerUrl = url + VersionUtils.getUrlQuery(mContext) + querySep + DeviceUtils.getUrlQuery() + querySep + SecurityUtils.getUrlQuery(mContext);
+				Log.d(TAG, "url: " + chkVerUrl);
+                json = jParser.getJSONFromUrl(chkVerUrl);
             }
         } catch(Exception e) {
             e.printStackTrace();
