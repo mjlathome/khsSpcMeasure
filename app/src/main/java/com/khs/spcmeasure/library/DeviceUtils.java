@@ -2,6 +2,8 @@ package com.khs.spcmeasure.library;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.os.Build;
+import android.util.Log;
 
 import java.net.URLEncoder;
 
@@ -10,6 +12,7 @@ import java.net.URLEncoder;
  * see: http://stackoverflow.com/questions/16704597/how-do-you-get-the-user-defined-device-name-in-android
  */
 public class DeviceUtils {
+    public static final String TAG = "deviceUtils";
     public static final String TAG_DEVICE_NAME = "deviceName";
 
     // returns user entered device name
@@ -20,6 +23,8 @@ public class DeviceUtils {
 
     // returns URL query string for device name
     public static String getUrlQuery() {
+        Log.i(TAG, "android.os.Build.SERIAL: " + Build.SERIAL);
+
         String url = "";
         try {
             url = TAG_DEVICE_NAME + "=" + URLEncoder.encode(getDeviceName(), "UTF-8");
