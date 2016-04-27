@@ -30,7 +30,7 @@ public class DBAdapter {
 	
 	// All Static variables
     // Database Version
-    static final int DATABASE_VERSION = 15;
+    static final int DATABASE_VERSION = 16;
  
     // Database Name
     public static final String DATABASE_NAME = "spcMeasure";
@@ -62,6 +62,7 @@ public class DBAdapter {
     public static final String KEY_LOWER = "lower";
     public static final String KEY_CP = "cp";
     public static final String KEY_CPK = "cpk";
+	public static final String KEY_MODIFY_DATETIME = "modifyDt";
     public static final String KEY_COLLECT_DATETIME = "collectDt";
     public static final String KEY_COLLECT_STATUS = "collectStatus";
     public static final String KEY_OPERATOR = "operator";
@@ -113,6 +114,7 @@ public class DBAdapter {
 			KEY_PROD_ID + " INTEGER KEY NOT NULL," +
 			KEY_SUB_GRP_ID + " INTEGER KEY," +
 			KEY_PIECE_NUM + " INTEGER KEY NOT NULL," +
+			KEY_MODIFY_DATETIME + " TEXT," +
 			KEY_COLLECT_DATETIME + " TEXT," +
 			KEY_OPERATOR + " TEXT," +
 			KEY_LOT + " TEXT," +
