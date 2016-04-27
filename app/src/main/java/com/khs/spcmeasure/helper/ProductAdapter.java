@@ -99,10 +99,20 @@ public class ProductAdapter extends ArrayAdapter<Product>{
                 // We perform filtering operation
                 String regex = constraint.toString().toUpperCase().replace("?", ".?").replace("*", ".*?");
 
+
                 List<Product> filterList = new ArrayList<Product>();
 
                 for (Product p : mProductList) {
-                    if (p.getName().toUpperCase().matches(regex)) {
+                    // check if matched
+                    boolean isMatch = false;
+                    if (regex.equalsIgnoreCase(constraint.toString()) && p.getName().toUpperCase().startsWith(regex)) {
+                        isMatch = true;
+                    } else if (p.getName().toUpperCase().matches(regex)) {
+                        isMatch = true;
+                    }
+
+                    // add matched to filtered list
+                    if (isMatch) {
                         filterList.add(p);
                     }
                 }
