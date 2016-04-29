@@ -5,6 +5,9 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.InputFilter;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.method.DigitsKeyListener;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -336,6 +339,9 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
         mBtnGetValue = (Button) rootView.findViewById(R.id.btnGetValue);
         mBtnClearValue = (Button) rootView.findViewById(R.id.btnClearValue);
 
+        // fix known bug with decimal point
+        mEdtMeasValue.setFilters(new InputFilter[] { new DecimalInputFilter() });
+
         try {
             // instantiate Dao's
             mPieceDao = new PieceDao(getActivity());
@@ -620,7 +626,7 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
         mEdtMeasValue.setEnabled(true);
         mEdtMeasValue.setFocusable(true);
         mEdtMeasValue.setFocusableInTouchMode(true);
-        mEdtMeasValue.setKeyListener(DigitsKeyListener.getInstance("01234567890."));
+        // was: mEdtMeasValue.setKeyListener(DigitsKeyListener.getInstance("01234567890."));
         mEdtMeasValue.setBackgroundResource(android.R.drawable.edit_text);
         mEdtMeasValue.setHint(R.string.prompt_gap_value);
     }
@@ -630,7 +636,7 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
         mEdtMeasValue.setEnabled(false);
         mEdtMeasValue.setFocusable(false);
         mEdtMeasValue.setFocusableInTouchMode(false);
-        mEdtMeasValue.setKeyListener(DigitsKeyListener.getInstance("01234567890.-"));
+        // was: mEdtMeasValue.setKeyListener(DigitsKeyListener.getInstance("01234567890.-"));
         mEdtMeasValue.setBackgroundResource(android.R.color.transparent);
         mEdtMeasValue.setHint("");
         mEdtMeasValue.setTextColor(getResources().getColor(android.R.color.black));
@@ -650,5 +656,35 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
     public void hideInput() {
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(mEdtMeasValue.getWindowToken(), 0);
+    }
+
+    // fix missing period for gaps
+    // see: http://stackoverflow.com/questions/11009533/android-comma-as-decimal-separator-on-numeric-keyboard
+    public class DecimalInputFilter implements InputFilter {
+
+        private static final String ALLOWED_CHARS = "0123456789.-";
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            if (source instanceof SpannableStringBuilder) {
+                final SpannableStringBuilder sourceAsSpannableBuilder = (SpannableStringBuilder)source;
+                for (int i = end - 1; i >= start; i--) {
+                    final char currentChar = source.charAt(i);
+                    if (ALLOWED_CHARS.indexOf(currentChar) < 0) {
+                        sourceAsSpannableBuilder.delete(i, i+1);
+                    }
+                }
+                return source;
+            } else {
+                final StringBuilder filteredStringBuilder = new StringBuilder();
+                for (int i = 0; i < end; i++) {
+                    final char currentChar = source.charAt(i);
+                    if (ALLOWED_CHARS.indexOf(currentChar) >= 0) {
+                        filteredStringBuilder.append(currentChar);
+                    }
+                }
+                return filteredStringBuilder.toString();
+            }
+        }
     }
 }
