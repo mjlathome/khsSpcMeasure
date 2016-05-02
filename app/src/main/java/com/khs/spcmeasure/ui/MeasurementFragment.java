@@ -598,14 +598,17 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
         // check security too
         // TODO needs to be called upon login/logout
         if (mPiece.getStatus() == CollectStatus.OPEN && SecurityUtils.checkSecurity(getActivity(), false)) {
+            // K1940 always enable measurement value regardless of gap or not
+            enableValue();
+
             // TODO Gap test
             Log.d(TAG, "Gap Test - Feature: " + mTxtFeatName.getText().toString());
             if (isGapCheck()) {
-                enableValue();
+                // enableValue();
                 mBtnGetValue.setVisibility(View.INVISIBLE);
                 Log.d(TAG, "Gap Test - Enabled");
             } else {
-                disableValue();
+                // disableValue();
                 mBtnGetValue.setVisibility(View.VISIBLE);
                 Log.d(TAG, "Gap Test - Disabled");
             }
@@ -628,7 +631,7 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
         mEdtMeasValue.setFocusableInTouchMode(true);
         // was: mEdtMeasValue.setKeyListener(DigitsKeyListener.getInstance("01234567890."));
         mEdtMeasValue.setBackgroundResource(android.R.drawable.edit_text);
-        mEdtMeasValue.setHint(R.string.prompt_gap_value);
+        mEdtMeasValue.setHint(R.string.prompt_meas_value);
     }
 
     // disable measurement value field
