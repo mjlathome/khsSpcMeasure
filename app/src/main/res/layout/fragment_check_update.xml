@@ -9,38 +9,56 @@
     tools:context=".ui.CheckUpdateActivity">
 
     <TextView
-        android:id="@+id/lblVersionName"
+        android:id="@+id/lblInstallVersion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:labelFor="@+id/txtVersionName"
-        android:text="@string/label_version_name"
+        android:labelFor="@+id/txtInstallVersion"
+        android:text="@string/text_install_version"
         android:textSize="@dimen/text_medium"
         android:textStyle="bold"
-        android:layout_alignTop="@+id/txtVersionName"
+        android:layout_alignTop="@+id/txtInstallVersion"
         android:layout_alignParentStart="true"
         android:layout_marginStart="30dp" />
 
     <TextView
-        android:id="@+id/txtVersionName"
+        android:id="@+id/txtInstallVersion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/label_version_name"
+        android:hint="@string/text_install_version"
         android:textSize="@dimen/text_medium"
         android:layout_marginTop="33dp"
-        android:layout_below="@+id/textAppName"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="53dp"
-        android:onClick="onClickVersionName"
-        android:clickable="true" />
+        android:layout_marginEnd="53dp" />
+
+    <TextView
+        android:id="@+id/txtLatestVersion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/label_latest_version"
+        android:textSize="@dimen/text_medium"
+        android:layout_alignTop="@+id/lblLatestVersion"
+        android:layout_alignStart="@+id/txtInstallVersion" />
+
+    <TextView
+        android:id="@+id/lblLatestVersion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:labelFor="@+id/txtLatestName"
+        android:text="@string/label_latest_version"
+        android:textSize="@dimen/text_medium"
+        android:textStyle="bold"
+        android:layout_below="@+id/lblInstallVersion"
+        android:layout_alignStart="@+id/lblInstallVersion"
+        android:layout_marginTop="63dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/text_install_update"
         android:id="@+id/btnInstallUpdate"
-        android:layout_below="@+id/lblVersionName"
+        android:onClick="onClickBtnInstallUpdate"
+        android:layout_below="@+id/txtLatestVersion"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="92dp"
-        android:onClick="onClickBtnInstallUpdate" />
+        android:layout_marginTop="42dp" />
 
 </RelativeLayout>

@@ -1,9 +1,7 @@
 package com.khs.spcmeasure.ui;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
 import android.content.pm.PackageInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -19,7 +17,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 
 public class AboutActivity extends Activity {
 
@@ -78,7 +75,7 @@ public class AboutActivity extends Activity {
 
         // display version
         if (versionName != null) {
-            TextView txtVersionName = (TextView) findViewById(R.id.txtVersionName);
+            TextView txtVersionName = (TextView) findViewById(R.id.txtInstallVersion);
             txtVersionName.setText(versionName);
         }
 
