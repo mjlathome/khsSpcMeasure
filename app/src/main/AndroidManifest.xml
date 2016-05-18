@@ -142,6 +142,10 @@
             android:exported="false" />
 
         <activity
+            android:name=".ui.CheckUpdateActivity"
+            android:label="@string/text_check_update"></activity>
+
+        <activity
             android:name=".ui.AboutActivity"
             android:label="@string/text_about"></activity>
 
