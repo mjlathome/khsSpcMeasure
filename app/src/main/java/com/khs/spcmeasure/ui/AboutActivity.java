@@ -63,20 +63,20 @@ public class AboutActivity extends Activity {
 
     // display version
     private void displayFields() {
-        String versionName = null;
+        String installVersion = null;
 
         // extract version
         try {
             PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            versionName = pInfo.versionName;
+            installVersion = pInfo.versionName + " (" + pInfo.versionCode + ")";
         } catch(Exception e) {
             e.printStackTrace();
         }
 
         // display version
-        if (versionName != null) {
-            TextView txtVersionName = (TextView) findViewById(R.id.txtInstallVersion);
-            txtVersionName.setText(versionName);
+        if (installVersion != null) {
+            TextView txtInstallVersion = (TextView) findViewById(R.id.txtInstallVersion);
+            txtInstallVersion.setText(installVersion);
         }
 
         // extract device name
