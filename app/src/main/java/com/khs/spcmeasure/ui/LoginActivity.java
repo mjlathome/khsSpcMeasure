@@ -50,7 +50,7 @@ import java.util.List;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends Activity implements CheckVersionTask.OnCheckVersionListener {
+public class LoginActivity extends Activity {
 
     private static final String TAG = "LoginActivity";
 
@@ -318,16 +318,19 @@ public class LoginActivity extends Activity implements CheckVersionTask.OnCheckV
         Log.d(TAG, "postLogin: loginOk = " + loginOk);
 
         // check successful login
-        if (loginOk) {
+        // TODO remove check version from here as done in separate task
+        // if (loginOk) {
+        returnResult(loginOk);
+
             // check version - handled as a separate task as
             // ldap in php is used for username and password authentication and
             // sas security function check is handled by checkUserAccess verb, not an spc verb
-            new CheckVersionTask(this, this).execute();
+            // new CheckVersionTask(this, this).execute();
 
-        } else {
+        // } else {
             // handle login failure
-            returnResult(loginOk);
-        }
+
+        // }
 
     }   // postLogin
 
@@ -344,7 +347,7 @@ public class LoginActivity extends Activity implements CheckVersionTask.OnCheckV
         finish();
     }
 
-    @Override
+    // TODO move this code into Check Version Task
     public void onCheckVersionPostExecute(boolean versionOk) {
 
         // initialize
@@ -358,11 +361,7 @@ public class LoginActivity extends Activity implements CheckVersionTask.OnCheckV
 
         // handle version ok
         if (versionOk) {
-            // import Action Cause Simple Codes
-            SimpleCodeService.startActionImport(getApplicationContext(), SimpleCodeService.TYPE_ACTION_CAUSE);
 
-            // import Gauge Audit Simple Codes
-            SimpleCodeService.startActionImport(getApplicationContext(), SimpleCodeService.TYPE_GAUGE_AUDIT);
 
             // check if latest version is not installed
             if (VersionUtils.isVersionCodeChanged(this, latestCode)) {

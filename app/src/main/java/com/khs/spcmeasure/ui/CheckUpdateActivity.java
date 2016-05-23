@@ -1,11 +1,16 @@
 package com.khs.spcmeasure.ui;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.widget.TextView;
 
+import com.khs.spcmeasure.R;
+import com.khs.spcmeasure.tasks.CheckVersionTask;
 import com.khs.spcmeasure.tasks.UpdateApp;
 
 /**
@@ -27,6 +32,12 @@ public class CheckUpdateActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.d(TAG, "onCreate");
+
+        // TODO remove action bar progress later
+        // add progress circle to Action Bar - must be done before content added
+        // requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
         // show the Up button in the action bar.
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -55,14 +66,14 @@ public class CheckUpdateActivity extends Activity {
         }
     }
 
-    // handle on click of button Install Update
-    public void onClickBtnInstallUpdate(View view) {
-        Log.d(TAG, "onClickBtnInstallUpdate");
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
 
-        UpdateApp updateApp = new UpdateApp();
-        updateApp.setContext(getApplicationContext());
-        updateApp.execute(url);
+        // TODO remove action bar progress later
+        // start the progress bar spinning
+//        setProgressBarIndeterminateVisibility(true);
 
-        return;
     }
+
 }

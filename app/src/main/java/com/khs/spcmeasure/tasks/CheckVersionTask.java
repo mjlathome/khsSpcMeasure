@@ -36,11 +36,10 @@ public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
 		mContext = context;
 		mListener = listener;
 	}
-	
+
 	@Override
 	protected void onPreExecute() {
-		// TODO Auto-generated method stub
-		super.onPreExecute();
+		mListener.onCheckVersionStarted();
 	}
 
 	@Override
@@ -68,8 +67,6 @@ public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
 
 	@Override
 	protected void onPostExecute(JSONObject json) {
-		super.onPostExecute(json);
-
 		Log.d(TAG, "json = " + json);
 
 		// initialize
@@ -104,7 +101,7 @@ public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
 		g.setLatestCode(latestCode);
 		g.setLatestName(latestName);
 
-		mListener.onCheckVersionPostExecute(versionOk);
+		mListener.onCheckVersionFinished();
 	}
 
 	// generate task
@@ -115,7 +112,9 @@ public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
 
 	// communication interface
 	public interface OnCheckVersionListener {
+		public void onCheckVersionStarted();
+
 		// TODO: Update argument type and name
-		public void onCheckVersionPostExecute(boolean versionOk);
+		public void onCheckVersionFinished();
 	}
 }
