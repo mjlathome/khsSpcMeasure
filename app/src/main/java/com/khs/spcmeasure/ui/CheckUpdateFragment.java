@@ -1,5 +1,6 @@
 package com.khs.spcmeasure.ui;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -41,6 +42,9 @@ public class CheckUpdateFragment extends Fragment implements CheckVersionTask.On
     private TextView mTxtVersionInfo;
     private Button mBtnInstallUpdate;
 
+    // exit if version is ok
+    private boolean mExitIfOk = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +73,7 @@ public class CheckUpdateFragment extends Fragment implements CheckVersionTask.On
         // progress dialog.
         if (mIsTaskRunning) {
             // TODO use String constants
-            mProgressDialog = ProgressDialog.show(getActivity(), getString(R.string.text_checking), getString(R.string.text_please_wait));
+            mProgressDialog = ProgressDialog.show(getActivity(), getString(R.string.text_checking_version), getString(R.string.text_please_wait));
         } else {
             mCheckVersionTask = new CheckVersionTask(mAppContext, this);
             mCheckVersionTask.execute();
@@ -79,6 +83,11 @@ public class CheckUpdateFragment extends Fragment implements CheckVersionTask.On
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        // extract bundle arguments
+        // see:
+        // http://stackoverflow.com/questions/12739909/send-data-from-activity-to-fragment-in-android
+        mExitIfOk = getArguments().getBoolean(CheckUpdateActivity.KEY_EXIT_IF_OK, false);
 
         // inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_check_update, container, false);
@@ -117,11 +126,16 @@ public class CheckUpdateFragment extends Fragment implements CheckVersionTask.On
     public void onCheckVersionStarted() {
         mIsTaskRunning = true;
         // TODO use String constants
-        mProgressDialog = ProgressDialog.show(getActivity(), getString(R.string.text_checking), getString(R.string.text_please_wait));
+        mProgressDialog = ProgressDialog.show(getActivity(), getString(R.string.text_checking_version), getString(R.string.text_please_wait));
     }
 
     @Override
     public void onCheckVersionFinished() {
+
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+        }
+        mIsTaskRunning = false;
 
         // get globals for version info
         Globals g = Globals.getInstance();
@@ -132,12 +146,15 @@ public class CheckUpdateFragment extends Fragment implements CheckVersionTask.On
 
             // import Gauge Audit Simple Codes
             SimpleCodeService.startActionImport(mAppContext, SimpleCodeService.TYPE_GAUGE_AUDIT);
-        }
 
-        if (mProgressDialog != null) {
-            mProgressDialog.dismiss();
+            // exit if required
+            if (mExitIfOk) {
+                if (getActivity() != null) {
+                    getActivity().setResult(Activity.RESULT_OK);
+                    getActivity().finish();
+                }
+            }
         }
-        mIsTaskRunning = false;
 
         // TODO display latest version and version message
         String latestVersion = g.getLatestName() + " (" + g.getLatestCode() + ")";

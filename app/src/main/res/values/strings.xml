@@ -81,6 +81,7 @@
     <string name="text_piece_feature_measured_all">All Features have been measured.</string>
     <string name="text_piece_feature_measured_some">Only %1$s out of %2$s features have been measured.</string>
     <string name="text_please_exit_app">Please exit the App</string>
+    <string name="text_checking_version">Checking Version</string>
     <string name="text_version_title">Application Outdated</string>
     <string name="text_version_logout_not_found">Logged out as app version not found.</string>
     <string name="text_version_logout_too_old">Logged out as app is too old.</string>

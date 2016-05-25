@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.khs.spcmeasure.Globals;
 import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.library.SecurityUtils;
@@ -33,7 +34,8 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
     private SylvacBleService mSylvacBleSrvc = null;
 
     // Activity result codes
-    private static int RESULT_IMPORT = 1;
+    private static final int RESULT_IMPORT = 1;
+    private static final int RESULT_CHECK_UPDATE = 2;
 
     // ensure that User Login is only asked once when app initially starts
     // TODO remove later as even though onCreate is re-run when activity is re-started
@@ -79,18 +81,42 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
         // start Piece Service
         startService(new Intent(getBaseContext(), PieceService.class));
 
-        // check if user should be asked to login
-        // if (askLogin) {
-        if (!SecurityUtils.getIsLoggedIn(this)) {
-            // askLogin = false;
+        // get globals for version info
+        Globals g = Globals.getInstance();
 
-            // initialize as logged out
-            SecurityUtils.setIsLoggedIn(this, false);
+        if (g.isVersionOk()) {
+            // check if user should be asked to login
+            if (!SecurityUtils.getIsLoggedIn(this)) {
 
-            // show login screen
-            Intent intentLogin = new Intent(this, LoginActivity.class);
-            startActivity(intentLogin);
+                // initialize as logged out
+                SecurityUtils.setIsLoggedIn(this, false);
+
+                // show login screen
+                Intent intentLogin = new Intent(this, LoginActivity.class);
+                startActivity(intentLogin);
+            }
+        } else {
+            // version not ok yet so force check version
+            Intent intentChkUpd = new Intent(this, CheckUpdateActivity.class);
+            intentChkUpd.putExtra(CheckUpdateActivity.KEY_EXIT_IF_OK, true);
+            startActivityForResult(intentChkUpd, RESULT_CHECK_UPDATE);
         }
+
+
+        // TODO handle login after version check is ok
+//        // check if user should be asked to login
+//        // if (askLogin) {
+//        if (!SecurityUtils.getIsLoggedIn(this)) {
+//            // askLogin = false;
+//
+//            // initialize as logged out
+//            SecurityUtils.setIsLoggedIn(this, false);
+//
+//            // show login screen
+//            Intent intentLogin = new Intent(this, LoginActivity.class);
+//            startActivity(intentLogin);
+//        }
+
     }
 
     @Override
@@ -178,12 +204,34 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
 
         Log.d(TAG, "onActivityResult: requestCode = " + requestCode + "; resultCode = " + resultCode);
 
-        // handle Activity results
-        if (requestCode == RESULT_IMPORT && resultCode == RESULT_OK) {
-            long prodId = data.getLongExtra(SetupImportActivity.RESULT_PROD_ID, -1);
-            Log.d(TAG, "onActivityResult: prodId = " + prodId);
-            if (mSetupListFrag != null) {
-                mSetupListFrag.refreshList(prodId);
+        if (resultCode == RESULT_OK) {
+            // handle Activity results
+            switch (requestCode) {
+                case RESULT_IMPORT:
+                    long prodId = data.getLongExtra(SetupImportActivity.RESULT_PROD_ID, -1);
+                    Log.d(TAG, "onActivityResult: prodId = " + prodId);
+                    if (mSetupListFrag != null) {
+                        mSetupListFrag.refreshList(prodId);
+                    }
+                    break;
+                case RESULT_CHECK_UPDATE:
+                    // get globals for version info
+                    Globals g = Globals.getInstance();
+
+                    if (g.isVersionOk()) {
+                        // version ok, launch login if required
+                        // check if user should be asked to login
+                        if (!SecurityUtils.getIsLoggedIn(this)) {
+
+                            // initialize as logged out
+                            SecurityUtils.setIsLoggedIn(this, false);
+
+                            // show login screen
+                            Intent intentLogin = new Intent(this, LoginActivity.class);
+                            startActivity(intentLogin);
+                        }
+                    }
+                    break;
             }
         }
     }

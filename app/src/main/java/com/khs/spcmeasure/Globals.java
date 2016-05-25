@@ -9,8 +9,7 @@ public class Globals{
     private static Globals instance;
 
     // global variables
-    private boolean doVersionCheck = true;
-    private boolean versionOk = true;  // assume version is ok
+    private boolean versionOk = false;  // assume version is not ok
     private int latestCode = -1;
     private String latestName = "";
 
@@ -23,14 +22,6 @@ public class Globals{
             instance = new Globals();
         }
         return instance;
-    }
-
-    public boolean getDoVersionCheck() {
-        return doVersionCheck;
-    }
-
-    public void setDoVersionCheck(boolean doVersionCheck) {
-        this.doVersionCheck = doVersionCheck;
     }
 
     public boolean isVersionOk() {
