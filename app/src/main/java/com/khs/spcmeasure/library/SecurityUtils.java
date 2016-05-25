@@ -3,6 +3,7 @@ package com.khs.spcmeasure.library;
 import android.content.Context;
 import android.util.Log;
 
+import com.khs.spcmeasure.Globals;
 import com.khs.spcmeasure.R;
 
 /**
@@ -31,27 +32,52 @@ public class SecurityUtils {
     }
 
     public static void setIsLoggedIn(Context context, boolean status) {
-        context.getApplicationContext().getSharedPreferences(SECURITY, Context.MODE_PRIVATE).edit().putBoolean(IS_LOGGED_IN, status).commit();
+        // get globals
+        Globals g = Globals.getInstance();
+        g.setLoggedIn(status);
+
+        // was:
+        // context.getApplicationContext().getSharedPreferences(SECURITY, Context.MODE_PRIVATE).edit().putBoolean(IS_LOGGED_IN, status).commit();
     }
 
     public static boolean getIsLoggedIn(Context context) {
-        return context.getApplicationContext().getSharedPreferences(SECURITY, Context.MODE_PRIVATE).getBoolean(IS_LOGGED_IN, true);
+        // get globals
+        Globals g = Globals.getInstance();
+        return g.isLoggedIn();
+        // was:
+        // return context.getApplicationContext().getSharedPreferences(SECURITY, Context.MODE_PRIVATE).getBoolean(IS_LOGGED_IN, true);
     }
 
     public static void setCanMeasure(Context context, boolean status) {
-        context.getApplicationContext().getSharedPreferences(SECURITY, Context.MODE_PRIVATE).edit().putBoolean(CAN_MEASURE, status).commit();
+        // get globals
+        Globals g = Globals.getInstance();
+        g.setCanMeasure(status);
+        // was:
+        // context.getApplicationContext().getSharedPreferences(SECURITY, Context.MODE_PRIVATE).edit().putBoolean(CAN_MEASURE, status).commit();
     }
 
     public static boolean getCanMeasure(Context context) {
-        return context.getApplicationContext().getSharedPreferences(SECURITY, Context.MODE_PRIVATE).getBoolean(CAN_MEASURE, false);
+        // get globals
+        Globals g = Globals.getInstance();
+        return g.isCanMeasure();
+        // was:
+        // return context.getApplicationContext().getSharedPreferences(SECURITY, Context.MODE_PRIVATE).getBoolean(CAN_MEASURE, false);
     }
 
     public static void setUsername(Context context, String username) {
-        context.getApplicationContext().getSharedPreferences(SECURITY, Context.MODE_PRIVATE).edit().putString(USERNAME, username).commit();
+        // get globals
+        Globals g = Globals.getInstance();
+        g.setUsername(username);
+        // was:
+        // context.getApplicationContext().getSharedPreferences(SECURITY, Context.MODE_PRIVATE).edit().putString(USERNAME, username).commit();
     }
 
     public static String getUsername(Context context) {
-        return context.getApplicationContext().getSharedPreferences(SECURITY, Context.MODE_PRIVATE).getString(USERNAME, "");
+        // get globals
+        Globals g = Globals.getInstance();
+        return g.getUsername();
+        // was:
+        // return context.getApplicationContext().getSharedPreferences(SECURITY, Context.MODE_PRIVATE).getString(USERNAME, "");
     }
 
     // checks whether security is okay

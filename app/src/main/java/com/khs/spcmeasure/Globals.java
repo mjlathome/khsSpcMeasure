@@ -12,6 +12,10 @@ public class Globals{
     private boolean versionOk = false;  // assume version is not ok
     private int latestCode = -1;
     private String latestName = "";
+    private boolean loggedIn = false;   // assume not logged in
+    private boolean canMeasure = false; // assume cannot measure
+    private String username = "";   // assume blank
+
 
     // restrict constructor from being instantiated
     public Globals(){}
@@ -46,5 +50,29 @@ public class Globals{
 
     public void setLatestName(String latestName) {
         this.latestName = latestName;
+    }
+
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
+
+    public void setLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
+    }
+
+    public boolean isCanMeasure() {
+        return canMeasure;
+    }
+
+    public void setCanMeasure(boolean canMeasure) {
+        this.canMeasure = canMeasure;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }
