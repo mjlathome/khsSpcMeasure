@@ -6,9 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.os.Bundle;
-import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -122,6 +120,8 @@ public class CheckUpdateFragment extends Fragment implements CheckVersionTask.On
         }
     }
 
+
+
     @Override
     public void onCheckVersionStarted() {
         mIsTaskRunning = true;
@@ -137,8 +137,12 @@ public class CheckUpdateFragment extends Fragment implements CheckVersionTask.On
         }
         mIsTaskRunning = false;
 
+        // calculate whether version code has changed
+        boolean verCodeChanged = VersionUtils.isVersionCodeChanged(mAppContext);
+
         // get globals for version info
         Globals g = Globals.getInstance();
+
 
         if (g.isVersionOk()) {
             // import Action Cause Simple Codes
@@ -148,7 +152,7 @@ public class CheckUpdateFragment extends Fragment implements CheckVersionTask.On
             SimpleCodeService.startActionImport(mAppContext, SimpleCodeService.TYPE_GAUGE_AUDIT);
 
             // exit if required
-            if (mExitIfOk) {
+            if (!verCodeChanged) {
                 if (getActivity() != null) {
                     getActivity().setResult(Activity.RESULT_OK);
                     getActivity().finish();
@@ -156,12 +160,11 @@ public class CheckUpdateFragment extends Fragment implements CheckVersionTask.On
             }
         }
 
-        // TODO display latest version and version message
-        String latestVersion = g.getLatestName() + " (" + g.getLatestCode() + ")";
-        mTxtLatestVersion.setText(latestVersion);
+        // display latest version and version message
+        mTxtLatestVersion.setText(VersionUtils.getLatestVersion());
 
         // check if latest version is not installed
-        if (VersionUtils.isVersionCodeChanged(mAppContext, g.getLatestCode())) {
+        if (verCodeChanged) {
             // latest version not installed
             mTxtVersionInfo.setText(R.string.text_version_newer_available);
             mBtnInstallUpdate.setVisibility(View.VISIBLE);

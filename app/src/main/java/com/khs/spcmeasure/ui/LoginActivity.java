@@ -364,7 +364,7 @@ public class LoginActivity extends Activity {
 
 
             // check if latest version is not installed
-            if (VersionUtils.isVersionCodeChanged(this, latestCode)) {
+            if (VersionUtils.isVersionCodeChanged(this)) {
                 // latest version changed
                 showDialog = true;
             }

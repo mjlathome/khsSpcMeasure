@@ -4,9 +4,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.util.Log;
 
-import com.khs.spcmeasure.R;
-
-import java.util.Arrays;
+import com.khs.spcmeasure.Globals;
 
 /**
  * Created by Mark on 3/21/2016.
@@ -64,8 +62,21 @@ public class VersionUtils {
         return TAG_INSTALL_CODE + "=" + String.valueOf(getVersionCode(context)) + "&" + TAG_INSTALL_NAME + "=" + getVersionName(context);
     }
 
+    // returns installed version concatenated string
+    public static String getInstallVersion(Context context) {
+        return String.valueOf(getVersionName(context)) + " (" + getVersionCode(context) + ")";
+    }
+
+    // returns latest version concatenated string
+    public static String getLatestVersion() {
+        // get globals for latest version info
+        Globals g = Globals.getInstance();
+
+        return String.valueOf(g.getLatestName()) + " (" + g.getLatestCode() + ")";
+    }
+
     // check version code to see if changed
-    public static boolean isVersionCodeChanged(Context context, int latestCode) {
+    public static boolean isVersionCodeChanged(Context context) {
 
         // initialize
         boolean changed = false;
@@ -73,10 +84,13 @@ public class VersionUtils {
         // get installed version code
         int installCode = getVersionCode(context);
 
-        Log.d(TAG, "isVersionCodeChanged: latestCode = " + latestCode + "; installCode = " + installCode);
+        // get globals for latest version info
+        Globals g = Globals.getInstance();
+
+        Log.d(TAG, "isVersionCodeChanged: latestCode = " + g.getLatestCode() + "; installCode = " + installCode);
 
         // compare versions
-        if (Integer.compare(installCode, latestCode) != 0) {
+        if (Integer.compare(installCode, g.getLatestCode()) != 0) {
             changed = true;
         }
 

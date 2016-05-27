@@ -2,18 +2,9 @@ package com.khs.spcmeasure.ui;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
-import android.widget.TextView;
-
-import com.khs.spcmeasure.Globals;
-import com.khs.spcmeasure.R;
-import com.khs.spcmeasure.tasks.CheckVersionTask;
-import com.khs.spcmeasure.tasks.UpdateApp;
 
 /**
  * Created by Mark on 05/16/2015.

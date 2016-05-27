@@ -1,7 +1,6 @@
 package com.khs.spcmeasure.ui;
 
 import android.app.Activity;
-import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -12,6 +11,7 @@ import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.helper.DBAdapter;
 import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.DeviceUtils;
+import com.khs.spcmeasure.library.VersionUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -63,21 +63,10 @@ public class AboutActivity extends Activity {
 
     // display version
     private void displayFields() {
-        String installVersion = null;
-
-        // extract version
-        try {
-            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            installVersion = pInfo.versionName + " (" + pInfo.versionCode + ")";
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
 
         // display version
-        if (installVersion != null) {
-            TextView txtInstallVersion = (TextView) findViewById(R.id.txtInstallVersion);
-            txtInstallVersion.setText(installVersion);
-        }
+        TextView txtInstallVersion = (TextView) findViewById(R.id.txtInstallVersion);
+        txtInstallVersion.setText(VersionUtils.getInstallVersion(this));
 
         // extract device name
         try {
