@@ -13,10 +13,6 @@ import android.view.MenuItem;
 public class CheckUpdateActivity extends Activity {
     private final String TAG = "CheckUpdateActivity";
 
-    // url for spcMeasure apk
-    // private static final String url = "http://thor.kmx.cosma.com/spc/apk/spcMeasure/app-release.apk";
-    private static final String url = "http://thor.kmx.cosma.com/spc/apk/spcMeasure/app-debug.apk";
-
     // bundle keys
     public static final String KEY_EXIT_IF_OK = "exit_if_ok";
 

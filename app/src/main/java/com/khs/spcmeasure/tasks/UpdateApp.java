@@ -19,9 +19,20 @@ import java.net.URL;
  * see: http://stackoverflow.com/questions/4967669/android-install-apk-programmatically
  */
 public class UpdateApp extends AsyncTask<String,Void,Void> {
-    private Context context;
-    public void setContext(Context contextf){
-        context = contextf;
+    private static final String TAG = "UpdateApp";
+
+    private Context mContext;
+    private OnUpdateAppListener mListener;
+
+    // constructor
+    public UpdateApp(Context context, OnUpdateAppListener listener) {
+        mContext = context;
+        mListener = listener;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        mListener.onUpdateAppStarted();
     }
 
     @Override
@@ -58,12 +69,25 @@ public class UpdateApp extends AsyncTask<String,Void,Void> {
             // intent.setDataAndType(Uri.fromFile(new File("/mnt/sdcard/Download/update.apk")), "application/vnd.android.package-archive");
             intent.setDataAndType(Uri.fromFile(outputFile), "application/vnd.android.package-archive");
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // without this flag android returned a intent error!
-            context.startActivity(intent);
+            mContext.startActivity(intent);
 
 
         } catch (Exception e) {
             Log.e("UpdateAPP", "Update error! " + e.getMessage());
         }
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        mListener.onUpdateAppFinished();
+    }
+
+    // communication interface
+    public interface OnUpdateAppListener {
+        public void onUpdateAppStarted();
+
+        // TODO: Update argument type and name
+        public void onUpdateAppFinished();
     }
 }

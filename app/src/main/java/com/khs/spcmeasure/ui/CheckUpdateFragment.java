@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.khs.spcmeasure.R;
 import com.khs.spcmeasure.library.VersionUtils;
 import com.khs.spcmeasure.service.SimpleCodeService;
 import com.khs.spcmeasure.tasks.CheckVersionTask;
+import com.khs.spcmeasure.tasks.UpdateApp;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,20 +27,27 @@ import com.khs.spcmeasure.tasks.CheckVersionTask;
  * see the following for how to handle asynctaks and configuration changes:
  * https://androidresearch.wordpress.com/2013/05/10/dealing-with-asynctask-and-screen-orientation/
  */
-public class CheckUpdateFragment extends Fragment implements CheckVersionTask.OnCheckVersionListener{
+public class CheckUpdateFragment extends Fragment implements View.OnClickListener, CheckVersionTask.OnCheckVersionListener, UpdateApp.OnUpdateAppListener {
 
     private final String TAG = "CheckUpdateFragment";
 
+    // url for spcMeasure apk
+    // private static final String url = "http://thor.kmx.cosma.com/spc/apk/spcMeasure/app-release.apk";
+    private static final String url = "http://thor.kmx.cosma.com/spc/apk/spcMeasure/app-debug.apk";
+
     private Context mAppContext;
     private ProgressDialog mProgressDialog;
+    private ProgressDialog mProgressDialogUpdateApp;
+
     private boolean mIsTaskRunning = false;
+    private boolean mIsTaskRunningUpdateApp = false;
     private CheckVersionTask mCheckVersionTask;
 
     // views
     private TextView mTxtInstallVersion;
     private TextView mTxtLatestVersion;
     private TextView mTxtVersionInfo;
-    private Button mBtnInstallUpdate;
+    private Button mBtnUpdateApp;
 
     // exit if version is ok
     private boolean mExitIfOk = false;
@@ -61,7 +70,7 @@ public class CheckUpdateFragment extends Fragment implements CheckVersionTask.On
         mTxtInstallVersion = (TextView) rootView.findViewById(R.id.txtInstallVersion);
         mTxtLatestVersion = (TextView) rootView.findViewById(R.id.txtLatestVersion);
         mTxtVersionInfo = (TextView) rootView.findViewById(R.id.txtVersionInfo);
-        mBtnInstallUpdate = (Button) rootView.findViewById(R.id.btnInstallUpdate);
+        mBtnUpdateApp = (Button) rootView.findViewById(R.id.btnUpdateApp);
 
         // display fields
         displayFields();
@@ -70,8 +79,9 @@ public class CheckUpdateFragment extends Fragment implements CheckVersionTask.On
         // and the AsyncTask is still working, re-create and display the
         // progress dialog.
         if (mIsTaskRunning) {
-            // TODO use String constants
             mProgressDialog = ProgressDialog.show(getActivity(), getString(R.string.text_checking_version), getString(R.string.text_please_wait));
+        } else if (mIsTaskRunningUpdateApp) {
+            mProgressDialogUpdateApp = ProgressDialog.show(getActivity(), getString(R.string.text_updating_app), getString(R.string.text_please_wait));
         } else {
             mCheckVersionTask = new CheckVersionTask(mAppContext, this);
             mCheckVersionTask.execute();
@@ -87,9 +97,19 @@ public class CheckUpdateFragment extends Fragment implements CheckVersionTask.On
         // http://stackoverflow.com/questions/12739909/send-data-from-activity-to-fragment-in-android
         mExitIfOk = getArguments().getBoolean(CheckUpdateActivity.KEY_EXIT_IF_OK, false);
 
+        // create listener for update app button
+        View v = inflater.inflate(R.layout.fragment_check_update, container, false);
+
+        // see
+        // http://stackoverflow.com/questions/6091194/how-to-handle-button-clicks-using-the-xml-onclick-within-fragments/6271637#6271637
+        Button bUpdateApp = (Button) v.findViewById(R.id.btnUpdateApp);
+        bUpdateApp.setOnClickListener(this);
+
         // inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_check_update, container, false);
+        return v;
     }
+
+
 
     @Override
     public void onDetach() {
@@ -97,6 +117,10 @@ public class CheckUpdateFragment extends Fragment implements CheckVersionTask.On
         // the: Activity has leaked window com.android.internal.policy... exception
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
+        }
+
+        if (mProgressDialogUpdateApp != null && mProgressDialogUpdateApp.isShowing()) {
+            mProgressDialogUpdateApp.dismiss();
         }
 
         super.onDetach();
@@ -120,12 +144,21 @@ public class CheckUpdateFragment extends Fragment implements CheckVersionTask.On
         }
     }
 
-
+    // handle update app button click
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnUpdateApp:
+                Log.d(TAG, "onClick - btnUpdateApp");
+                UpdateApp updateApp = new UpdateApp(mAppContext, this);
+                updateApp.execute(url);
+                break;
+        }
+    }
 
     @Override
     public void onCheckVersionStarted() {
         mIsTaskRunning = true;
-        // TODO use String constants
         mProgressDialog = ProgressDialog.show(getActivity(), getString(R.string.text_checking_version), getString(R.string.text_please_wait));
     }
 
@@ -167,12 +200,26 @@ public class CheckUpdateFragment extends Fragment implements CheckVersionTask.On
         if (verCodeChanged) {
             // latest version not installed
             mTxtVersionInfo.setText(R.string.text_version_newer_available);
-            mBtnInstallUpdate.setVisibility(View.VISIBLE);
+            mBtnUpdateApp.setVisibility(View.VISIBLE);
         } else {
             // latest version is installed
             mTxtVersionInfo.setText(R.string.text_version_latest_installed);
-            mBtnInstallUpdate.setVisibility(View.INVISIBLE);
+            mBtnUpdateApp.setVisibility(View.INVISIBLE);
         }
 
+    }
+
+    @Override
+    public void onUpdateAppStarted() {
+        mIsTaskRunningUpdateApp = true;
+        mProgressDialogUpdateApp = ProgressDialog.show(getActivity(), getString(R.string.text_updating_app), getString(R.string.text_please_wait));
+    }
+
+    @Override
+    public void onUpdateAppFinished() {
+        if (mProgressDialogUpdateApp != null) {
+            mProgressDialogUpdateApp.dismiss();
+        }
+        mIsTaskRunningUpdateApp = false;
     }
 }

@@ -95,6 +95,8 @@
     <string name="text_refresh">Refresh</string>
     <string name="text_scan">Scan</string>
     <string name="text_warning">Warning</string>
+    <string name="text_update_app">Update App</string>
+    <string name="text_updating_app">Updating App</string>
     <string name="text_unknown">Unknown</string>
     <string name="text_username">Username</string>
     <string name="text_password">Password</string>

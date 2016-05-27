@@ -63,11 +63,10 @@
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:id="@+id/btnInstallUpdate"
+        android:id="@+id/btnUpdateApp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/text_install_update"
-        android:onClick="onClickBtnInstallUpdate"
+        android:text="@string/text_update_app"
         android:layout_marginTop="70dp"
         android:layout_below="@+id/txtVersionInfo"
         android:layout_centerHorizontal="true" />
