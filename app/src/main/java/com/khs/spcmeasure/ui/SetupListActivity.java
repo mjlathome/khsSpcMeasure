@@ -38,6 +38,7 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
     private static final int RESULT_CHECK_UPDATE = 2;
 
     // ensure that User Login is only asked once when app initially starts
+    private boolean mAskLogin = true;
     // TODO remove later as even though onCreate is re-run when activity is re-started
     // TODO the static var was set to true so no login shown
     // private static boolean askLogin = true;
@@ -84,58 +85,32 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
         // get globals for version info
         Globals g = Globals.getInstance();
 
-        if (g.isVersionOk()) {
-            // check if user should be asked to login
-            if (!SecurityUtils.getIsLoggedIn(this)) {
-
-                // initialize as logged out
-                SecurityUtils.setIsLoggedIn(this, false);
-
-                // show login screen
-                Intent intentLogin = new Intent(this, LoginActivity.class);
-                startActivity(intentLogin);
-            }
-        } else {
+        if (!g.isVersionOk()) {
             // version not ok yet so force check version
             Intent intentChkUpd = new Intent(this, CheckUpdateActivity.class);
             intentChkUpd.putExtra(CheckUpdateActivity.KEY_EXIT_IF_OK, true);
             startActivityForResult(intentChkUpd, RESULT_CHECK_UPDATE);
         }
-
-
-        // TODO handle login after version check is ok
-//        // check if user should be asked to login
-//        // if (askLogin) {
-//        if (!SecurityUtils.getIsLoggedIn(this)) {
-//            // askLogin = false;
-//
-//            // initialize as logged out
-//            SecurityUtils.setIsLoggedIn(this, false);
-//
-//            // show login screen
-//            Intent intentLogin = new Intent(this, LoginActivity.class);
-//            startActivity(intentLogin);
-//        }
-
     }
 
     @Override
     protected void onStart() {
-        Log.d(TAG, "onStart");
+        Log.d(TAG, "onStart: mAskLogin = " + mAskLogin);
         super.onStart();
 
+        // get globals for version info
+        Globals g = Globals.getInstance();
 
+        if (g.isVersionOk()) {
+            // check if user should be asked to login
+            if (mAskLogin && !SecurityUtils.getIsLoggedIn(this)) {
 
-//        Log.d(TAG, "OnStart: 1 Lock = " + SecurityUtils.getLockStatus(this) + "; App = " + SecurityUtils.getInAppStatus(this));
-//        if (SecurityUtils.getLockStatus(this)) {
-//            // show lock screen
-//            Intent intentLogin = new Intent(this, LoginActivity.class);
-//            startActivity(intentLogin);
-//        } else {
-//            // not locked
-//            SecurityUtils.setInAppStatus(this, true);
-//        }
-//        Log.d(TAG, "OnStart: 2 Lock = " + SecurityUtils.getLockStatus(this) + "; App = " + SecurityUtils.getInAppStatus(this));
+                mAskLogin = false;
+
+                // attempt login
+                SecurityUtils.doLogin(this);
+            }
+        }
     }
 
     @Override
@@ -214,24 +189,25 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
                         mSetupListFrag.refreshList(prodId);
                     }
                     break;
-                case RESULT_CHECK_UPDATE:
-                    // get globals for version info
-                    Globals g = Globals.getInstance();
-
-                    if (g.isVersionOk()) {
-                        // version ok, launch login if required
-                        // check if user should be asked to login
-                        if (!SecurityUtils.getIsLoggedIn(this)) {
-
-                            // initialize as logged out
-                            SecurityUtils.setIsLoggedIn(this, false);
-
-                            // show login screen
-                            Intent intentLogin = new Intent(this, LoginActivity.class);
-                            startActivity(intentLogin);
-                        }
-                    }
-                    break;
+                // TODO remove later no handled in onStart
+//                case RESULT_CHECK_UPDATE:
+//                    // get globals for version info
+//                    Globals g = Globals.getInstance();
+//
+//                    if (g.isVersionOk()) {
+//                        // version ok, launch login if required
+//                        // check if user should be asked to login
+//                        if (!SecurityUtils.getIsLoggedIn(this)) {
+//
+//                            // initialize as logged out
+//                            SecurityUtils.setIsLoggedIn(this, false);
+//
+//                            // show login screen
+//                            Intent intentLogin = new Intent(this, LoginActivity.class);
+//                            startActivity(intentLogin);
+//                        }
+//                    }
+//                    break;
             }
         }
     }
@@ -268,9 +244,13 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
                 return true;
             case R.id.action_login:
                 Log.d(TAG, "Menu: Login");
+                // attempt login
+                SecurityUtils.doLogin(this);
+
+                // TODO remove later once as dones in SecurityUtils now
                 // show login screen
-                Intent intentLogin = new Intent(this, LoginActivity.class);
-                startActivity(intentLogin);
+                // Intent intentLogin = new Intent(this, LoginActivity.class);
+                // startActivity(intentLogin);
                 return true;
             case R.id.action_logout:
                 Log.d(TAG, "Menu: Logout");

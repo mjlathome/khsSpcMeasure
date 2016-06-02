@@ -78,17 +78,22 @@ public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
 		try {
 			// handle null
 			if (json != null) {
+				// extract success flag
+				success = json.getBoolean(TAG_SUCCESS);
+
 				// extract latest version info
 				versionOk = json.getBoolean(VersionUtils.TAG_VERSION_OK);
 
                 // handle version failure
                 if (!versionOk) {
-                    // broadcast version failure
-                    VersionReceiver.sendBroadcast(mContext);
-                } else {
+					// broadcast version failure
+					VersionReceiver.sendBroadcast(mContext);
+				}
+
+				// upon success, extract the latest version info
+                if(success) {
                     latestCode = json.getInt(TAG_LATEST_CODE);
                     latestName = json.getString(TAG_LATEST_NAME);
-                    success = true;
                 }
 			}
 		} catch (Exception e) {

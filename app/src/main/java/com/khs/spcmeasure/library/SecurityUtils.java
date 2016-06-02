@@ -1,10 +1,12 @@
 package com.khs.spcmeasure.library;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.khs.spcmeasure.Globals;
 import com.khs.spcmeasure.R;
+import com.khs.spcmeasure.ui.LoginActivity;
 
 /**
  * Created by Mark on 08/10/2015.
@@ -20,9 +22,29 @@ public class SecurityUtils {
     static final String CAN_MEASURE = "can_meassure";
     static final String USERNAME = "username";
 
+    // handle log in
+    public static void doLogin(Context context) {
+        Log.d(TAG, "doLogin: getIsLoggedIn(context) = " + getIsLoggedIn(context));
+
+        // get globals for version info
+        Globals g = Globals.getInstance();
+
+        if (g.isVersionOk()) {
+            // initialize as logged out
+            SecurityUtils.setIsLoggedIn(context, false);
+
+            // show login screen
+            Intent intentLogin = new Intent(context, LoginActivity.class);
+            context.startActivity(intentLogin);
+        } else {
+            // version not ok, tell user cannot login
+            AlertUtils.alertDialogShow(context, context.getString(R.string.text_cannot_login), context.getString(R.string.text_version_too_old));
+        }
+    }
+
     // handle log out
     public static void doLogout(Context context) {
-        Log.d(TAG, "logoutOut: getIsLoggedIn(context) = " + getIsLoggedIn(context));
+        Log.d(TAG, "doLogout: getIsLoggedIn(context) = " + getIsLoggedIn(context));
 
         // inform user
         AlertUtils.alertDialogShow(context, context.getString(R.string.text_information), context.getString(R.string.sec_now_logged_out));
