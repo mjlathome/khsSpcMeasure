@@ -162,9 +162,8 @@ public class PieceListActivity extends Activity implements
         switch(id) {
             case R.id.action_login:
                 Log.d(TAG, "Menu: Login");
-                // show login screen
-                Intent intentLogin = new Intent(this, LoginActivity.class);
-                startActivity(intentLogin);
+                // attempt login
+                SecurityUtils.doLogin(this);
                 return true;
             case R.id.action_logout:
                 Log.d(TAG, "Menu: Logout");

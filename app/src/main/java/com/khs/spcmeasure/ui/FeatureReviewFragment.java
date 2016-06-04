@@ -422,7 +422,7 @@ public class FeatureReviewFragment extends ListFragment {
     private void closePiece() {
 
         // check security
-        if (SecurityUtils.checkSecurity(getActivity(), true)) {
+        if (SecurityUtils.isSecurityOk(getActivity(), true)) {
             // handle Close Piece confirmation
             mClosePieceConfirmTask = new ClosePieceConfirmTask();
             mClosePieceConfirmTask.execute();

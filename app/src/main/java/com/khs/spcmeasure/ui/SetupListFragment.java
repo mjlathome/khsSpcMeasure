@@ -188,7 +188,7 @@ public class SetupListFragment extends ListFragment {
     public void deleteSetup(int pos) {
 
         // check security
-        if (!SecurityUtils.checkSecurity(getActivity(), true)) {
+        if (!SecurityUtils.isSecurityOk(getActivity(), true)) {
             return;
         }
 

@@ -103,7 +103,7 @@ public class SecurityUtils {
     }
 
     // checks whether security is okay
-    public static boolean checkSecurity(Context context, boolean showMess) {
+    public static boolean isSecurityOk(Context context, boolean showMess) {
         boolean securityOkay = true;
 
         if (!SecurityUtils.getIsLoggedIn(context)) {

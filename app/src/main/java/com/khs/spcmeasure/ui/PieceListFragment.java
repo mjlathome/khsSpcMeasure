@@ -337,7 +337,7 @@ public class PieceListFragment extends ListFragment implements AdapterView.OnIte
 	// handles piece deletion
 	private void deletePiece(int pos) {
         // check security
-        if (!SecurityUtils.checkSecurity(getActivity(), true)) {
+        if (!SecurityUtils.isSecurityOk(getActivity(), true)) {
             return;
         }
 

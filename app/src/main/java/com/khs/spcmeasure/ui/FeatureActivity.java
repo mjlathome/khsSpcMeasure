@@ -453,18 +453,19 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
                 getActionBar().getSelectedNavigationIndex());
     }
 
-    // handle activity result intent callback
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // super.onActivityResult(requestCode, resultCode, data);
-
-        Log.d(TAG, "onActivityResult: requestCode = " + requestCode + "; resultCode = " + resultCode);
-
-        // handle activity results
-        if (requestCode == RESULT_LOGIN) {
-            enableMeasurement();
-        }
-    }
+    // TODO remove later - enableMeasurement called when service is bound from OnStart call to bindBleService()
+//    // handle activity result intent callback
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        // super.onActivityResult(requestCode, resultCode, data);
+//
+//        Log.d(TAG, "onActivityResult: requestCode = " + requestCode + "; resultCode = " + resultCode);
+//
+//        // handle activity results
+//        if (requestCode == RESULT_LOGIN) {
+//            enableMeasurement();
+//        }
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -486,9 +487,12 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
             case R.id.action_login:
                 Log.d(TAG, "Menu: Login");
                 mShowSecMess = true;
-                // show login screen
-                Intent intentLogin = new Intent(this, LoginActivity.class);
-                startActivityForResult(intentLogin, RESULT_LOGIN);
+                // attempt login
+                SecurityUtils.doLogin(this);
+                // TODO remove later once happy with doLogin call
+//                // show login screen
+//                Intent intentLogin = new Intent(this, LoginActivity.class);
+//                startActivityForResult(intentLogin, RESULT_LOGIN);
                 return true;
             case R.id.action_logout:
                 Log.d(TAG, "Menu: Logout");
@@ -588,7 +592,7 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
         // for Open Pieces only to save battery power
         // check security too
         if (mPiece.getStatus() == CollectStatus.OPEN) {
-            if (SecurityUtils.checkSecurity(this, mShowSecMess)) {
+            if (SecurityUtils.isSecurityOk(this, mShowSecMess)) {
                 connectBleDevice();
             } else {
                 mShowSecMess = false;
@@ -939,6 +943,6 @@ public class FeatureActivity extends FragmentActivity implements ActionBar.OnNav
 
     // checks whether the app
     public boolean isMeasurementEnabled() {
-        return (mPiece.getStatus() == CollectStatus.OPEN && SecurityUtils.checkSecurity(this, false));
+        return (mPiece.getStatus() == CollectStatus.OPEN && SecurityUtils.isSecurityOk(this, false));
     }
 }

@@ -152,9 +152,8 @@ public class SetupImportActivity extends Activity {
 		switch (item.getItemId()) {
             case R.id.action_login:
                 Log.d(TAG, "Menu: Login");
-                // show login screen
-                Intent intentLogin = new Intent(this, LoginActivity.class);
-                startActivity(intentLogin);
+                // attempt login
+                SecurityUtils.doLogin(this);
                 return true;
             case R.id.action_logout:
                 Log.d(TAG, "Menu: Logout");

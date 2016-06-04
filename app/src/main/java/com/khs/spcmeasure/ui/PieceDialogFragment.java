@@ -64,7 +64,7 @@ public class PieceDialogFragment extends DialogFragment implements OnClickListen
 		super.onCreate(savedInstanceState);
 
 		// check security
-		if (!SecurityUtils.checkSecurity(getActivity(), true)) {
+		if (!SecurityUtils.isSecurityOk(getActivity(), true)) {
 			dismiss();
 		}
 

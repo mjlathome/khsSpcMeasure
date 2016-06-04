@@ -247,7 +247,7 @@ public class SetupListActivity extends Activity implements SetupListFragment.OnS
                 // attempt login
                 SecurityUtils.doLogin(this);
 
-                // TODO remove later once as dones in SecurityUtils now
+                // TODO remove later once as done in SecurityUtils now
                 // show login screen
                 // Intent intentLogin = new Intent(this, LoginActivity.class);
                 // startActivity(intentLogin);

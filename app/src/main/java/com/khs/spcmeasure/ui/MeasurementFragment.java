@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.text.InputFilter;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.method.DigitsKeyListener;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -597,7 +596,7 @@ public class MeasurementFragment extends Fragment implements AdapterView.OnItemS
         // disable/hide/show views based upon Piece collect status
         // check security too
         // TODO needs to be called upon login/logout
-        if (mPiece.getStatus() == CollectStatus.OPEN && SecurityUtils.checkSecurity(getActivity(), false)) {
+        if (mPiece.getStatus() == CollectStatus.OPEN && SecurityUtils.isSecurityOk(getActivity(), false)) {
             // K1940 always enable measurement value regardless of gap or not
             enableValue();
 
