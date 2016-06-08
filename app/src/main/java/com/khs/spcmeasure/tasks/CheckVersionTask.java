@@ -46,6 +46,9 @@ public class CheckVersionTask extends AsyncTask<Void, Void, JSONObject>{
 	protected JSONObject doInBackground(Void... params) {
         Log.d(TAG, "start");
 
+		// delete app apk if it exists on the device
+		UpdateApp.deleteFullPathname(UpdateApp.getApkFullPathname());
+
 		JSONObject json = null;
 
         try {

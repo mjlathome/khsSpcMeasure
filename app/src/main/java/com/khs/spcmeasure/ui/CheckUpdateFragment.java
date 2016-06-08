@@ -32,8 +32,8 @@ public class CheckUpdateFragment extends Fragment implements View.OnClickListene
     private final String TAG = "CheckUpdateFragment";
 
     // url for spcMeasure apk
-    // private static final String url = "http://thor.kmx.cosma.com/spc/apk/spcMeasure/app-release.apk";
-    private static final String url = "http://thor.kmx.cosma.com/spc/apk/spcMeasure/app-debug.apk";
+    private static final String url = "http://thor.kmx.cosma.com/spc/apk/spcMeasure/app-release.apk";
+    // private static final String url = "http://thor.kmx.cosma.com/spc/apk/spcMeasure/app-debug.apk";
 
     private Context mAppContext;
     private ProgressDialog mProgressDialog;
@@ -185,7 +185,7 @@ public class CheckUpdateFragment extends Fragment implements View.OnClickListene
             SimpleCodeService.startActionImport(mAppContext, SimpleCodeService.TYPE_GAUGE_AUDIT);
 
             // exit if required
-            if (!verCodeChanged) {
+            if (!verCodeChanged && mExitIfOk) {
                 if (getActivity() != null) {
                     getActivity().setResult(Activity.RESULT_OK);
                     getActivity().finish();

@@ -102,6 +102,7 @@ public class SylvacBleService extends Service {
     public final static String COMMAND_GET_CURRENT_VALUE = "?\r";
     public final static String COMMAND_SET_MEASUREMENT_UOM_MM = "MM\r";
     public final static String COMMAND_GET_BATTERY_STATUS = "BAT?\r";
+    public final static String COMMAND_SET_FAVOURITE_DATA_TRANSMISSION = "FCT0\r";
         
     // sylvac battery states
     public final static String BATTERY_OK  = "BAT1\r";
@@ -352,6 +353,8 @@ public class SylvacBleService extends Service {
                 Log.i(TAG, "onServicesDiscovered GATT_SUCCESS: " + status);
                 Log.d(TAG, "onServicesDiscovered Services = " + gatt.getServices());
                 displayGattServices(gatt.getServices());
+                // TODO need to handle the response to this.  maybe ask favourite first too
+                // writeCharacteristic(COMMAND_SET_FAVOURITE_DATA_TRANSMISSION);
                 writeCharacteristic(COMMAND_GET_BATTERY_STATUS);
             } else {
                 Log.w(TAG, "onServicesDiscovered received: " + status);

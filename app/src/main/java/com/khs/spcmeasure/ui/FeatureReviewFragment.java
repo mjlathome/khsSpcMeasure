@@ -121,7 +121,8 @@ public class FeatureReviewFragment extends ListFragment {
 
             // ensure that there was at least one measurement taken
             if (mNumMeas == 0) {
-                AlertUtils.alertDialogShow(getActivity(), getString(R.string.text_information), getString(R.string.text_piece_feature_measured_none));
+                AlertUtils.alertDialogShow(getActivity(), getString(R.string.text_cannot_close),
+                        getString(R.string.text_piece_feature_measured_none) + "\n" + getString(R.string.text_long_delete));
                 return;
             }
 
