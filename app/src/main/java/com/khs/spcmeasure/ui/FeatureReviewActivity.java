@@ -100,6 +100,12 @@ public class FeatureReviewActivity extends Activity implements
                 Intent intentPrefs = new Intent(this, SettingsActivity.class);
                 startActivity(intentPrefs);
                 return true;
+            case R.id.action_check_update:
+                // about activity
+                Log.d(TAG, "Menu: Check for Update");
+                Intent intentCheckUpdate = new Intent(this, CheckUpdateActivity.class);
+                startActivity(intentCheckUpdate);
+                return true;
             case R.id.action_about:
                 // about activity
                 Log.d(TAG, "Menu: About");

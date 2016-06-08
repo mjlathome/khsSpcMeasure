@@ -40,14 +40,14 @@
         jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
         jumboMode="true"
         revision="23.0.1"
-        sha1="c2ec7ab360d1dc3a0d4b1f65eee6455c2c52eeec">
+        sha1="7f767958cb6c8ca64ea3e957b61f09bfa1f13c95">
         <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_553c14dc6502ad12a170936e221f45d95acf423e\classes.dex" />
     </item>
     <item
         jar="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
         jumboMode="true"
         revision="23.0.1"
-        sha1="012133ef4da6d113856e78a6e0f17c894f1a9ef4">
+        sha1="edce7bf2e3423381636a41eb7050fb7fb4556ade">
         <dex dex="C:\Users\Mark\AndroidStudioProjects\khsSpcMeasure\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_c0857887ad3cbec79e04be06569459b67bf17b36\classes.dex" />
     </item>
     <item
