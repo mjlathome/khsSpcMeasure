@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.khs.spcmeasure.Globals;
 import com.khs.spcmeasure.R;
+import com.khs.spcmeasure.library.AlertUtils;
 import com.khs.spcmeasure.library.VersionUtils;
 import com.khs.spcmeasure.service.SimpleCodeService;
 import com.khs.spcmeasure.tasks.CheckVersionTask;
@@ -170,14 +171,16 @@ public class CheckUpdateFragment extends Fragment implements View.OnClickListene
         }
         mIsTaskRunning = false;
 
-        // calculate whether version code has changed
-        boolean verCodeChanged = VersionUtils.isVersionCodeChanged(mAppContext);
+        // version code changed
+        boolean verCodeChanged = false;
 
         // get globals for version info
         Globals g = Globals.getInstance();
 
-
         if (g.isVersionOk()) {
+            // calculate whether version code has changed
+            verCodeChanged = VersionUtils.isVersionCodeChanged(mAppContext);
+
             // import Action Cause Simple Codes
             SimpleCodeService.startActionImport(mAppContext, SimpleCodeService.TYPE_ACTION_CAUSE);
 
@@ -191,22 +194,28 @@ public class CheckUpdateFragment extends Fragment implements View.OnClickListene
                     getActivity().finish();
                 }
             }
+
+            // check if latest version is not installed
+            if (verCodeChanged) {
+                // latest version not installed
+                mTxtVersionInfo.setText(R.string.text_version_newer_available);
+                mBtnUpdateApp.setVisibility(View.VISIBLE);
+            } else {
+                // latest version is installed
+                mTxtVersionInfo.setText(R.string.text_version_latest_installed);
+                mBtnUpdateApp.setVisibility(View.INVISIBLE);
+            }
+        } else {
+            // latest version could not be checked
+            mTxtVersionInfo.setText(R.string.text_version_check_failed);
+            mBtnUpdateApp.setVisibility(View.INVISIBLE);
+            if (getActivity() != null) {
+                AlertUtils.errorDialogShow(getActivity(), getString(R.string.text_version_check_failed) + "  " + getString(R.string.text_contact_admin));
+            }
         }
 
         // display latest version and version message
         mTxtLatestVersion.setText(VersionUtils.getLatestVersion());
-
-        // check if latest version is not installed
-        if (verCodeChanged) {
-            // latest version not installed
-            mTxtVersionInfo.setText(R.string.text_version_newer_available);
-            mBtnUpdateApp.setVisibility(View.VISIBLE);
-        } else {
-            // latest version is installed
-            mTxtVersionInfo.setText(R.string.text_version_latest_installed);
-            mBtnUpdateApp.setVisibility(View.INVISIBLE);
-        }
-
     }
 
     @Override

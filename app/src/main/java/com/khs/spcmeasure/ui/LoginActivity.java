@@ -369,58 +369,5 @@ public class LoginActivity extends Activity {
         finish();
     }
 
-    // TODO move this code into Check Version Task
-    public void onCheckVersionPostExecute(boolean versionOk) {
-
-        // initialize
-        StringBuffer message = new StringBuffer("");
-        boolean showDialog = false;
-
-        // update version globals
-        Globals g = Globals.getInstance();
-        int latestCode = g.getLatestCode();
-        String latestName = g.getLatestName();
-
-        // handle version ok
-        if (versionOk) {
-
-
-            // check if latest version is not installed
-            if (VersionUtils.isVersionCodeChanged(this)) {
-                // latest version changed
-                showDialog = true;
-            }
-        } else {
-            showDialog = true;
-        }
-
-        if (showDialog) {
-            // build confirmation message
-            if (!versionOk) {
-                // major version changed
-                // SecurityUtils.setIsLoggedIn(this, false);
-                message.insert(0, getString(R.string.text_version_logout_too_old) + "\n");
-            }
-
-            message.append(getString(R.string.text_version_contact) + "\n");
-            message.append(getString(R.string.text_version_install, VersionUtils.getVersionName(this), VersionUtils.getVersionCode(this)) + "\n");
-            message.append(getString(R.string.text_version_latest, latestName, latestCode));
-
-            final boolean returnVal = versionOk;
-            AlertDialog.Builder dlgAlert = AlertUtils.createAlert(this, getString(R.string.text_version_title), message.toString());
-            dlgAlert.setPositiveButton(getString(R.string.text_okay), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // dismiss the dialog
-                    returnResult(returnVal);
-                }
-            });
-            dlgAlert.create().show();
-        } else {
-            // version okay
-            returnResult(versionOk);
-        }
-
-    }
 }
 

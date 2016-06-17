@@ -5,7 +5,7 @@ android {
         karmax {
             keyAlias 'karmax'
             keyPassword 'Kmx5571'
-            storeFile file('C:/Users/mark/AndroidKeystore/karmax.release.jks')
+            storeFile file('C:/Users/mlees/AndroidKeystore/karmax.release.jks')
             storePassword 'Kmx5571'
         }
     }
@@ -22,7 +22,7 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
             signingConfig signingConfigs.karmax
-            proguardFile 'C:/Users/mark/AndroidStudioProjects/khsSpcMeasure/app/proguard-rules.pro'
+            proguardFile 'C:/Users/mlees/AndroidStudioProjects/khsSpcMeasure/app/proguard-rules.pro'
         }
         debug {
             minifyEnabled false

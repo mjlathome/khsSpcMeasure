@@ -94,8 +94,9 @@
     <string name="text_version_latest">Latest version %1$s (%2$s).</string>
     <string name="text_version_too_old">Installed version is too old.  Please update.</string>
     <string name="text_version_contact">Please contact SPC Coordinator for an update.</string>
-    <string name="text_version_latest_installed">The latest version is installed</string>
-    <string name="text_version_newer_available">A newer version is available</string>
+    <string name="text_version_latest_installed">The latest version is installed.</string>
+    <string name="text_version_newer_available">A newer version is available.</string>
+    <string name="text_version_check_failed">Version check failed.</string>
     <string name="text_refresh">Refresh</string>
     <string name="text_scan">Scan</string>
     <string name="text_warning">Warning</string>
