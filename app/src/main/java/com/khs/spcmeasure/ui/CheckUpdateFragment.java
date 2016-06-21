@@ -21,6 +21,7 @@ import com.khs.spcmeasure.library.VersionUtils;
 import com.khs.spcmeasure.service.SimpleCodeService;
 import com.khs.spcmeasure.tasks.CheckVersionTask;
 import com.khs.spcmeasure.tasks.UpdateApp;
+import com.khs.spcmeasure.tasks.WaitWiFiTask;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,7 +29,7 @@ import com.khs.spcmeasure.tasks.UpdateApp;
  * see the following for how to handle asynctaks and configuration changes:
  * https://androidresearch.wordpress.com/2013/05/10/dealing-with-asynctask-and-screen-orientation/
  */
-public class CheckUpdateFragment extends Fragment implements View.OnClickListener, CheckVersionTask.OnCheckVersionListener, UpdateApp.OnUpdateAppListener {
+public class CheckUpdateFragment extends Fragment implements View.OnClickListener, WaitWiFiTask.OnWaitWiFiListener, CheckVersionTask.OnCheckVersionListener, UpdateApp.OnUpdateAppListener {
 
     private final String TAG = "CheckUpdateFragment";
 
@@ -39,10 +40,11 @@ public class CheckUpdateFragment extends Fragment implements View.OnClickListene
     private Context mAppContext;
     private ProgressDialog mProgressDialog;
     private ProgressDialog mProgressDialogUpdateApp;
+    private ProgressDialog mProgressDialogWaitWiFi;
 
     private boolean mIsTaskRunning = false;
     private boolean mIsTaskRunningUpdateApp = false;
-    private CheckVersionTask mCheckVersionTask;
+    private boolean mIsTaskRunningWaitWiFi = false;
 
     // views
     private TextView mTxtInstallVersion;
@@ -83,9 +85,11 @@ public class CheckUpdateFragment extends Fragment implements View.OnClickListene
             mProgressDialog = ProgressDialog.show(getActivity(), getString(R.string.text_checking_version), getString(R.string.text_please_wait));
         } else if (mIsTaskRunningUpdateApp) {
             mProgressDialogUpdateApp = ProgressDialog.show(getActivity(), getString(R.string.text_updating_app), getString(R.string.text_please_wait));
+        } else if (mIsTaskRunningWaitWiFi) {
+            mProgressDialogWaitWiFi = ProgressDialog.show(getActivity(), getString(R.string.text_checking_wifi_conn), getString(R.string.text_please_wait));
         } else {
-            mCheckVersionTask = new CheckVersionTask(mAppContext, this);
-            mCheckVersionTask.execute();
+            WaitWiFiTask waitWiFiTask = new WaitWiFiTask(mAppContext, this);
+            waitWiFiTask.execute();
         }
     }
 
@@ -110,8 +114,6 @@ public class CheckUpdateFragment extends Fragment implements View.OnClickListene
         return v;
     }
 
-
-
     @Override
     public void onDetach() {
         // All dialogs should be closed before leaving the activity in order to avoid
@@ -122,6 +124,10 @@ public class CheckUpdateFragment extends Fragment implements View.OnClickListene
 
         if (mProgressDialogUpdateApp != null && mProgressDialogUpdateApp.isShowing()) {
             mProgressDialogUpdateApp.dismiss();
+        }
+
+        if (mProgressDialogWaitWiFi != null && mProgressDialogWaitWiFi.isShowing()) {
+            mProgressDialogWaitWiFi.dismiss();
         }
 
         super.onDetach();
@@ -155,6 +161,25 @@ public class CheckUpdateFragment extends Fragment implements View.OnClickListene
                 updateApp.execute(url);
                 break;
         }
+    }
+
+    @Override
+    public void onWaitWiFiStarted() {
+        mIsTaskRunningWaitWiFi = true;
+        mProgressDialogWaitWiFi = ProgressDialog.show(getActivity(), getString(R.string.text_checking_wifi_conn), getString(R.string.text_please_wait));
+    }
+
+    @Override
+    public void onWaitWiFiFinished(boolean isWiFiConn) {
+        // TODO handle when wifi not connected
+        if (mProgressDialogWaitWiFi != null) {
+            mProgressDialogWaitWiFi.dismiss();
+        }
+        mIsTaskRunningWaitWiFi = false;
+
+        // run the check version task
+        CheckVersionTask checkVersionTask = new CheckVersionTask(mAppContext, this);
+        checkVersionTask.execute();
     }
 
     @Override

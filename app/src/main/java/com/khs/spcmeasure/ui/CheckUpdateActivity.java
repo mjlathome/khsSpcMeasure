@@ -2,6 +2,7 @@ package com.khs.spcmeasure.ui;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -13,6 +14,8 @@ import android.view.MenuItem;
 public class CheckUpdateActivity extends Activity {
     private final String TAG = "CheckUpdateActivity";
 
+    private static final String TAG_CHECK_UPDATE_FRAGMENT = "check_update_fragment";
+
     // bundle keys
     public static final String KEY_EXIT_IF_OK = "exit_if_ok";
 
@@ -23,6 +26,9 @@ public class CheckUpdateActivity extends Activity {
 
     // exit if version is ok
     private boolean mExitIfOk = false;
+
+    // check update fragment is maintained across activity re-creates due to configuration changes
+    private CheckUpdateFragment mChkUpdFrag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,18 +49,23 @@ public class CheckUpdateActivity extends Activity {
         // show the Up button in the action bar.
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // create fragment with bundle
-        // see:
-        // http://stackoverflow.com/questions/12739909/send-data-from-activity-to-fragment-in-android
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(KEY_EXIT_IF_OK, mExitIfOk);
-        CheckUpdateFragment chkUpdFrag = new CheckUpdateFragment();
-        chkUpdFrag.setArguments(bundle);
+        // look for an existing check update fragment
+        FragmentManager fm = getFragmentManager();
+        mChkUpdFrag = (CheckUpdateFragment) fm.findFragmentByTag(TAG_CHECK_UPDATE_FRAGMENT);
+
+        // create a new check update fragment if not found
+        if (mChkUpdFrag == null) {
+            // create fragment with bundle
+            // see:
+            // http://stackoverflow.com/questions/12739909/send-data-from-activity-to-fragment-in-android
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(KEY_EXIT_IF_OK, mExitIfOk);
+            mChkUpdFrag = new CheckUpdateFragment();
+            mChkUpdFrag.setArguments(bundle);
+        }
 
         // Display the fragment as the main content.
-        getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, chkUpdFrag)
-                .commit();
+        fm.beginTransaction().replace(android.R.id.content, mChkUpdFrag, TAG_CHECK_UPDATE_FRAGMENT).commit();
     }
 
     @Override

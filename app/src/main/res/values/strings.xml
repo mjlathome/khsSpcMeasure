@@ -10,6 +10,7 @@
     <string name="text_cannot_login">Cannot Login</string>
     <string name="text_check_update">Check for Update</string>
     <string name="text_checking">Checking</string>
+    <string name="text_checking_wifi_conn">Checking WiFi Connection</string>
     <string name="text_clear_pref_app">Cleared Preferred App</string>
     <string name="text_clear_value">Clear Value</string>
     <string name="text_collect_dt">Collect Datetime</string>
