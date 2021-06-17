@@ -48,7 +48,7 @@ public class SimpleCodeService extends IntentService {
     public static final String TYPE_GAUGE_AUDIT = "gaugeAudit";
 
     // url address
-    private static String url = "http://thor.kmx.cosma.com/spc/get_simple_code.php?";
+    private static String url = "http://thor.magna.global/spc/get_simple_code.php?";
     private static String querySep = "&";
     private static String queryType = "type=";
 

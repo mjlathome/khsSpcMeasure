@@ -56,7 +56,7 @@ public class SetupService extends IntentService {
     private static List<Long> canceledImportProdId = new ArrayList<Long>();
 
     // url address
-    private static final String url = "http://thor.kmx.cosma.com/spc/get_setup.php?";
+    private static final String url = "http://thor.magna.global/spc/get_setup.php?";
     private static final String querySep = "&";
     private static final String queryProdId = "prodId=";
 

@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: com.android.support:support-v13:23.1.0@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/e43788e261e61c013b9f47326413f93b/support-v13-23.1.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/e43788e261e61c013b9f47326413f93b/support-v13-23.1.0/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/e43788e261e61c013b9f47326413f93b/support-v13-23.1.0/jars/libs/internal_impl-23.1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.support/support-v13/23.1.0/81f059ce853fe84e7ec4e2136779c6058d6d49b8/support-v13-23.1.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.android.support/support-v13/23.1.0/9eb806e010a682a16de886ec590fb977bcee11eb/support-v13-23.1.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

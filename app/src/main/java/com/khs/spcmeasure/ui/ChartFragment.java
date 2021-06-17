@@ -42,7 +42,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * {@link Fragment} subclass for rendering a chart based upon the provided arguments
+ * subclass for rendering a chart based upon the provided arguments
  */
 public class ChartFragment extends Fragment {
 

@@ -1,0 +1,119 @@
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\build\intermediates\merged_manifests\release\AndroidManifest.xml:147
+-keep class com.khs.spcmeasure.receiver.VersionReceiver { <init>(); }
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\build\intermediates\merged_manifests\release\AndroidManifest.xml:136
+-keep class com.khs.spcmeasure.service.HistoryService { <init>(); }
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\build\intermediates\merged_manifests\release\AndroidManifest.xml:114
+-keep class com.khs.spcmeasure.service.MeasurementService { <init>(); }
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\build\intermediates\merged_manifests\release\AndroidManifest.xml:118
+-keep class com.khs.spcmeasure.service.PieceService { <init>(); }
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\build\intermediates\merged_manifests\release\AndroidManifest.xml:110
+-keep class com.khs.spcmeasure.service.SetupService { <init>(); }
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\build\intermediates\merged_manifests\release\AndroidManifest.xml:106
+-keep class com.khs.spcmeasure.service.SimpleCodeService { <init>(); }
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\build\intermediates\merged_manifests\release\AndroidManifest.xml:50
+-keep class com.khs.spcmeasure.service.SylvacBleService { <init>(); }
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\build\intermediates\merged_manifests\release\AndroidManifest.xml:143
+-keep class com.khs.spcmeasure.ui.AboutActivity { <init>(); }
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\build\intermediates\merged_manifests\release\AndroidManifest.xml:140
+-keep class com.khs.spcmeasure.ui.CheckUpdateActivity { <init>(); }
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\build\intermediates\merged_manifests\release\AndroidManifest.xml:91
+-keep class com.khs.spcmeasure.ui.FeatureActivity { <init>(); }
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\build\intermediates\merged_manifests\release\AndroidManifest.xml:82
+-keep class com.khs.spcmeasure.ui.FeatureReviewActivity { <init>(); }
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\build\intermediates\merged_manifests\release\AndroidManifest.xml:131
+-keep class com.khs.spcmeasure.ui.LoginActivity { <init>(); }
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\build\intermediates\merged_manifests\release\AndroidManifest.xml:73
+-keep class com.khs.spcmeasure.ui.PieceListActivity { <init>(); }
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\build\intermediates\merged_manifests\release\AndroidManifest.xml:100
+-keep class com.khs.spcmeasure.ui.SettingsActivity { <init>(); }
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\build\intermediates\merged_manifests\release\AndroidManifest.xml:64
+-keep class com.khs.spcmeasure.ui.SetupImportActivity { <init>(); }
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\build\intermediates\merged_manifests\release\AndroidManifest.xml:54
+-keep class com.khs.spcmeasure.ui.SetupListActivity { <init>(); }
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\build\intermediates\merged_manifests\release\AndroidManifest.xml:123
+-keep class com.khs.spcmeasure.widget.LoginActivityOld { <init>(); }
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\src\main\res\layout\activity_feature.xml:17
+-keep class android.support.v4.view.PagerTabStrip { <init>(...); }
+
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\src\main\res\layout\activity_feature.xml:12
+-keep class android.support.v4.view.ViewPager { <init>(...); }
+
+# Referenced at C:\Users\mlees\.gradle\caches\transforms-2\files-2.1\0caab607edc121fe92ec065d3ff8d1d8\appcompat-v7-23.1.1\res\layout\abc_alert_dialog_material.xml:75
+-keep class android.support.v4.widget.NestedScrollView { <init>(...); }
+
+# Referenced at C:\Users\mlees\.gradle\caches\transforms-2\files-2.1\0caab607edc121fe92ec065d3ff8d1d8\appcompat-v7-23.1.1\res\layout\abc_alert_dialog_button_bar_material.xml:40
+-keep class android.support.v4.widget.Space { <init>(...); }
+
+# Referenced at C:\Users\mlees\.gradle\caches\transforms-2\files-2.1\0caab607edc121fe92ec065d3ff8d1d8\appcompat-v7-23.1.1\res\layout\abc_action_menu_item_layout.xml:17
+-keep class android.support.v7.view.menu.ActionMenuItemView { <init>(...); }
+
+# Referenced at C:\Users\mlees\.gradle\caches\transforms-2\files-2.1\0caab607edc121fe92ec065d3ff8d1d8\appcompat-v7-23.1.1\res\layout\abc_expanded_menu_layout.xml:17
+-keep class android.support.v7.view.menu.ExpandedMenuView { <init>(...); }
+
+# Referenced at C:\Users\mlees\.gradle\caches\transforms-2\files-2.1\0caab607edc121fe92ec065d3ff8d1d8\appcompat-v7-23.1.1\res\layout\abc_list_menu_item_layout.xml:17
+# Referenced at C:\Users\mlees\.gradle\caches\transforms-2\files-2.1\0caab607edc121fe92ec065d3ff8d1d8\appcompat-v7-23.1.1\res\layout\abc_popup_menu_item_layout.xml:17
+-keep class android.support.v7.view.menu.ListMenuItemView { <init>(...); }
+
+# Referenced at C:\Users\mlees\.gradle\caches\transforms-2\files-2.1\0caab607edc121fe92ec065d3ff8d1d8\appcompat-v7-23.1.1\res\layout\abc_screen_toolbar.xml:27
+-keep class android.support.v7.widget.ActionBarContainer { <init>(...); }
+
+# Referenced at C:\Users\mlees\.gradle\caches\transforms-2\files-2.1\0caab607edc121fe92ec065d3ff8d1d8\appcompat-v7-23.1.1\res\layout\abc_action_mode_bar.xml:19
+# Referenced at C:\Users\mlees\.gradle\caches\transforms-2\files-2.1\0caab607edc121fe92ec065d3ff8d1d8\appcompat-v7-23.1.1\res\layout\abc_screen_toolbar.xml:43
+-keep class android.support.v7.widget.ActionBarContextView { <init>(...); }
+
+# Referenced at C:\Users\mlees\.gradle\caches\transforms-2\files-2.1\0caab607edc121fe92ec065d3ff8d1d8\appcompat-v7-23.1.1\res\layout\abc_screen_toolbar.xml:17
+-keep class android.support.v7.widget.ActionBarOverlayLayout { <init>(...); }
+
+# Referenced at C:\Users\mlees\.gradle\caches\transforms-2\files-2.1\0caab607edc121fe92ec065d3ff8d1d8\appcompat-v7-23.1.1\res\layout\abc_action_menu_layout.xml:17
+-keep class android.support.v7.widget.ActionMenuView { <init>(...); }
+
+# Referenced at C:\Users\mlees\.gradle\caches\transforms-2\files-2.1\0caab607edc121fe92ec065d3ff8d1d8\appcompat-v7-23.1.1\res\layout\abc_activity_chooser_view.xml:19
+-keep class android.support.v7.widget.ActivityChooserView$InnerLayout { <init>(...); }
+
+# Referenced at C:\Users\mlees\.gradle\caches\transforms-2\files-2.1\0caab607edc121fe92ec065d3ff8d1d8\appcompat-v7-23.1.1\res\layout\abc_alert_dialog_button_bar_material.xml:18
+-keep class android.support.v7.widget.ButtonBarLayout { <init>(...); }
+
+# Referenced at C:\Users\mlees\.gradle\caches\transforms-2\files-2.1\0caab607edc121fe92ec065d3ff8d1d8\appcompat-v7-23.1.1\res\layout\abc_screen_content_include.xml:19
+-keep class android.support.v7.widget.ContentFrameLayout { <init>(...); }
+
+# Referenced at C:\Users\mlees\.gradle\caches\transforms-2\files-2.1\0caab607edc121fe92ec065d3ff8d1d8\appcompat-v7-23.1.1\res\layout\abc_alert_dialog_material.xml:48
+-keep class android.support.v7.widget.DialogTitle { <init>(...); }
+
+# Referenced at C:\Users\mlees\.gradle\caches\transforms-2\files-2.1\0caab607edc121fe92ec065d3ff8d1d8\appcompat-v7-23.1.1\res\layout\abc_screen_simple_overlay_action_mode.xml:23
+-keep class android.support.v7.widget.FitWindowsFrameLayout { <init>(...); }
+
+# Referenced at C:\Users\mlees\.gradle\caches\transforms-2\files-2.1\0caab607edc121fe92ec065d3ff8d1d8\appcompat-v7-23.1.1\res\layout\abc_dialog_title_material.xml:22
+# Referenced at C:\Users\mlees\.gradle\caches\transforms-2\files-2.1\0caab607edc121fe92ec065d3ff8d1d8\appcompat-v7-23.1.1\res\layout\abc_screen_simple.xml:17
+-keep class android.support.v7.widget.FitWindowsLinearLayout { <init>(...); }
+
+# Referenced at C:\Users\mlees\.gradle\caches\transforms-2\files-2.1\0caab607edc121fe92ec065d3ff8d1d8\appcompat-v7-23.1.1\res\layout\abc_search_view.xml:78
+-keep class android.support.v7.widget.SearchView$SearchAutoComplete { <init>(...); }
+
+# Referenced at C:\Users\mlees\.gradle\caches\transforms-2\files-2.1\0caab607edc121fe92ec065d3ff8d1d8\appcompat-v7-23.1.1\res\layout\abc_screen_toolbar.xml:36
+-keep class android.support.v7.widget.Toolbar { <init>(...); }
+
+# Referenced at C:\Users\mlees\.gradle\caches\transforms-2\files-2.1\0caab607edc121fe92ec065d3ff8d1d8\appcompat-v7-23.1.1\res\layout\abc_screen_simple.xml:25
+# Referenced at C:\Users\mlees\.gradle\caches\transforms-2\files-2.1\0caab607edc121fe92ec065d3ff8d1d8\appcompat-v7-23.1.1\res\layout\abc_screen_simple_overlay_action_mode.xml:32
+-keep class android.support.v7.widget.ViewStubCompat { <init>(...); }
+
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\src\main\res\layout\fragment_chart.xml:6
+-keep class com.androidplot.xy.XYPlot { <init>(...); }
+
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\src\main\res\layout\activity_login_old.xml:1
+-keep class com.khs.spcmeasure.widget.LoginActivityFragmentOld { <init>(...); }
+
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\src\main\res\layout\activity_about.xml:23
+-keepclassmembers class * { *** onClickAppName(android.view.View); }
+
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\src\main\res\layout\fragment_measurement.xml:210
+-keepclassmembers class * { *** onClickBtnClearValue(android.view.View); }
+
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\src\main\res\layout\fragment_measurement.xml:203
+-keepclassmembers class * { *** onClickBtnGetValue(android.view.View); }
+
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\src\main\res\layout\activity_about.xml:84
+-keepclassmembers class * { *** onClickBtnOk(android.view.View); }
+
+# Referenced at C:\Users\mlees\StudioProjects\khsSpcMeasure\app\src\main\res\layout\activity_about.xml:48
+-keepclassmembers class * { *** onClickVersionName(android.view.View); }
+

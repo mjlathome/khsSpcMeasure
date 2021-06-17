@@ -34,8 +34,8 @@ public class CheckUpdateFragment extends Fragment implements View.OnClickListene
     private final String TAG = "CheckUpdateFragment";
 
     // url for spcMeasure apk
-    private static final String url = "http://thor.kmx.cosma.com/spc/apk/spcMeasure/app-release.apk";
-    // private static final String url = "http://thor.kmx.cosma.com/spc/apk/spcMeasure/app-debug.apk";
+    private static final String url = "http://thor.magna.global/spc/apk/spcMeasure/app-release.apk";
+    // private static final String url = "http://thor.magna.global/spc/apk/spcMeasure/app-debug.apk";
 
     private Context mAppContext;
     private ProgressDialog mProgressDialog;

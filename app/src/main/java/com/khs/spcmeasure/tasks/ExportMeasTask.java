@@ -23,7 +23,7 @@ public class ExportMeasTask extends AsyncTask<Long, JSONObject, Integer>{
 	private static final String TAG = "ExportMeasTask";
 
 	// private static String url = "http://10.35.33.58/spc/save_measurement.php";
-	private static String url = "http://thor.kmx.cosma.com/spc/save_measurements.php";	
+	private static String url = "http://thor.magna.global/spc/save_measurements.php";
 	// json node names
 	private static final String TAG_SUCCESS = "success";
 	private static final String TAG_MESSAGE = "message";

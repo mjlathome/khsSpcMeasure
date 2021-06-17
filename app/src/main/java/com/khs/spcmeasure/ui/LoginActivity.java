@@ -58,7 +58,7 @@ public class LoginActivity extends Activity {
     private static final String TAG_LDAP_AUTH  = "ldapAuth";
     private static final String TAG_CAN_ACCESS = "canAccess";
 
-    private static String url = "http://thor.kmx.cosma.com/spc/spc_measure_login.php";
+    private static String url = "http://thor.magna.global/spc/spc_measure_login.php";
 
     private final int MIN_PSWD_LEN = 8;
 

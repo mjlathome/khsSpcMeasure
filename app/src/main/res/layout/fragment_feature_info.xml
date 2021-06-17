@@ -71,14 +71,14 @@
         android:textSize="@dimen/text_medium"
         android:textStyle="bold" />
 
-    <ListView android:id="@+id/android:list"
+    <ListView android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/lblCpk"
         android:paddingTop="@dimen/margin_small"
         android:drawSelectorOnTop="false" />
 
-    <TextView android:id="@id/android:empty"
+    <TextView android:id="@android:id/empty"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="center"

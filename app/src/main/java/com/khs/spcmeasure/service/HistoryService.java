@@ -56,7 +56,7 @@ public class HistoryService extends IntentService {
     private static List<Long> canceledMeasHistProdId = new ArrayList<Long>();
 
     // url address
-    private static String url = "http://thor.kmx.cosma.com/spc/get_meas_hist.php?";
+    private static String url = "http://thor.magna.global/spc/get_meas_hist.php?";
     private static String querySep = "&";
     private static String queryProdId = "prodId=";
     private static String queryMaxSg = "maxSg=";

@@ -3,10 +3,10 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         karmax {
-            keyAlias 'karmax'
-            keyPassword 'Kmx5571'
-            storeFile file('C:/Users/mlees/AndroidKeystore/karmax.release.jks')
-            storePassword 'Kmx5571'
+            keyAlias 'keyStoreApk'
+            keyPassword 'kmx5571'
+            storeFile file('C:/Users/mlees/KeyStoreApk/keyStoreApk.jks')
+            storePassword 'kmx5571'
         }
     }
     compileSdkVersion 23
@@ -15,7 +15,7 @@ android {
         useLibrary 'org.apache.http.legacy'
         applicationId "com.khs.spcmeasure"
         minSdkVersion 19
-        targetSdkVersion 23
+        targetSdkVersion 29
     }
     buildTypes {
         release {
