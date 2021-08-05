@@ -372,7 +372,7 @@ public class DBAdapter {
 
 	// get Features by prodId and active
 	public Cursor getFeaturesByProdIdActive(long prodId, boolean active) {
-		String selectQuery = "SELECT * FROM " + TABLE_FEATURE + " WHERE " + KEY_PROD_ID + " = " + Long.toString(prodId) + " AND " + KEY_ACTIVE + " = " + boolToInt(active);
+		String selectQuery = "SELECT * FROM " + TABLE_FEATURE + " WHERE " + KEY_PROD_ID + " = " + Long.toString(prodId) + " AND " + KEY_ACTIVE + " = " + boolToInt(active) + " ORDER BY " + KEY_NAME;
 		return db.rawQuery(selectQuery, null);
 	};
 
@@ -380,7 +380,7 @@ public class DBAdapter {
 	public Cursor getFeaturesByPieceId(long pieceId) {
 		String selectQuery = "SELECT * FROM " + TABLE_FEATURE + " t1 " +
 				" INNER JOIN " + TABLE_MEASUREMENT + " t2 ON t2." + KEY_PROD_ID + " = t1." + KEY_PROD_ID + " AND t2." + KEY_FEAT_ID + " = t1." + KEY_FEAT_ID +
-				" WHERE t2." + KEY_PIECE_ID + " = " + Long.toString(pieceId);
+				" WHERE t2." + KEY_PIECE_ID + " = " + Long.toString(pieceId) + " ORDER BY " + KEY_NAME;
 		return db.rawQuery(selectQuery, null);
 	};
 
