@@ -1,5 +1,5 @@
 <component name="libraryTable">
-  <library name="Gradle: com.google.zxing:android-integration:3.2.1@jar">
+  <library name="Gradle: com.google.zxing:android-integration:3.2.1">
     <CLASSES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.zxing/android-integration/3.2.1/87a3d7da33a6c633fb1ff30023dbf0d05e8ea74c/android-integration-3.2.1.jar!/" />
     </CLASSES>

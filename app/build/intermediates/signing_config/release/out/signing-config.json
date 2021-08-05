@@ -1,1 +1,1 @@
-{"mName":"externalOverride","mStoreFile":"C:\\Users\\mlees\\KeyStoreApk\\keyStoreApk.jks","mStorePassword":"kmx5571","mKeyAlias":"keyStoreApk","mKeyPassword":"kmx5571","mStoreType":"jks","mV1SigningEnabled":true,"mV2SigningEnabled":false}
+{"mName":"externalOverride","mStoreFile":"C:\\Users\\mlees\\KeyStoreApk\\keyStoreApk.jks","mStorePassword":"kmx5571","mKeyAlias":"keyStoreApk","mKeyPassword":"kmx5571","mStoreType":"pkcs12","mV1SigningEnabled":true,"mV2SigningEnabled":false}

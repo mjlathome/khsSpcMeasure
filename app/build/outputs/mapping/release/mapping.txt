@@ -1,7 +1,7 @@
 # compiler: R8
 # compiler_version: 1.5.69
 # min_api: 19
-# pg_map_id: cc30be8
+# pg_map_id: 39cd6c8
 android.support.v4.app.ActivityCompat$OnRequestPermissionsResultCallback -> a.a.a.a.a:
 android.support.v4.app.ActivityCompat21 -> a.a.a.a.b:
     java.lang.reflect.Method android.support.v4.widget.PopupWindowCompatGingerbread.sSetWindowLayoutTypeMethod -> c
@@ -9491,10 +9491,10 @@ com.khs.spcmeasure.ui.FeatureReviewFragment$ClosePieceConfirmTask -> b.d.a.h.f$b
     6:6:java.lang.Object doInBackground(java.lang.Object[]):0 -> doInBackground
     7:7:java.lang.Boolean doInBackground(java.lang.Void[]):0:0 -> doInBackground
     7:7:java.lang.Object doInBackground(java.lang.Object[]):0 -> doInBackground
-    8:8:void com.khs.spcmeasure.helper.DBAdapter.<init>(android.content.Context):0:0 -> doInBackground
+    8:8:com.khs.spcmeasure.entity.Piece com.khs.spcmeasure.ui.FeatureReviewFragment.access$000(com.khs.spcmeasure.ui.FeatureReviewFragment):0:0 -> doInBackground
     8:8:java.lang.Boolean doInBackground(java.lang.Void[]):0 -> doInBackground
     8:8:java.lang.Object doInBackground(java.lang.Object[]):0 -> doInBackground
-    9:9:com.khs.spcmeasure.helper.DBAdapter com.khs.spcmeasure.helper.DBAdapter.open():0:0 -> doInBackground
+    9:9:long com.khs.spcmeasure.entity.Piece.getProdId():0:0 -> doInBackground
     9:9:java.lang.Boolean doInBackground(java.lang.Void[]):0 -> doInBackground
     9:9:java.lang.Object doInBackground(java.lang.Object[]):0 -> doInBackground
     10:10:java.lang.Boolean doInBackground(java.lang.Void[]):0:0 -> doInBackground
@@ -9502,32 +9502,16 @@ com.khs.spcmeasure.ui.FeatureReviewFragment$ClosePieceConfirmTask -> b.d.a.h.f$b
     11:11:com.khs.spcmeasure.entity.Piece com.khs.spcmeasure.ui.FeatureReviewFragment.access$000(com.khs.spcmeasure.ui.FeatureReviewFragment):0:0 -> doInBackground
     11:11:java.lang.Boolean doInBackground(java.lang.Void[]):0 -> doInBackground
     11:11:java.lang.Object doInBackground(java.lang.Object[]):0 -> doInBackground
-    12:12:long com.khs.spcmeasure.entity.Piece.getProdId():0:0 -> doInBackground
+    12:12:java.lang.Long com.khs.spcmeasure.entity.Piece.getId():0:0 -> doInBackground
     12:12:java.lang.Boolean doInBackground(java.lang.Void[]):0 -> doInBackground
     12:12:java.lang.Object doInBackground(java.lang.Object[]):0 -> doInBackground
-    13:13:android.database.Cursor com.khs.spcmeasure.helper.DBAdapter.getFeaturesByProdIdActive(long,boolean):0:0 -> doInBackground
-    13:13:java.lang.Boolean doInBackground(java.lang.Void[]):0 -> doInBackground
+    13:13:java.lang.Boolean doInBackground(java.lang.Void[]):0:0 -> doInBackground
     13:13:java.lang.Object doInBackground(java.lang.Object[]):0 -> doInBackground
-    14:14:java.lang.Boolean doInBackground(java.lang.Void[]):0:0 -> doInBackground
+    14:14:void com.khs.spcmeasure.helper.DBAdapter.close():0:0 -> doInBackground
+    14:14:java.lang.Boolean doInBackground(java.lang.Void[]):0 -> doInBackground
     14:14:java.lang.Object doInBackground(java.lang.Object[]):0 -> doInBackground
-    15:15:com.khs.spcmeasure.entity.Piece com.khs.spcmeasure.ui.FeatureReviewFragment.access$000(com.khs.spcmeasure.ui.FeatureReviewFragment):0:0 -> doInBackground
-    15:15:java.lang.Boolean doInBackground(java.lang.Void[]):0 -> doInBackground
+    15:15:java.lang.Boolean doInBackground(java.lang.Void[]):0:0 -> doInBackground
     15:15:java.lang.Object doInBackground(java.lang.Object[]):0 -> doInBackground
-    16:16:java.lang.Long com.khs.spcmeasure.entity.Piece.getId():0:0 -> doInBackground
-    16:16:java.lang.Boolean doInBackground(java.lang.Void[]):0 -> doInBackground
-    16:16:java.lang.Object doInBackground(java.lang.Object[]):0 -> doInBackground
-    17:17:java.lang.Boolean doInBackground(java.lang.Void[]):0:0 -> doInBackground
-    17:17:java.lang.Object doInBackground(java.lang.Object[]):0 -> doInBackground
-    18:18:android.database.Cursor com.khs.spcmeasure.helper.DBAdapter.getAllMeasurements(long):0:0 -> doInBackground
-    18:18:java.lang.Boolean doInBackground(java.lang.Void[]):0 -> doInBackground
-    18:18:java.lang.Object doInBackground(java.lang.Object[]):0 -> doInBackground
-    19:19:java.lang.Boolean doInBackground(java.lang.Void[]):0:0 -> doInBackground
-    19:19:java.lang.Object doInBackground(java.lang.Object[]):0 -> doInBackground
-    20:20:void com.khs.spcmeasure.helper.DBAdapter.close():0:0 -> doInBackground
-    20:20:java.lang.Boolean doInBackground(java.lang.Void[]):0 -> doInBackground
-    20:20:java.lang.Object doInBackground(java.lang.Object[]):0 -> doInBackground
-    21:21:java.lang.Boolean doInBackground(java.lang.Void[]):0:0 -> doInBackground
-    21:21:java.lang.Object doInBackground(java.lang.Object[]):0 -> doInBackground
     1:1:void onPostExecute(java.lang.Boolean):0:0 -> onPostExecute
     1:1:void onPostExecute(java.lang.Object):0 -> onPostExecute
     2:2:com.khs.spcmeasure.entity.Piece com.khs.spcmeasure.ui.FeatureReviewFragment.access$000(com.khs.spcmeasure.ui.FeatureReviewFragment):0:0 -> onPostExecute
